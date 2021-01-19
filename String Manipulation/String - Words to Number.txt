@@ -1,0 +1,76 @@
+English Words to Integer
+
+Turn a string to a number
+
+Example 1:
+
+Input: "Three hundred million"
+Output: 300,000,000
+
+Example 2:
+
+Input: "Five Hundred Thousand"
+Output: 500,000
+
+
+// create HashMaps of english words to number
+// split the string and iterate through adding the number of string
+    
+    public static long WordtoNumber(String word) {  
+        
+        Map<String, Integer> smallNums = new HashMap<String, Integer>();
+            smallNums.put("one", 1);
+            smallNums.put("two", 2);
+            smallNums.put("three",3);
+            smallNums.put("four", 4);
+            smallNums.put("five", 5);
+            smallNums.put("six", 6);
+            smallNums.put("seven", 7);
+            smallNums.put("eight", 8);
+            smallNums.put("nine", 9);
+            smallNums.put("ten", 10);
+            smallNums.put("eleven", 11);
+            smallNums.put("twelve", 12);
+            smallNums.put("thirteen", 13);
+            smallNums.put("fourteen", 14);
+            smallNums.put("fifteen", 15);
+            smallNums.put("sixteen", 16);
+            smallNums.put("seventeen", 17);
+            smallNums.put("eighteen", 18);
+            smallNums.put("nineteen", 19);
+            smallNums.put("twenty", 20);
+            smallNums.put("thirty", 30);
+            smallNums.put("forty", 40);
+            smallNums.put("fifty", 50);
+            smallNums.put("sixty", 60);
+            smallNums.put("seventy", 70);
+            smallNums.put("eighty", 80);
+            smallNums.put("ninety" , 90);
+
+        Map<String, Integer> bigNums = new HashMap<>();
+            bigNums.put("thousand", 1000);
+            bigNums.put("million", 1000000);
+            bigNums.put("billion", 1000000000); 
+        
+        String[] strs = word.toLowercase().split(" ");
+    
+        long tempNum = 0;
+        long finalNum = 0;
+
+		for(String s : strs) {
+			if(smallNums.containsKey(s)) {
+				tempNum += (long) smallNums.get(s);                
+            }
+			else if(s.equals("hundred")) {
+				tempNum *= 100;     
+            }
+			else if(bigNums.containsKey(s)) {
+				tempNum *= (long) bigNums.get(s);
+				finalNum += tempNum;
+				tempNum = 0;
+			}
+        }
+		finalNum += tempNum;        
+		
+		return finalNum;
+	}

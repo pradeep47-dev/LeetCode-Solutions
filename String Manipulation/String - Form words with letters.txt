@@ -1,0 +1,127 @@
+Form words with letters
+
+Given a list of words and list of letters. Words can be formed by using letters given and each letter can only be used once. 
+Find maximum number of letters that can be used from the given list to form the words from the word list.
+
+Example 1:
+
+Input: words = ["dog", "og", "cat"], letters = ['o', 'g', 'd']
+Output: ["dog"]
+Explanation: Using the given letters we can form ["dog"] and ["og"] but output the longer word
+
+Example 2:
+
+Input: words =[ "dog", "do", "go"], letters = ["d", "o", "g", "o"]
+Output: ["do", "go"]
+Explanation: Here we can either form ["dog"] or ["do", "go"] but pick the one which requires more leters.
+
+
+class TrieDictionary {
+
+ 
+    public static List<string> TrieList = new List<string>();
+
+    static class TrieNode {
+        bool endofword = false;
+        TrieNode[] child = new TrieNode[26];
+    }
+
+    public static void main(String[] args) {
+
+        String[] words = { "dogo", "og", "go", "od" };
+        char[] letters = { 'o', 'g', 'd' };
+
+        TrieNode root = new TrieNode();
+        for (int i = 0; i < words.length; i++)
+            InsertNode(root, words[i]);
+
+        FindMaxLettersUsed(root, letters, letters.length);
+
+        int itemCount = TrieList.size();
+        if (itemCount == 0)
+            System.out.print(itemCount);
+        else {
+            int maxString = Integer.MIN_VALUE;
+            int minString = Integer.MAX_VALUE;
+            int CharsSum = 0, maxCharacters = 0;           
+
+            for (int i = 0; i < itemCount; i++) {
+				int len = TrieList.get(i).length();
+				CharsSum += len;
+				
+                if (len > maxString) maxString = len;
+                if (len < minString) minString = len;                
+            }
+
+            if (maxString == minString) {
+                maxCharacters = CharsSum;                
+            } else {
+                for (int i = 0; i < itemCount; i++) {
+                    if (TrieList.get(i).length() != maxString) {
+                        maxCharacters += TrieList.get(i).length();
+                    }
+                }
+            }
+
+            System.out.print(maxString > maxCharacters ? maxString : maxCharacters);
+        }
+    }
+
+    public static void InsertNode(TrieNode root, String word) {
+
+        int n = word.length();
+        TrieNode node = root;
+
+        for (int i = 0; i < n; i++) {
+            int index = word.charAt(i) - 'a';
+
+            if (node.child[index] == null)
+                node.child[index] = new TrieNode();
+
+            node = node.child[index];
+        }
+        node.endofword = true;
+    }
+
+    public static void FindMaxLettersUsed(TrieNode root, char[] letters, int n) {
+
+        int[] hashset = new int[26];
+        for (int i = 0; i < n; i++) {
+            hashset[letters[i] - 'a']++;
+        }
+
+        TrieNode node = root;
+        String str = "";
+
+        for (int i = 0; i < 26; i++) {
+
+            if (hashset[i] > 0 && node.child[i] != null) {
+                str = str + (char) (i + 'a');
+                hashset[i]--;
+                SearchString(node.child[i], hashset, str);
+                hashset[i]++;
+                str = "";
+            }
+        }
+    }
+
+    public static void SearchString(TrieNode node, int[] hashset, String str) {
+        if (node.endofword == true) {
+            TrieList.add(str);
+        }
+
+        for (int i = 0; i < 26; i++) {
+
+            if (hashset[i] > 0 && node.child[i] != null) {
+                char ch = (char) (i + 'a');
+                hashset[i]--;
+                SearchString(node.child[i], hashset, str + ch);
+                hashset[i]++;
+            }
+        }
+    }
+}
+
+Input is String[] words = { "dogo", "og", "go", "od" };
+char[] letters = { 'o', 'g', 'd' };
+Output is 6.

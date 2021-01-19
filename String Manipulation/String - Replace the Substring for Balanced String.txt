@@ -1,0 +1,41 @@
+Replace the Substring for Balanced String
+
+You are given a string containing only 4 kinds of characters 'Q', 'W', 'E' and 'R'.
+
+A string is said to be balanced if each of its characters appears n/4 times where n is the length of the string.
+
+Return the minimum length of the substring that can be replaced with any other string of the same length
+to make the original string s balanced.
+
+Return 0 if the string is already balanced. 
+
+Example 1:
+
+Input: s = "QWER"
+Output: 0
+Explanation: s is already balanced.
+
+// get char count and target k = n/4
+// Sliding Window - if the window has all 4 characters less than K
+// result is minimum of windows
+
+	public int balancedString(String s) {
+        int n = s.length();
+        
+        int[] chars = new int[128];        
+        for(int i=0;i<n;i++)
+            chars[s.charAt(i)]++;
+        
+		int result = n, start = 0, k =n/4;
+		
+        for(int end=0;end<n;end++) {
+            chars[s.charAt(end)]--;
+            
+			while(start<n && chars['Q'] <= k && chars['W'] <= k && chars['E'] <= k && chars['R'] <= k) {
+                result = Math.min(result, end-start+1);
+                chars[s.charAt(start)]++;
+                start++;
+            }
+        }
+        return result;
+    }

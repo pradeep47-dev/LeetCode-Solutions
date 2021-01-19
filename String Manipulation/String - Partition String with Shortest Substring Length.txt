@@ -1,0 +1,59 @@
+Find Substrings
+
+Given a string of lowercase letters, partition to subset based on
+
+1) no overlap among substring - distinct
+2) one letter can only exist in substring. For every letter ex: c all occurences must be in 1 substring
+3) find as many substrings as possible
+4) if there r two solutions with same no of substrings return smallest length;
+
+Example:
+
+s = "ddmxmaccabe";
+output:  dd x cc b e 
+
+s = "baddacxb:
+output: "dd" "c" "x" (not "adda" "c" "x")->longer length 
+
+// get the first and last index of character
+// add the substring of each character and compare previous substring
+// remove previous one if it is higher
+public static List<String> PartitionLabels(String Str) 
+	{	
+		char[] S = Str.toCharArray();
+        int n = S.length;
+        int[] firstIndex = new int[26];
+        Arrays.fill(firstIndex, -1);
+		
+        int[] lastIndex = new int[26];
+		Set<Character> set = new HashSet<>();
+		
+        for (int i = 0; i < n; i++)
+		{   
+		     if(firstIndex[S[i] -'a'] == -1)
+		        firstIndex[S[i] -'a'] = i;
+		     lastIndex[S[i] - 'a'] = i;
+		     set.add(S[i]);
+		}        
+        
+        int prev_end = n+1;
+        int prev_start = 0;
+        List<String> result = new ArrayList<String>();
+        
+        for (int i = 0; i < set.size(); i++) 
+        {
+            char c = set.get(i);
+            int start = firstIndex[c - 'a'];
+            int end = lastIndex[c - 'a'];
+            if(prev_end < end) {
+                result.add(Str.substring(start, end+1));
+            }
+            else {
+                if(result.size() > 0) result.remove(result.size() -1);
+                result.add(Str.substring(start, end+1));
+            }
+            prev_end = end;
+            prev_start = start;
+        }
+        return result;
+    }

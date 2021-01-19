@@ -1,0 +1,67 @@
+
+		String str = "abcxabcdabcdabcy";
+        String pattern = "abcdabcy";
+       
+        boolean result = KMP(str.toCharArray(), pattern.toCharArray());
+		
+
+	/**
+     * KMP algorithm of pattern matching.
+     */
+	 
+    public boolean KMP(char[] text, char[] pattern){
+        
+        int lps[] = computeLPSArray(pattern, pattern.length);
+        int i=0;
+        int j=0;
+        while(i < text.length && j < pattern.length)
+		{
+            if(text[i] == pattern[j])
+			{
+                i++;
+                j++;
+            }
+			else
+			{
+                if(j!=0)
+				{
+                    j = lps[j-1];
+                }
+				else
+				{				
+                    i++;
+                }
+            }
+        }
+        if(j == pattern.length){
+            return true;
+        }
+        return false;
+    }
+	
+	// longest prefix suffix array
+    public int[] computeLPSArray(char[] p, int n) {
+		int[] lps = new int[n];
+        int len = 0;
+        int i = 1;
+        
+        while(i < n) {
+            if(p[i] == p[len]) {              
+                len++;
+                lps[i] = len;
+                i++;            
+            }
+            else {
+                if(len != 0) {				// set value if its not zero
+                    len = lps[len -1];
+                }
+                else {
+                    lps[i] = len;
+                    i++;
+                }
+            }
+        }
+		return lps;
+    }
+	
+	

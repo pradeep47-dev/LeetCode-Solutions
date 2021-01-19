@@ -1,0 +1,52 @@
+Reorganize String
+
+Given a string S, check if the letters can be rearranged so that two characters that are adjacent to each other are not the same.
+
+If possible, output any possible result.  If not possible, return the empty string.
+
+Example 1:
+
+Input: S = "aab"
+Output: "aba"
+
+Example 2:
+
+Input: S = "aaab"
+Output: ""
+
+// get the count of each characters and sort them by frequency
+// for all charcters with more than 0 frequency, add them to result array with index increment of 2
+// check if frequency is > n/2, then it is impossible
+
+	public String reorganizeString(String S) {
+        int[] chars = new int[26];
+        char[] ch = S.toCharArray();
+        int n = S.length();
+        
+        for(char c : ch)
+            chars[(int)c-'a']+=100;
+        
+        for(int i=0;i<26;i++)
+            if(chars[i] != 0)
+                chars[i] += i;
+        
+        Arrays.sort(chars);
+        int idx = 1;
+        char[] result = new char[n];
+        
+        for(int i=0;i<26;i++) {
+            if(chars[i] == 0) continue;
+            
+            int count = chars[i] / 100;
+            char c = (char) ('a' + chars[i] % 100);
+            
+            if(count > (n+1) / 2) return "";
+            
+            for(int j=0;j<count;j++) {                
+                
+                result[idx] = c;
+                idx = idx + 2 < n ? idx + 2 : 0;
+            }
+        }
+        return String.valueOf(result);
+    }

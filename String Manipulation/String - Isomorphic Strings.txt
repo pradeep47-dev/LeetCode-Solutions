@@ -1,0 +1,90 @@
+Isomorphic Strings
+
+Given two strings s and t, determine if they are isomorphic.
+
+Two strings are isomorphic if the characters in s can be replaced to get t.
+
+All occurrences of a character must be replaced with another character while preserving the order of characters. No two characters may map to the same character but a character may map to itself.
+
+Example 1:
+
+Input: s = "egg", t = "add"
+Output: true
+
+Input: s = "foo", t = "bar"
+Output: false
+
+// Check two string are isomorphic
+
+												public boolean isIsomorphic(String s, String t) {
+													int[] m1 = new int[256];
+													int[] m2 = new int[256];
+													int n = s.length();
+													for (int i = 0; i < n; i++) {
+														if (m1[s.charAt(i)] != m2[t.charAt(i)]) return false;
+														m1[s.charAt(i)] = i + 1;
+														m2[t.charAt(i)] = i + 1;
+													}
+													return true;
+												}
+	
+
+Given an array of strings, you need to Group Isomorphic strings together.
+
+Example:
+
+Input: ["apple", "apply", "dog", "cog", "romi"]
+Output: [["dog", "cog"], ["romi"], ["apple", "apply"]]
+
+
+ * make a pattern for all the string like for apple >>> 12211 . where a>1 p>2 >l2 and 3>1 
+ * store the pattern as a key in map 
+ * match if this kind of pattern exist in map 
+	
+
+	"apple" -> 12234 & "apply" -> 12234
+	"dog" -> 123 & cog -> 123
+
+								public List<List<String>> groupIsomorphicStrings(List<String> strings) {
+									if (strings == null || strings.isEmpty())
+										return new ArrayList<>();
+							
+									Map<String, List<String>> map = new HashMap<>();
+							
+									for (String string : strings) {
+							
+										String hash = hash(string);
+									
+										map.putIfAbsent(hash, new ArrayList<>());
+							
+										map.get(hash).add(string);
+									}
+									return new ArrayList(map.values());
+								}
+							
+							
+								private String hash(String s) {
+									if (s.isEmpty())
+										return "";
+							
+									int count = 1;
+									StringBuilder hash = new StringBuilder();
+							
+									Map<Character, Integer> map = new HashMap<>();
+							
+									for (char c : s.toCharArray()) {
+							
+										if (!map.containsKey(c)) {
+											map.put(c, count++);
+										}
+										hash.append(map.get(c) + ","); 
+										
+										//for cases like when counter=12 then 12 and actual 12(1 for a, 2 for b) 
+										should be different
+									}
+									hash.deleteCharAt(hash.length()-1);
+									return hash.toString();
+								}
+							
+							
+								O(n * L ) where L is the max size of String

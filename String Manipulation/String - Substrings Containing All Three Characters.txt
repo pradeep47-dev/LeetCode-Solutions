@@ -1,0 +1,32 @@
+Substrings Containing All Three Characters
+
+Given a string s consisting only of characters a, b and c.
+
+Return the number of substrings containing at least one occurrence of all these characters a, b and c.
+ 
+Example 1:
+
+Input: s = "abcabc"
+Output: 10
+Explanation: The substrings containing at least one occurrence of the characters a, b and c are
+ "abc", "abca", "abcab", "abcabc", "bca", "bcab", "bcabc", "cab", "cabc" and "abc" (again). 
+
+// Sliding window - count the occurrence of a b and c 
+
+	public int numberOfSubstrings(String s) {
+        char[] S = s.toCharArray();
+        int n = S.length, ans = 0, start = 0;
+        int[] chars = new int[3];
+        
+        for(int end = 0; end < n;end++) {            
+            chars[S[end] - 'a']++;
+            
+            while(chars[0] > 0 && chars[1] > 0 && chars[2]>0) {                
+                chars[S[start] -'a']--;
+                start++;
+            }
+            ans += start;
+        }
+        return ans;
+    }
+	

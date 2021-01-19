@@ -1,0 +1,276 @@
+Two Sum
+
+Given an array of integers, return indices of the two numbers such that they add up to a specific target.
+
+Example:
+
+Given nums = [2, 7, 11, 15], target = 9, Because nums[0] + nums[1] = 2 + 7 = 9,
+return [0, 1].
+
+// Use hashMap to store the index of calculated sum (target - num)
+
+	public int[] TwoSum(int[] nums, int target) {        
+		Map<Integer,Integer> map = new  HashMap<>();
+		
+		for(int i=0;i<nums.length;i++) {
+			if(map.containsKey(target - nums[i]))
+			{
+				return new int[] { map.get(target - nums[i]), i};
+			}
+			
+			map.put(nums[i], i);            
+		}
+		return new int[0];
+	}
+	
+// no of unique pairs - 2 HashSets to store the seen num and calculated num
+
+	public static int uniquePairs(int[] nums, int target){
+		Set<Integer> set = new HashSet<Integer>();
+		Set<Integer> seen = new HashSet<Integer>();
+		int count = 0;
+		for(int num : nums){
+			if(set.contains(target-num) && !seen.contains(num)){
+				count++;
+				seen.add(target-num);
+				seen.add(num);
+			}
+			else if(!set.contains(num)){
+				set.add(num);
+			}
+		}
+		return count;
+	}
+
+Two Sum II - Input array is sorted
+
+Example:
+
+Input: numbers = [2,7,11,15], target = 9, The sum of 2 and 7 is 9. Therefore index1 = 1, index2 = 2.
+Output: [1,2]
+
+// Input array is sorted, so use two pointers start and end to get target
+
+	public int[] TwoSum(int[] numbers, int target) {
+		
+		int start = 0, end = numbers.Length - 1;
+		
+		while(start < end)
+		{
+			int sum = numbers[start] + numbers[end];
+			
+			if(sum == target)
+				return new int[] {start+1, end+1};
+			else if(sum < target)
+				start++;
+			else
+				end--;
+		}
+		return new int[] {-1,-1};
+	}
+	
+
+
+Two Sum III – Data structure design (Java)
+ 
+Design and implement a TwoSum class. It should support the following operations: add and find.
+
+add - Add the number to an internal data structure.
+find - Find if there exists any pair of numbers which sum is equal to the value.
+
+For example,
+
+add(1); 
+add(3); 
+add(5);
+find(4) -> true
+find(7) -> false
+
+
+
+	private HashMap<Integer, Integer> elements = new HashMap<Integer, Integer>();
+	
+	public void add(int number) {
+	
+		elements.put(number, elements.getOrDefault(number, 0) + 1);		
+	}
+	
+	public boolean find(int value) {
+		for (Integer i : elements.keySet()) {
+			int target = value - i;
+			if (elements.containsKey(target)) {
+				if (i == target && elements.get(target) < 2) { 
+					// check if it is same number
+					continue;
+				}
+				return true;
+			}
+		}
+		return false;
+	}
+
+
+Two Sum Less Than K - Closest to K
+
+Given an array A of integers and integer K, return the maximum S such that there exists i < j with A[i] + A[j] = S and S < K. If no i, j exist satisfying this equation, return -1.
+ 
+Example 1:
+
+Input: A = [34,23,1,24,75,33,54,8], K = 60
+Output: 58
+Explanation: 
+We can use 34 and 24 to sum 58 which is less than 60.
+
+// Sort the array, use two pointers start and end to check if it is target
+
+	public int TwoSumLessThanK(int[] A, int K) {  
+		
+		Array.Sort(A);        
+		int max = -1, i = 0, j = A.Length -1;
+		
+		while(i<j)
+		{
+			int sum = A[i] + A[j];
+			
+			if(sum < K)
+			{
+				if(max < sum)
+				{
+					max = sum;
+					result = new int[] { nums[start], nums[end] };
+				}           
+				i++;
+			}                
+			else 
+				j--;
+		}
+		return max;
+	}
+	
+
+Two Sum IV - Input is a BST
+
+Given a Binary Search Tree and a target number, return true if there exist two elements in the BST such that their sum is equal to the given target.
+
+Example 1:
+
+Input: 
+    5
+   / \
+  3   6
+ / \   \
+2   4   7
+
+Target = 9
+
+Output: True
+
+// HashSet and preOrder recursive traversal - O(n) space
+
+	public boolean FindTarget(TreeNode root, int k) {
+		
+		HashSet<int> set = new HashSet<int>();
+		return preOrder(root, k, set);
+	}
+	
+	public boolean preOrder(TreeNode root, int k, HashSet<int> set)
+	{
+		if(root == null) return false;
+		
+		int val = root.val;
+		if(set.Contains(k-val)) return true;
+		else set.Add(val);
+		
+		return preOrder(root.left, k, set) || preOrder(root.right, k, set);
+	}
+
+
+//  O(1) space in-place pointer modification - change the tree to a sorted doubly linked list
+//  use two pointers - start and end
+
+   
+	TreeNode left;
+	TreeNode right;
+	
+	public boolean findTarget(TreeNode root, int k) {
+		if(root == null) return false;
+		helper(root);	// Convert BST to Double Linked List 
+							- Inorder traversal
+		left = root;
+		right = root;
+		while(left.left != null) left=left.left;	// start of DLL
+		while(right.right != null) right=right.right; // end of DLL
+		
+		int sum;
+		while(left != right && (left.val + right.val) != k){
+			sum = left.val + right.val;
+			if(sum < k) left = left.right;
+			else right = right.left;
+		}
+		return left != right;
+	}
+	
+	public void helper(TreeNode node){ 
+		if(node == null) return;
+		helper(node.left);
+	
+		if(left != null) left.right = node;
+		node.left = left;
+	
+		left = node;	 
+		helper(node.right);
+	}   
+
+Maximum Product of Three Numbers
+
+Given an integer array, find three numbers whose product is maximum and output the maximum product.
+
+
+Example 2:
+
+Input: [1,2,3,4]
+Output: 24
+
+
+	public int MaximumProduct(int[] nums) {
+		
+		int min1 = int.MaxValue;
+		int min2 = int.MaxValue;
+		int Max1 = int.MinValue;
+		int Max2 = int.MinValue;
+		int Max3 = int.MinValue;
+				
+		int n = nums.Length;
+		for(int i=0;i<n;i++)
+		{
+			int val = nums[i];
+			
+			if(val < min1)
+			{
+				min2 =min1;
+				min1 = val;
+			}
+			else if(val < min2) 
+			{
+				min2 =val;
+			}
+			
+			if(val > Max1)
+			{
+				Max3 = Max2;
+				Max2 = Max1;
+				Max1 = val;                
+			}
+			else if(val > Max2)
+			{
+				Max3 = Max2;
+				Max2 = val;                
+			}
+			else if(val > Max3)
+			{
+				Max3 = val;
+			}
+		}
+		
+		return Math.Max(min1 * min2 * Max1, Max1*Max2*Max3 );
+	}

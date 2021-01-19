@@ -1,0 +1,45 @@
+Sort Characters By Frequency
+
+Given a string, sort it in decreasing order based on the frequency of characters.
+
+Example 1:
+
+Input:
+"tree"
+
+Output:
+"eert"
+
+Explanation:
+'e' appears twice while 'r' and 't' both appear once.
+So 'e' must appear before both 'r' and 't'. Therefore "eetr" is also a valid answer.
+
+// Get the frequency of characters
+// put them in list<character> array to sort by increasing in linear time
+// Stringbuilder to add the characters
+
+	public String frequencySort(String s) {
+        Map<Character, Integer> map = new HashMap<>();
+        for(char c : s.toCharArray())
+            map.put(c, map.getOrDefault(c, 0) + 1);
+        
+        List<Character>[] lists = new ArrayList[s.length() + 1];
+        for(char k : map.keySet()) {
+            int idx = map.get(k);
+            if(lists[idx] == null)
+                lists[idx] = new ArrayList<>();
+            
+            lists[idx].add(k);
+        }
+        
+        StringBuilder sb = new StringBuilder();
+        for(int i=s.length(); i>=0; i--) {
+            if(lists[i] != null) {
+                for(char c : lists[i]) {
+                    for(int k=0;k<i;k++)
+                        sb.append(c);
+                }                    
+            }
+        }
+        return sb.toString();
+    }

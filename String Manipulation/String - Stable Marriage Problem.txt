@@ -1,0 +1,58 @@
+Stable marriage problem
+
+Suppose you have N men and N women, and each person has ranked their prospective opposite-sex partners in order of preference.
+
+For example, if N = 3, the input could be something like this: // Always contains stable couples
+
+guy_preferences = {
+    'andrew': ['caroline', 'abigail', 'betty'],
+    'bill': ['caroline', 'betty', 'abigail'],
+    'chester': ['betty', 'caroline', 'abigail'],
+}
+
+gal_preferences = {
+    'abigail': ['andrew', 'bill', 'chester'],
+    'betty': ['bill', 'andrew', 'chester'],
+    'caroline': ['bill', 'chester', 'andrew']
+}
+
+Write an algorithm that pairs the men and women together in such a way that no two people of opposite sex 
+would both rather be with each other than with their current partners.
+
+ * Initially all N men and N women are single and have a preference list of opposite sex.
+ * Each single man proposes to woman he prefers most(regardless of whether the woman is already engaged or not).
+ * If the woman is not engaged or prefers this man over her current partner then she replies with a Yes. If the woman prefers this guy, then she rejects her current partner who now becomes single.
+ * If the woman prefers her current partner over the proposing one the she replies with a No.
+ * Step 2 is repeated until every man is engaged.
+ 
+	
+	private Map<String,String> galeShapely(Map<String,List<String>> Men, Map<String, List<String>> Women) {
+
+		Map<String, String> engagedTo = new TreeMap<String, String>();
+        List<String> SingleMens = new ArrayList<>(Men.keySet());       
+       
+        while(!SingleMens.isEmpty()){
+		
+            String man = SingleMens.remove(0); // get first man
+            List<String> manPrefers = Men.get(man);
+			
+            for(String girl : manPrefers){
+                if(engagedTo.get(girl) == null){	//girl is free
+                    engagedTo.put(girl, Guy); 
+                    break;
+                }else{
+                    String newMan = engagedTo.get(girl);
+                    List<String> girlPrefers = Women.get(girl);
+                    if(girlPrefers.indexOf(man) < girlPrefers.indexOf(newMan)){	
+                        
+                        engagedTo.put(girl, man);
+                        SingleMens.add(newMan);
+                        break;
+                    }
+                }
+            }
+        }
+        return engagedTo;
+    }
+	
+	O(N^2)

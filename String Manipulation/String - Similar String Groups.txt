@@ -1,0 +1,140 @@
+Similar String Groups
+
+Two strings X and Y are similar if we can swap two letters (in different positions) of X, so that it equals Y. 
+Also two strings X and Y are similar if they are equal.
+
+For example, 
+
+"tars" and "rats" are similar (swapping at positions 0 and 2), and "rats" and "arts" are similar, 
+but "star" is not similar to "tars", "rats", or "arts".
+
+Together, these form two connected groups by similarity: {"tars", "rats", "arts"} and {"star"}.  
+Notice that "tars" and "arts" are in the same group even though they are not similar.  
+Formally, each group is such that a word is in the group if and only if it is similar to at least one other word in the group.
+
+We are given a list A of strings.  Every string in A is an anagram of every other string in A.  
+How many groups are there?
+
+ 
+Example 1:
+
+Input: A = ["tars","rats","arts","star"]
+Output: 2
+ 
+
+// Trie datastructure for Linear search
+// UnionFind to group the same strings
+// DFS to  find all combinations - swap the character in string
+
+class Solution {
+    class TrieNode {
+        TrieNode[] next = new TrieNode[26];
+        int index = -1;
+    }
+
+    public int numSimilarGroups(String[] a) {
+        if (a.length == 0) return 0;
+        int n = a.length;
+
+        TrieNode root = new TrieNode();
+        Union union = new Union(n);
+
+        for (int i = 0; i < n; i++) {
+            char[] ca = a[i].toCharArray();
+            List<Integer> matchingIndices = find(root, ca);
+            for (int index : matchingIndices) {
+                union.merge(index, i);
+            }
+            addString(ca, root, i);
+        }
+        return union.numUnique;
+    }
+
+    void addString(char[] ca, TrieNode root, int i) {
+        TrieNode node = root;
+        for (char c : ca) {
+            int index = c - 'a';
+            if (node.next[index] == null) {
+                node.next[index] = new TrieNode();
+            }
+            node = node.next[index];
+        }
+        if (node.index == -1) node.index = i;
+    }
+
+    List<Integer> find(TrieNode root, char[] ca) {
+        List<Integer> matchingIndices = new ArrayList<>();
+        helper(root, ca, 0, -1, false, matchingIndices);
+        return matchingIndices;
+    }
+
+    void helper(TrieNode node, char[] ca, int index, int mismatchedChar, boolean mismatchMatched, List<Integer> matchingIndices) {
+        if (index == ca.length) {
+            matchingIndices.add(node.index);
+            return;
+        }
+        int c = ca[index] - 'a';
+        // first try matching ca[index]
+        if (node.next[c] != null) {
+            helper(node.next[c], ca, index+1, mismatchedChar, mismatchMatched, matchingIndices);
+        }
+
+        // if mismatchMatched, we cannot have any more unmatched chars
+        if (mismatchMatched) return;
+
+        // if mismatch is not empty, we can only try that char
+        if (mismatchedChar != -1) {
+            if (node.next[mismatchedChar] == null) return;
+            helper(node.next[mismatchedChar], ca, index+1, mismatchedChar, true, matchingIndices);
+            return;
+        }
+
+        for (int i = 0; i < 26; i++) {
+            if (i == c || node.next[i] == null) continue;
+            helper(node.next[i], ca, index+1, c, mismatchMatched, matchingIndices);
+        }
+        return;
+    }
+
+
+
+    class Union {
+        int[] parent;
+        int[] rank;
+        int numUnique;
+
+        Union(int n) {
+            parent = new int[n];
+            rank = new int[n];
+            for (int i = 0; i < n; i++) {
+                parent[i] = i;
+            }
+            numUnique = n;
+        }
+
+        int findParent(int x) {
+            int initial = x;
+            while (x != parent[x]) {
+                x = parent[x];
+            }
+            parent[initial] = x;
+            return x;
+        }
+
+        void merge(int x, int y) {
+            int parentx = findParent(x);
+            int parenty = findParent(y);
+            if (parentx == parenty) return;
+
+            int rankx = rank[parentx];
+            int ranky = rank[parenty];
+            if (rankx <= parenty) {
+                parent[parentx] = parenty;
+                if (rankx == ranky) rank[parenty]++;
+            } else {
+                parent[parenty] = parentx;
+            }
+            numUnique--;
+        }
+    }
+}

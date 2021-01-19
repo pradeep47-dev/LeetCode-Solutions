@@ -1,0 +1,82 @@
+Split String into Unique Primes
+
+Write an algorithm to find the number of ways the given string can be split into unique prime numbers using the
+ entire string.
+
+Each number split of the given number must be in the range 2 to 10 inclusive.
+Since the answer can be large, return the answer modulo (1000000007)
+
+Input:
+inputstring = 11373
+
+Output:
+6
+
+This string can be split into prime numbers in 6 different ways: 
+[11,3,7,3], [113, 7,3], [11,3,73], [11, 37, 3], [113,73] and [11, 373]. So the output is 6.
+
+// Dynamic Programming Bottom Up Approach
+// using concept Sieve of Eratosthenes to precompute and store prime numbers
+// redeuce the time complexity to check for a number at every iteration. 
+
+	static HashSet<String> getPrimesFromSeive(HashSet<String> primes) 	{ 
+		boolean[] prime = new boolean[1000001]; 
+		Arrays.fill(prime, true); 
+		prime[0] = prime[1] = false; 
+		for (int i = 2; i * i <= 1000000; i++) { 
+			if (prime[i] == true) { 
+				for (int j = i * i; j <= 1000000; j += i) 
+					prime[j] = false; 
+			} 
+		} 	
+		
+		HashSet<String> primes = new HashSet<>();
+		for (int i = 2; i <= 1000000; i++) { 
+			if (prime[i] == true) 
+				primes.add(String.valueOf(i)); 
+		} 
+	} 
+	
+	
+	static int splitIntoPrimes(String number) 
+	{ 
+		int numLen = number.length(); 	
+		
+		int[] splitDP = new int[numLen + 1]; 
+		Arrays.fill(splitDP, -1); 	
+		
+		HashSet<String> primes = getPrimesFromSeive(primes); 
+		
+			
+		for (int i = 1; i <= numLen; i++) { 
+	
+			// If the prefix is prime
+			if (i <= 6 && (primes.contains(number.substring(0, i)))) 
+				splitDP[i] = 1; 
+	
+			// If the Given Prefix can be split into Primes then for the remaining String from i to j 
+			// Check if Prime. If yes calculate the minimum split till j 
+			
+			if (splitDP[i] != -1) { 
+				for (int j = 1; j <= 6 && i + j <= numLen; j++) { 	
+					
+					if (primes.contains(number.substring(i, i+j))) { 	
+						
+						if (splitDP[i + j] == -1) 
+							splitDP[i + j] = 1 + splitDP[i]; 
+						else
+							splitDP[i + j] = Math.min(splitDP[i + j], 1 + splitDP[i]); 
+					} 
+				} 
+			} 
+		} 
+	
+		
+		return splitDP[numLen]; 
+	} 
+	
+	Time Complexity:
+
+    O(N) where N is the length of the input string.
+    sieve of Eratosthenes has a run time of O(N*log(log(N))) where N is 1 Million (upper bound of input)
+	

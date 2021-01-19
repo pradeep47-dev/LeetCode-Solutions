@@ -1,0 +1,52 @@
+K Distinct Chars in Substrings
+
+Return a list of all substrings of input String with K characters, that have k-1 distinct character 
+i.e. exactly one character is repeated, or an empty list if no such substring exist in inputString.
+The order in which the substrings are returned does not matter.
+
+The input string consists of only lowercase alphabetic characters.
+
+Example
+Input:
+inputString = awaglk
+K = 4
+
+Output:
+[awag]
+
+Explanation:
+The substrings are {awag, wagl, aglk}
+The answer is awag as it has 3 distinct characters in a string of size 4, and only one character is repeated twice.
+
+
+	public List<String> findKMinusOneDistinct(String str, int k) {
+
+        Map<Character, Integer> Map = new HashMap<>();
+        List<String> resultList = new ArrayList<>();
+
+        for (int i = 0; i + k <= str.length(); i++) {
+
+            String Substr = str.substring(i, i + k);
+            boolean isRepeat = false;
+
+            foreach (char c in Substr.ToCharArray()) {
+			
+                if (Map.ContainsKey(c)) {
+                    if (!isRepeat)
+                        Map[c]++;
+                    else
+                        break;
+
+                    isRepeat = true;
+                } 
+				else
+                    Map[c] = 1;
+            }
+           
+            if (isRepeat)
+                resultList.add(Substr);
+           
+            Map.clear();
+        }
+        return resultList;
+    }

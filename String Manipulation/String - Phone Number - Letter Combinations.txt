@@ -1,0 +1,69 @@
+
+Print all possible words from phone digits
+
+Before advent of QWERTY keyboards, texts and numbers were placed on the same key. 
+For example 2 has “ABC” if we wanted to write anything starting with ‘A’ we need to type key 2 once. 
+If we wanted to type ‘B’, press key 2 twice and thrice for typing ‘C’. below is picture of such keypad.
+
+Input:
+
+{2, 3, 4}
+
+Output:
+
+adg adh adi aeg aeh aei afg afh afi bdg 
+bdh bdi beg beh bei bfg bfh bfi cdg cdh 
+
+	
+// backtracking
+	
+	String[] mapping = new String[] {"", "", "abc", "def", "ghi", "jkl", "mno", "pqrs", "tuv", "wxyz"};        
+    List<String> output = new ArrayList<String>();
+    
+    public List<String> letterCombinations(String digits) {        
+        if(digits.length() != 0) 
+            backtrack(new StringBuilder(), digits);
+        return output; 
+    }
+    
+    public void backtrack(StringBuilder sb, String digits) {
+        if(digits.length() == 0)
+            output.add(sb.toString());
+        else {            
+            String letters = mapping[digits.charAt(0) - '0'];
+			
+            for(char c : letters.toCharArray()) {     
+                sb.append(c);
+                backtrack(sb, digits.substring(1));
+                sb.deleteCharAt(sb.length() -1);
+            }            
+        }            
+    }
+	
+// Iteration
+	
+	public IList<string> LetterCombinations(string digits) 
+    {        
+       if (string.IsNullOrEmpty(digits)) 
+	   { 
+			return new List<string>(); 
+	   }
+            List<string> result = new List<string>(){""};
+            List<string> mapping = new[] { "", "", "abc", "def", "ghi", "jkl", "mno", "pqrs", "tuv", "wxyz" };    
+
+            foreach (char digit in digits)
+            {
+                var backup = new List<string>();
+                foreach (var ch in mapping[digit - '0'])
+                {
+                    foreach (var answer in result)
+                    {
+                        backup.Add(answer + ch);
+                    }
+                }
+
+                result = backup;
+            }
+
+            return result;
+    }

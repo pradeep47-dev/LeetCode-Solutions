@@ -1,0 +1,61 @@
+Maximum number formed from array with K number of adjacent swaps allowed
+
+Given an array and the number of adjacent swap operations allowed are K. The task is to find the max number that can be formed using these swap operations.
+
+Examples:
+
+    Input : a[]={ 1, 2, 9, 8, 1, 4, 9, 9, 9 }, K = 4
+    Output : 9 8 1 2 1 4 9 9 9
+    After 1st swap a[ ] becomes 1 9 2 8 1 4 9 9 9
+    After 2nd swap a[ ] becomes 9 1 2 8 1 4 9 9 9
+    After 3rd swap a[ ] becomes 9 1 8 2 1 4 9 9 9
+    After 4th swap a[ ] becomes 9 8 1 2 1 4 9 9 9
+
+// Find the max element index in next K elements of each index i
+// swap from i to maxIndex
+
+N * K - Solution
+	
+	public void maximizeArray(int[] arr, int n, int k) 
+	{    
+		if (k <= 0) 
+			return;  
+	
+		for (int i = 0; i < n; i++)  
+		{ 
+			int max_index = 0, max = Integer.MIN_VALUE; 	
+				
+			// Find index of the minimum element in next K elements 
+			for (int j = i; j <= i+k && j < n; j++)  
+			{ 
+				if (arr[j] > max)  
+				{ 
+					max = arr[j]; 
+					max_index = j; 
+				} 
+			} 
+	
+			// Update the array elements by swapping adjacent elements 
+			swapMax(arr, i, max_index); 
+			
+			// Update the value of number of swaps 
+			k = k - (max_index - i); 
+	
+			if (k <= 0) 
+				break; 
+		} 
+	}
+
+	public void swapMax(int[] arr, int target_position, int current_position) { 
+	
+		for (int i = current_position; i > target_position; i--)  
+		{ 
+			int temp = arr[i - 1]; 
+			arr[i - 1] = arr[i]; 
+			arr[i] = temp; 
+		} 
+	} 
+  
+
+  
+

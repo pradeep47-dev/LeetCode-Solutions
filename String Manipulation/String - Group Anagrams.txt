@@ -1,0 +1,35 @@
+Group Anagrams
+
+Given an array of strings, group anagrams together.
+
+Example:
+
+Input: ["eat", "tea", "tan", "ate", "nat", "bat"],
+Output:
+[
+  ["ate","eat","tea"],
+  ["nat","tan"],
+  ["bat"]
+]
+	
+	public List<List<String>> groupAnagrams(String[] strs) {
+       
+        Map<String, List<String>> map = new HashMap<>();
+        
+        for(String str : strs) {
+            char[] chars = new char[26];
+            for(char c : str.toCharArray())
+                chars[c -'a']++;
+            
+			String key = String.valueOf(chars);            
+            
+            map.putIfAbsent(key, new ArrayList<>());
+            map.get(key).add(str);
+        }  
+        
+        return new ArrayList(map.values());
+    }
+	
+	
+	Time - Linear time O(n)
+	space - O(n) 

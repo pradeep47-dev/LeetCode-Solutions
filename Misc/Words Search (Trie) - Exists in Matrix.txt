@@ -1,0 +1,124 @@
+Word Search
+
+Given a 2D board and a list of words from the dictionary, find all words in the board.
+
+Each word must be constructed from letters of sequentially adjacent cell, where "adjacent" cells are those horizontally or vertically neighboring. The same letter cell may not be used more than once in a word.
+
+Example:
+
+Input: 
+board = [
+  ['o','a','a','n'],
+  ['e','t','a','e'],
+  ['i','h','k','r'],
+  ['i','f','l','v']
+]
+words = ["oath","pea","eat","rain"]
+
+Output: ["eat","oath"]
+
+
+// Trie data structure + DFS Backtracking of matrix
+
+class Solution {
+
+    public class Trie {
+        public String word = false;
+        public Trie[] childs = new Trie[26];
+    }
+    
+    private int m, n;
+    
+    public List<String> findWords(char[][] board, String[] words) {
+        List<String> result = new ArrayList<>();
+        if(words == null || words.length == 0) return result;
+        if(board == null || board.length == 0) return result;
+        m = board.length;
+        n = board[0].length;
+        
+        Trie root = BuildTrieNodes(words);
+        
+        for(int i=0;i<m;i++) {
+            for(int j=0;j<n;j++){
+                 if(root.childs[board[i][j]-'a'] != null)
+                     DFS_Backtrack(board, i, j, root, result);
+            }
+        }
+        return result;
+    }
+    
+    public void DFS_Backtrack(char[][] board, int i, int j, Trie node, List<String> result) {
+        if(!(i>=0 && i<m && j>=0 && j<n)) return;
+        if(board[i][j] == '#') return;
+        
+        char c = board[i][j];
+        if(node.childs[c-'a'] == null) return;
+        
+        node = node.childs[c-'a'];
+        if(node.word != null) {
+            result.add(node.word);
+            node.word = null;
+        }
+        
+        board[i][j] = '#'; 
+        DFS_Backtrack(board, i+1, j, node, result);
+        DFS_Backtrack(board, i-1, j, node, result);
+        DFS_Backtrack(board, i, j+1, node, result);
+        DFS_Backtrack(board, i, j-1, node, result);
+        board[i][j] = c;
+    }
+    
+    public Trie BuildTrieNodes(String[] words) {
+        Trie root = new Trie();
+        
+        for(String word : words) {
+            Trie node = root;
+            for(int i=0;i<word.length();i++) {
+                char c = word.charAt(i);
+                if(node.childs[c-'a']== null)
+                    node.childs[c-'a'] = new Trie();
+                
+                node = node.childs[c-'a'];
+            }
+            node.word = word;
+        }
+        return root;
+    }
+	
+	
+	Time : O(m * n * 4^(maxlengthword)) where m*n is the size of the board and max length of the word in the list
+	
+	
+	/// store all paths
+
+		Stack<int[]> paths = new Stack<int[]>();
+        List<Stack<int[]>> Finalpaths = new List<Stack<int[]>>();
+        printPathDFS(grid, sx, sy, paths, Finalpaths, visited);
+		   
+	void printPathDFS(int[][] grid, int x, int y, Stack<int[]> paths, List<Stack<int[]>> Finalpaths, bool[][] visited)
+    {
+        if (!(x >= 0 && x < m && y < n && y >= 0 && grid[x][y] >= 0) || visited[x][y])
+            return;
+
+        if (x == ex && y == ey)
+        {
+            Finalpaths.Add(new Stack<int[]>(paths));
+            return;
+        }
+      
+        visited[x][y] = true;
+        paths.Push(new int[] { x, y });
+
+        printPathUtil(grid, x + 1, y, paths, Finalpaths, visited);  
+      
+        printPathUtil(grid, x , y - 1, paths, Finalpaths, visited);  
+       
+        printPathUtil(grid, x, y + 1, paths, Finalpaths, visited);   
+       
+        printPathUtil(grid, x - 1, y, paths, Finalpaths, visited);
+
+        paths.Pop();
+      
+        visited[x][y] = false;
+    }
+}

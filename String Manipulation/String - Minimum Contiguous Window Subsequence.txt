@@ -1,0 +1,68 @@
+Minimum Window Subsequence
+
+Given strings S and T, find the minimum (contiguous) substring W of S, so that T is a subsequence of W.
+
+If there is no such window in S that covers all characters in T, return the empty string "". If there are multiple such minimum-length windows, return the one with the left-most starting index.
+
+Example 1:
+
+Input: 
+S = "abcdebdde", T = "bde"
+Output: "bcde"
+Explanation: 
+"bcde" is the answer because it occurs before "bdde" which has the same length.
+"deb" is not a smaller window because the elements of T in the window must occur in order.
+
+// Sliding Window Algorithm
+
+	public string MinWindow(string S, string T) 
+    {
+        if (S.length() < T.length() || T.length() == 0) {
+			return "";
+		}
+		if (T.length() == 1) {
+		    if (S.indexOf(T) == -1) return "";			
+			return T;
+		}	
+	
+		char[] s = S.toCharArray();
+		char[] t = T.toCharArray();		
+		int tIdx = 0;
+		int start = -1;
+		int minLen = Integer.MAX_VALUE;
+        
+		for (int sIdx = 0; sIdx < s.length; sIdx++) {
+			if (s[sIdx] == t[tIdx]) {
+				tIdx ++; 
+				
+				if (tIdx == t.length) { 
+					int end = sIdx + 1; 
+					tIdx --; 
+					while (tIdx >= 0) { 
+						if (s[sIdx] == t[tIdx]) { 
+							tIdx --;
+						}
+						sIdx --;
+					}
+					
+					sIdx ++;
+					tIdx ++;
+					
+					if (end - sIdx < minLen) {
+						minLen = end - sIdx;
+						
+						if (minLen == t.length) { 
+							return S.substring(sIdx, end);
+						}
+						start = sIdx;
+					}
+				}
+			}		
+		}
+        
+		if (start == -1) {
+			return "";
+		}
+        
+		return S.substring(start, start + minLen);
+    }

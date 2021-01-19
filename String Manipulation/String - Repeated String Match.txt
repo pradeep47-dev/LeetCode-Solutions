@@ -1,0 +1,89 @@
+Repeated String Match
+
+Given two strings A and B, find the minimum number of times A has to be repeated such that B is a substring of it. If no such solution, return -1.
+
+For example, with A = "abcd" and B = "cdabcdab".
+
+Return 3, because by repeating A three times (“abcdabcdabcd”), B is a substring of it; 
+
+// minimum number of times A has to be repeated
+
+ * get the counts of characters in A to check if B has diff character
+ * repeat the string A to max length to get the index of B
+
+	public int repeatedStringMatch(String A, String B) {
+        int m = A.length();
+        int n = B.length();
+        int[] chars = new int[128];
+        
+        for(int c : A.toCharArray())
+            chars[c - 'a']++;
+        
+        for(int c : B.toCharArray()) 
+            if(chars[c -'a'] == 0)
+                return -1;
+        
+        StringBuilder str = new StringBuilder();
+        int count = 0;
+        
+        int maxlen = Math.max(m,n) * 2;
+        
+        while(str.length() < maxlen){
+            str.append(A);
+            count ++;
+            
+            if(str.indexOf(B) != -1) {	// use KMP - pattern matching algorithm
+                return count;
+            } 
+        }
+
+        return -1;
+    }
+
+// Can be inserted at any index
+
+ab will generate 
+abab(append at 0th position), 
+aabb(append at 1st position), 
+abab(append at 2nd position)  Now given an initial value('ab') and another string ('aababbab')
+
+// check A and B has diff characters
+// DFS to try to insert the string a at all positions
+// memoization - HashMap to store the results
+
+	public boolean repeatedStringMatch(String A, String B) {
+        int m = A.length();
+        int n = B.length();
+        int[] chars = new int[128];
+        
+        for(int c : A.toCharArray())
+            chars[c - 'a']++;
+        
+        for(int c : B.toCharArray())
+            if(chars[c -'a'] == 0)
+                return false;
+		
+		Map<String, Boolean> map = new HashMap<>();
+        dfs(A, B, A, map)
+        return map[A];
+	}
+		
+	public boolean dfs(a, b, real_a, map) {
+        if (a.equals(b))
+            return True;
+
+        if (a.length() >= b.length() || a.length() + real_a.length() > b.length())
+            return False;
+
+        if (map.containsKey(a))
+            return map.get(a);
+        
+        for (int i=0; i< a.length(); i++) {
+            boolean temp = dfs(a.substring(0, i) + real_a + a.substring(i+1), b, real_a, map)
+            map.put(a, temp);
+            if (temp == True) {
+                return True;
+			}  
+		}
+        return map.get(a);
+	}

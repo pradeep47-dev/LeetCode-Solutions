@@ -1,0 +1,49 @@
+Integer to English Words
+
+Convert a non-negative integer to its english words representation. Given input is guaranteed to be less than 231 - 1.
+
+Example 2:
+
+Input: 12345
+Output: "Twelve Thousand Three Hundred Forty Five"
+
+Example 3:
+
+Input: 1234567
+Output: "One Million Two Hundred Thirty Four Thousand Five Hundred Sixty Seven"
+
+
+// create string array map of equvalent english words
+// iterate number % 1000s
+    
+    public string[] Numbers = {"","One","Two","Three","Four","Five","Six","Seven","Eight","Nine","Ten","Eleven","Twelve","Thirteen","Fourteen","Fifteen","Sixteen","Seventeen","Eighteen","Nineteen","Twenty"};
+    public string[] Tens = { "", "Ten","Twenty","Thirty","Forty","Fifty","Sixty","Seventy","Eighty","Ninety"};
+    public string[] Thousands = {"", "Thousand", "Million", "Billion"};
+    
+    public string NumberToWords(int num) {
+        
+        if(num == 0) return "Zero";
+        
+        int i=0;
+		StringBuilder sb = new StringBuilder();
+        
+        while(num > 0) {
+            if(num % 1000 != 0)
+                sb.insert(0, multiples(num % 1000) + Thousands[i] + " ");
+            num = num / 1000;
+            i++;
+        }
+        return sb.toString().trim();
+    }
+    
+    public string multiples(int num)
+    {
+        if(num==0)
+            return "";
+        else if(num < 20)
+            return Numbers[num] + " ";
+        else if(num < 100)
+            return Tens[num / 10] + " " + multiples(num % 10);
+        else
+            return Numbers[num / 100] + " Hundred " + multiples(num % 100);
+    }

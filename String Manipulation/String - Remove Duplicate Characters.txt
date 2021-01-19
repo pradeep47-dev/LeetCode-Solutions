@@ -1,0 +1,50 @@
+Smallest Subsequence of Distinct Characters (or) Remove Duplicate Letters
+
+Return the lexicographically smallest subsequence of text that contains all the distinct characters of text exactly once.
+
+Example 1:
+
+Input: "cdadabcc"
+Output: "adbc"
+
+Example 3:
+
+Input: "ecbacba"
+Output: "eacb"
+
+Example 4:
+
+Input: "leetcode"
+Output: "letcod"
+
+
+// get count of characters in string
+// loop through the string - append the unique char in string builder
+
+	public String removeDuplicateLetters(String text) {
+        int[] record = new int[26];
+        StringBuilder sb = new StringBuilder();       
+        for(char a : text.toCharArray()){
+            record[a-'a']++;
+        }
+        
+        boolean[] visited = new boolean[26];
+        
+        for(char a: text.toCharArray()){
+            record[a-'a']--;
+            if(visited[a-'a'])
+                continue;
+            
+            while (sb.length() != 0 && a < sb.charAt(sb.length() - 1)
+				&& record[sb.charAt(sb.length() - 1) - 'a'] > 0) {
+				
+				visited[sb.charAt(sb.length() - 1) - 'a'] = false;
+				sb.deleteCharAt(sb.length() - 1);
+		    }
+            
+            sb.append(a);
+            visited[a-'a'] = true;            
+        }        
+        
+        return sb.toString();
+    }

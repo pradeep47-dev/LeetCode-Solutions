@@ -1,0 +1,52 @@
+Distinct permutations of the string
+
+Print all distinct permutation of a string having duplicates.
+
+Examples:
+
+Input : ABCA
+Output : AABC AACB ABAC ABCA ACBA 
+         ACAB BAAC BACA BCAA CABA 
+         CAAB CBAA	
+
+// DFS Backtracking 
+
+	public static int count = 0;
+
+    public static void permutation(char[] str,int index, int n)
+    {
+        if(index >= n)
+        {
+             count++;
+             return;
+        }       
+        else
+        {
+            for(int i = index; i < n;i++)
+            {
+                if(shouldSwap(str, index, i))
+                {
+                    Swap(str, index, i);
+                    permutation(str, index+1, n);
+                    Swap(str, index, i);
+                }
+            }
+        }		
+    }
+
+    public static boolean shouldSwap(char[] ch,int start, int curr)
+    {
+        for (int i = start; i < curr; i++) { 
+            if (ch[i] == ch[curr]) { 
+                return false; 
+            } 
+        } 
+        return true;
+    }
+
+    public static void Swap(char[] ch, int i, int j)
+    {
+       char temp = ch[i];
+       ch[i] = ch[j];
+       ch[j] = temp;
+    }

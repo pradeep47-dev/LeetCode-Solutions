@@ -1,0 +1,103 @@
+Synonymous Sentences
+
+Given a list of pairs of equivalent words synonyms and a sentence text, 
+Return all possible synonymous sentences sorted lexicographically.
+ 
+Example 1:
+
+Input:
+synonyms = [["happy","joy"],["sad","sorrow"],["joy","cheerful"]],
+text = "I am happy today but was sad yesterday"
+Output:
+["I am cheerful today but was sad yesterday",
+"I am cheerful today but was sorrow yesterday",
+"I am happy today but was sad yesterday",
+"I am happy today but was sorrow yesterday",
+"I am joy today but was sad yesterday",
+"I am joy today but was sorrow yesterday"]
+
+	
+//	Union Find algorithm to group the synonyms
+//  generate a graph using the grouped synonym from union find
+//  generateSentences using DFS
+	
+	HashMap<String, String> parent = new HashMap();
+    
+    private String find(String x){
+        if(!parent.containsKey(x)) return null;
+        if(parent.get(x).equals(x)) return x;
+		
+        String px = find(parent.get(x));
+        parent.put(x, px);
+        return px;
+    }
+    
+    private void union(String x, String y){
+        String px = find(x);
+        String py = find(y);
+        parent.put(px, py);
+    }
+    
+    public List<String> generateSentences(List<List<String>> synonyms, String text) {
+        
+        for(List<String> s: synonyms){
+            String word1 = s.get(0);
+            String word2 = s.get(1);
+            parent.put(word1, word1);
+            parent.put(word2, word2);
+        }
+        
+        for(List<String> s: synonyms){
+            String word1 = s.get(0);
+            String word2 = s.get(1);
+            union(word1, word2);
+        }
+        
+        HashMap<String, HashSet<String>> dict = new HashMap();
+		
+        for(List<String> s: synonyms){
+            String word1 = s.get(0);
+            String word2 = s.get(1);
+			
+            String pw1 = find(word1);
+            dict.putIfAbsent(pw1, new HashSet<String>());
+            dict.get(pw1).add(word2);
+			
+            String pw2 = find(word2);
+            dict.putIfAbsent(pw2, new HashSet<String>());
+            dict.get(pw2).add(word1);
+        }
+        
+        
+        List<String> res = new ArrayList();
+        String[] texts = text.split(" ");
+        dfs(texts, 0, dict, new StringBuilder(), res);
+        Collections.sort(res);
+        return res;
+    
+    }
+    
+    private void dfs(String[] texts, int index, HashMap<String, HashSet<String>> dict, StringBuilder sb, List<String> res){
+        if(texts.length ==index){
+            res.add(sb.toString());
+            return ;
+        }
+        
+        if(index!=0)sb.append(" ");
+        
+        String word = texts[index];
+        if(find(word)!=null){
+            HashSet<String> synonym = dict.get(find(word));
+            for(String s: synonym){
+                sb.append(s);
+                dfs(texts, index+1, dict, sb, res);
+                sb.setLength(sb.length()-s.length());
+            }
+        }
+        else{        
+            sb.append(word);
+            dfs(texts, index+1, dict, sb, res);
+            sb.setLength(sb.length()-word.length());
+        }
+        if(index!=0)sb.setLength(sb.length()-1);
+    }

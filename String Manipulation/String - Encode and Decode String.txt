@@ -1,0 +1,101 @@
+Encode and Decode String
+
+Encode:
+Input: "WWWWWWWWWBBBBBBB"
+Output: "9W7B"
+
+Decode:
+Input "9W7B"
+Output: "WWWWWWWWWBBBBBBB"
+
+	public String encode(String s) {
+		int i = 0;
+		int j = 0;
+		StringBuilder encoded = new StringBuilder();
+		while (j < s.length()) {
+			if (s.charAt(i) != s.charAt(j)) {
+				encoded.append(j - i).append(s.charAt(i));
+				i = j;
+			}
+			j++;
+			if (j == s.length())
+				encoded.append(j - i).append(s.charAt(i));
+		}
+		return encoded.toString();
+	}
+	
+	public String decode(String s) {
+		StringBuilder decoded = new StringBuilder();
+		for (int i = 0; i < s.length(); i++) {
+			char ch = s.charAt(i);
+			int n = 0;
+			while (Character.isDigit(ch)) {
+				n = (n * 10) + Character.digit(ch, 10);
+				ch = s.charAt(++i);
+			}
+			decoded.append(String.valueOf(ch).repeat(n));
+		}
+		return decoded.toString();
+	}
+
+
+Decode String with [ ]
+
+Given an encoded string, return its decoded string.
+
+The encoding rule is: k[encoded_string], where the encoded_string inside the square brackets is being repeated exactly k times. Note that k is guaranteed to be a positive integer.
+
+You may assume that the input string is always valid; No extra white spaces, square brackets are well-formed, etc.
+
+Furthermore, you may assume that the original data does not contain any digits and that digits are only for those repeat numbers, k. For example, there won't be input like 3a or 2[4].
+ 
+
+Example 1:
+
+Input: s = "3[a]2[bc]"
+Output: "aaabcbc"
+
+Example 2:
+
+Input: s = "3[a2[c]]"
+Output: "accaccacc"
+
+// Using two stacks, get the count and the string inside the braces
+// iterate through the string and add them to the stacks
+// solve them - last in first out
+
+	public String decodeString(String s) {
+        int n = s.length();       
+        Stack<Integer> Countstack = new Stack<Integer>();
+        Stack<String> Strstack = new Stack<String>();
+        
+		StringBuilder sb = new StringBuilder();
+        int i = 0;
+        while(i < n) {
+            char c = s.charAt(i);
+            
+            if(Character.isDigit(c)) {
+               int count = 0;
+               while(Character.isDigit(s.charAt(i))) {
+                   count = count * 10 + (s.charAt(i) - '0');
+                   i++;
+               }               
+               Countstack.push(count);
+            }
+            else if(c == '[') {                
+                Strstack.push(sb.toString());
+                sb = new StringBuilder();               
+            }
+            else if(c == ']') {			
+                String str = Strstack.pop();
+                int count = Countstack.pop();               
+              
+                sb = new StringBuilder(str.repeat(count));   
+            }
+            else {
+                sb.append(c);               
+            }
+		 i++;			
+        }
+        return sb.toString();
+    }

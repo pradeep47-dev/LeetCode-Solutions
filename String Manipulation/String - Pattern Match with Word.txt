@@ -1,0 +1,112 @@
+Word Pattern
+
+Given a pattern and a string s, find if s follows the same pattern.
+
+Here follow means a full match, such that there is a bijection between a letter in pattern and a non-empty word in s.
+
+Example 1:
+
+Input: pattern = "abba", s = "dog cat cat dog"
+Output: true
+
+// HashMap to save the pattern and string index
+
+	public boolean wordPattern(String pattern, String str) {       
+        String[] strs = str.split(" ");
+        if(pattern.length() != strs.length)
+            return false;
+        
+        HashMap map = new HashMap<>();
+        for(Integer i=0;i<strs.length;i++) {
+            char c = pattern.charAt(i);
+            if(!map.containsKey(c)) {
+                map.put(c, i);
+            }
+            
+            if(!map.containsKey(strs[i])) {
+                map.put(strs[i], i);
+            }
+            
+            if(map.get(c) != map.get(strs[i])) {
+                return false;
+            }
+        }
+        return true;
+    }
+	
+
+Word Pattern II
+
+Given a pattern and a string str, find if str follows the same pattern.
+
+Here follow means a full match, such that there is a bijection between a letter in pattern and a non-empty substring in str.
+
+Example 1:
+
+Input: pattern = "abab", str = "redblueredblue"
+Output: true
+
+Example 2:
+
+Input: pattern = "aaaa", str = "asdasdasdasd"
+Output: true
+
+
+// DFS Backtracking
+// Try each char in String as pattern and find the match 
+// p=a s=r or p=a s=re or p=a, s=red
+// HashSet to eliminate duplicate chars like p=a s=a and p=b s=aa
+
+	 public boolean wordPatternMatch(String pattern, String str) {
+        Map<Character, String> map = new HashMap<>();
+        Set<String> set = new HashSet<>();
+    
+        return isMatch(str, 0, pattern, 0, map, set);
+    }
+    
+    
+    public boolean isMatch(String str, int i, String pat, int j, Map<Character, String> map, Set<String> set) {
+		// base case
+		if (i == str.length() && j == pat.length()) return true;
+		if (i == str.length() || j == pat.length()) return false;
+		
+		
+		char c = pat.charAt(j);	// get current pattern character
+		
+		
+		if (map.containsKey(c)) {	// if the pattern character exists
+			String s = map.get(c);
+			
+			// then check if we can use it to match str[i...i+s.length()]
+			if (!str.startsWith(s, i)) {
+				return false;
+			}
+			
+			// if it can match, great, continue to match the rest
+			return isMatch(str, i + s.length(), pat, j + 1, map, set);
+		}
+		
+		// pattern character does not exist in the map
+		for (int k = i; k < str.length(); k++) {
+			String p = str.substring(i, k + 1);
+		
+			if (set.contains(p)) {
+				continue;
+			}
+		
+			// create or update it
+			map.put(c, p);
+			set.add(p);
+			
+			// continue to match the rest
+			if (isMatch(str, k + 1, pat, j + 1, map, set)) {
+				return true;
+		}
+	
+			// backtracking
+			map.remove(c);
+			set.remove(p);
+		}    
+		
+		return false;
+	}

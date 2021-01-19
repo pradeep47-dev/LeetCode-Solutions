@@ -1,0 +1,98 @@
+Substrings of size K with K distinct chars
+
+Given a string s and an int k, return all unique substrings of s of size k with k distinct characters.
+
+Example 1:
+
+Input: s = "abcabc", k = 3
+Output: ["abc", "bca", "cab"]
+
+Example 3:
+
+Input: s = "awaglknagawunagwkwagl", k = 4
+Output: ["wagl", "aglk", "glkn", "lkna", "knag", "gawu", "awun", "wuna", "unag", "nagw", "agwk", "kwag"]
+Explanation: 
+Substrings in order are: "wagl", "aglk", "glkn", "lkna", "knag", "gawu", "awun", "wuna", "unag", "nagw", "agwk", "kwag", "wagl" 
+"wagl" is repeated twice, but is included in the output once.
+
+
+// Sliding Window - using two pointers start and end
+// k distinct chars means k size, so check the length alone
+
+	public static Set<String> uniqueSubstringSizeK(String s, int k) {
+        Set<String> set = new HashSet<>();
+        int[] ch = new int[26];
+		int start = 0;
+        for(int end =0 ; end < s.length(); end++) {
+            ch[s.charAt(end)-'a']++;
+			
+            while(ch[s.charAt(end)-'a'] > 1) {
+                ch[s.charAt(start)-'a']--;
+                start++;
+            }
+			
+            if(end-start+1 == k) {
+                set.add(s.substring(start, end+1));
+                ch[s.charAt(start)-'a']--;
+                start++;
+            }           
+        }       
+         return new ArrayList<>(set);
+    }
+	
+
+// Using Hash Map
+
+	public static Set<String> uniqueSubstringSizeK(String s, int k) {
+		List<String> res = new ArrayList<>();
+        Map<Character, Integer> map = new HashMap<>();
+
+        for(int i = 0, j = 0; i < s.length(); i++) {
+            char c = s.charAt(i);
+
+            if(map.containsKey(c)) {
+                j = Math.max(map.get(c), j);
+            }
+
+
+            if(i - j + 1 == K && !res.contains(s.substring(j, i + 1))) {
+                res.add(s.substring(j, i + 1));
+                j++;  
+            }
+            map.put(c, i + 1);
+        }
+       return res;
+    }
+	
+	
+
+Find K-Length Substrings With No Repeated Characters - Distinct Chars
+
+Given a string S, return the number of substrings of length K with no repeated characters.
+
+Example 1:
+
+Input: S = "havefunonleetcode", K = 5
+Output: 6
+Explanation: 
+There are 6 substrings they are : 'havef','avefu','vefun','efuno','etcod','tcode'.
+
+Example 2:
+
+Input: S = "home", K = 5
+Output: 0
+Explanation: 
+Notice K can be larger than the length of S. In this case is not possible to find any substring.
+
+	
+	public int numKLenSubstrNoRepeats(String S, int K) {
+        HashSet<Character> cur = new HashSet<>();
+        int res = 0, i = 0;
+        for (int j = 0; j < S.length(); ++j) {
+            while (cur.contains(S.charAt(j)))
+                cur.remove(S.charAt(i++));
+            cur.add(S.charAt(j));
+            res += j - i + 1 >= K ? 1 : 0;
+        }
+        return res;
+    }

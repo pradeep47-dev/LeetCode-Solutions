@@ -1,0 +1,47 @@
+First Occurence of a string
+
+Given a string of the form "BLAHBLAHBLAHBLAHBLAH...BLAHAPPLEAPPLEAPPLEAPPLE...APPLE"
+consisting of a bunch of concatenated "BLAH"s followed by a bunch of concatenated "APPLE"s
+find the starting index of the first occurence of "APPLE". Both "BLAH" and "APPLE" may appear zero or more times.
+
+Examples
+
+    "BLAHBLAHBLAH" => return -1 because "APPLE" does not appear at all
+    "APPLEAPPLEAPPLE" => return 0 becase "APPLE" appears right at the beginning
+    "BLAHBLAHBLAHAPPLEAPPLEAPPLE" => return 12 because that is the first place where "APPLE" occurs
+
+// can use KMP pattern matching algorithm
+
+	public static int getFirstOccurence(string input, string target)
+    {
+        int i = 0, j = 0, firstOccurenceIndex = -1;
+        int length1 = input.length();
+        int length2 = target.length();
+        while (i < length1 && j < length2)
+        {
+            char ch1 = input.charAt(i);
+            char ch2 = target.charAt(j);
+            if (ch1 == ch2)
+            {
+                if (j == 0)
+                {
+                    firstOccurenceIndex = i;
+                }
+                i++;
+                j++;
+            }
+            else
+            {
+                i++;
+                j = 0;
+            }
+        }
+        if (j == length2)
+        {
+            return firstOccurenceIndex;
+        }
+        else
+        {
+            return -1;
+        }
+    }

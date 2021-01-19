@@ -1,0 +1,56 @@
+Number of Matching Subsequences
+
+Given string S and a dictionary of words words, find the number of words[i] that is a subsequence of S.
+
+Example :
+Input: 
+S = "abcde"
+words = ["a", "bb", "acd", "ace"]
+Output: 3
+Explanation: There are three words in words that are a subsequence of S: "a", "acd", "ace".
+
+
+// using Item DS, and queue add all the words based on the first character
+// for each char in string, get the queue elements of first character of string
+// check if it is a subsequence
+   
+    public class Item {
+        String word;
+        int index;
+        public Item (String s, int i) {
+            word = s;
+            index = i;
+        }
+    }
+	
+    public int numMatchingSubseq(String S, String[] words) {
+        Queue<Item>[] dict = new Queue[26];
+        for (int i = 0; i < dict.length; i++) {
+            dict[i] = new LinkedList<>();
+        }
+
+        for (String word :words) {
+            if (word.length() > 0) {
+                dict[word.charAt(0) - 'a'].add(new Item(word, 0));
+            }
+        }
+
+        int count = 0;
+        for (char c : S.toCharArray()) {
+            Queue<Item> queue = dict[c - 'a'];
+            
+            for (int i = queue.size(); i > 0; i--) {
+                Item top = queue.poll();
+                top.index++;
+                if (top.index == top.word.length()) {
+                    count++;
+                } else {
+					char c = top.word.charAt(top.index);
+                    dict[c - 'a'].add(top);
+                }
+            }
+        }
+
+        return count;
+    }    
+

@@ -1,0 +1,86 @@
+Minimum Window Substring
+
+Given a string S and a string T, find the minimum window in S which will contain all the characters in T in complexity O(n).
+
+Example:
+
+Input: S = "ADOBECODEBANC", T = "ABC"
+Output: "BANC"
+
+
+// Minimum substring - Sliding Window
+
+// get the count of characters in T string
+// for each window check if counter is zero and check the window length
+
+	public String minWindow(String s, String t) {
+        int n = s.length();
+        int[] chars = new int[128];
+        int start = 0, end = 0, min = Integer.MAX_VALUE;
+        int counter = t.length();
+        String result = "";
+        
+        for(char c : t.toCharArray())
+            chars[c]++;
+        
+        while(end < n) {
+            if(chars[s.charAt(end)] > 0)
+                counter--;
+            
+            chars[s.charAt(end)]--;
+            end++;
+            
+            while(counter == 0) {
+                if(end - start < min) {
+                    min = end - start;
+                    result = s.substring(start, end);
+                }
+                
+                if(chars[s.charAt(start)] == 0)
+                    counter++;
+                chars[s.charAt(start)]++;
+                start++;
+            }                
+        }
+        
+        return result;
+    }
+	
+	
+	
+	////   maximum substring
+	
+	
+    public static string MaxWindow(string s, string t)
+    {
+        int n = s.length();
+        int[] chars = new int[128];
+        int start = 0, end = 0, max = Integer.MIN_VALUE;
+        int counter = t.length();
+        String result = "";
+        
+        for(char c : t.toCharArray())
+            chars[c]++;
+        
+        while(end < n) {
+            if(chars[s.charAt(end)] > 0)
+                counter--;
+            
+            chars[s.charAt(end)]--;
+            end++;
+            
+            while(counter == 0) {
+                if(end - start > max) {
+                    max = end - start;
+                    result = s.substring(start, end);
+                }
+                
+                if(chars[s.charAt(start)] == 0)
+                    counter++;
+                chars[s.charAt(start)]++;
+                start++;
+            }                
+        }
+        
+        return result;
+    }

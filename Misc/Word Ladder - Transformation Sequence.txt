@@ -1,0 +1,163 @@
+Word Ladder 
+
+Given two words (beginWord and endWord), and a dictionary's word list, find all shortest transformation sequence(s) from beginWord to endWord, such that:
+
+    Only one letter can be changed at a time
+    Each transformed word must exist in the word list. Note that beginWord is not a transformed word.
+
+    Return an empty list if there is no such transformation sequence.
+  
+Example 1:
+
+Input:
+beginWord = "hit",
+endWord = "cog",
+wordList = ["hot","dot","dog","lot","log","cog"]
+
+output: 5
+
+// Bi-directional search of two hashsets to return number
+
+   public int ladderLength(String beginWord, String endWord, List<String> wordList) {
+        
+        HashSet<String> wordSet = new HashSet<String>(wordList);
+
+        if (!wordSet.contains(endWord))
+            return 0;
+
+        HashSet<String> first = new HashSet<String>();
+        HashSet<String> second = new HashSet<String>();
+        first.add(beginWord);
+        second.add(endWord);
+        int counter = 0;
+
+        while (first.size() > 0 && second.size() > 0)
+        {
+            counter++;
+
+            if (first.size() > second.size())
+            {
+                var temp = first;
+                first = second;
+                second = temp;
+            }
+
+            HashSet<String> helper = new HashSet<String>();
+			
+            for(String word : first) {
+                char[] ch = word.toCharArray();
+				
+                for(int i=0;i<ch.length; i++) {
+                    char saved = ch[i];
+					
+                    for(char c='a'; c<='z'; c++) {
+                        if(c == saved) continue;
+                        ch[i] = c;
+                        String newWord = new String(ch);
+                        
+                        if(second.contains(newWord))
+                            return counter+1;
+                        
+                        if(wordSet.contains(newWord)) {
+                            wordSet.remove(newWord);
+                            helper.add(newWord);
+                        }
+                    }
+                    ch[i] = saved;
+                }                
+            }
+            first = helper;
+        }
+        return 0;
+    }
+	
+	Time : Linear O(words in wordList * 26)
+	
+	
+/// Return the Strings
+
+Output:
+[
+  ["hit","hot","dot","dog","cog"],
+  ["hit","hot","lot","log","cog"]
+]
+
+// Two hashsets of beginWord and endWord, BFS to build a word graph (from beginword to all possible words in WordList)
+// DFS to find the words connected and add to list
+
+// Use BFS to find the shortest distance between start and end, tracing the distance of crossing nodes from start node to end node, and store node's next level neighbors to HashMap
+// Use DFS to output paths with the same distance as the shortest distance from distance HashMap: compare if the distance of the next level node equals the distance of the current node + 1.
+
+  
+	public List<List<String>> findLadders(String beginWord, String endWord, 
+								List<String> wordList){
+		
+		List<List<String>> res = new ArrayList<>();
+		if(!wordList.contains(endWord))
+			return res;
+		
+		Set<String> dict = new HashSet<>(wordList);
+		Set<String> startSet = new HashSet<>(){{ add(beginWord); }};       
+		Set<String> endSet = new HashSet<>(){{ add(endWord); }};
+		
+		Map<String, Set<String>> map = new HashMap<>();
+		
+		bfs(startSet, endSet, map, dict, false);   
+		dfs_backtrack(beginWord, endWord, map, new ArrayList<>(){{add(beginWord)}}, res);
+		return res;
+	}
+	
+	private void bfs(Set<String> startSet, Set<String> endSet, 
+					Map<String, Set<String>> map, Set<String> dict, boolean reverse) {
+		if(startSet.size() > endSet.size()) {
+			bfs(endSet, startSet, map, dict, !reverse);
+			return;
+		}
+		
+		boolean found  = false;
+		dict.removeAll(startSet);
+		Set<String> nextLevel = new HashSet<>();
+		
+		for(String start : startSet) {            
+			for(int i = 0; i < start.length(); i++) {
+				char[] chars = start.toCharArray();						
+				char saved = chars[i];
+				for(char ch = 'a'; ch <= 'z'; ch++) {
+					chars[i] = ch;
+					String newstr = new String(chars);
+					if(dict.contains(newstr)) {                        
+						String key = reverse ? newstr : start;
+						String val = reverse ? start : newstr;						
+												
+						map.putIfAbsent(key, new HashSet<>());
+						map.get(key).add(val);                                              
+						
+						nextLevel.add(newstr);
+						if(endSet.contains(newstr))
+							found = true;
+					}
+				}                
+			}
+		}
+		
+		if(!found && nextLevel.size() > 0) {
+			bfs(nextLevel, endSet, map, dict, reverse);
+		}
+	}
+	
+	private void dfs_backtrack(String current, String endWord, 
+					Map<String, Set<String>> map, List<String> list, List<List<String>> res) {
+		
+		if(current.equals(endWord)) {           
+			res.add(new ArrayList<>(list));
+			return;
+		}
+		
+		if(map.containsKey(current)) {   
+			for(String str: map.get(current)) {
+				list.add(str);
+				dfs_backtrack(str, endWord, map, list, res);
+				list.remove(str);
+			}
+		}
+	}

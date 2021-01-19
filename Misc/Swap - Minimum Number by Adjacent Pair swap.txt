@@ -1,0 +1,73 @@
+Minimum integer that can be obtained by swapping adjacent digits
+
+// swap only by different pair - divide by 2
+
+Given an integer N, the task is to find the minimum integer that can be obtained from the given integer such that the adjacent digits of different parity can be swapped any no of times.
+Two digits of different parity means that they will have different remainders when divided by two.
+
+Examples:
+
+    Input: N = 64432
+    Output: 36442
+    Explanation:
+    Swap the 4th and 3rd digit; N = 64342
+    Swap the 3rd and 2nd digit; N = 63442
+    Swap the 2nd and 1st digit; N = 36442
+
+    Input :
+    3137
+    Output :
+    3137 
+
+
+// use two stacks to keep the digits of the number.
+
+    In one stack, numbers which are divisible by two can be stored.
+    In another stack, numbers which are not divisible by two can be stored.
+    The elements are then pushed into both the stacks from reverse order of the number.
+    Now, the element from the stack whose top contains the smaller element is popped and concatenated with the answer till one of the stacks is empty.
+    The remaining elements of the stack are then concatenated which is not empty with the answer and finally the output is returned.
+
+
+	public int minimumNo(int n) 
+	{ 
+		int ans = 0; 
+		Stack<Integer> stack1 = new Stack<Integer>(); 
+		Stack<Integer> stack2 = new Stack<Integer>(); 
+		while (n != 0) 
+		{ 
+			int r = n % 10; 
+	
+			if (r % 2 == 0)       
+				stack1.add(r);   // divisible by two  
+			else         
+				stack2.add(r); 	// not divisible by two
+			
+			n = n / 10; 
+		} 
+		
+	// merge two stacks
+	
+		while (!stack1.isEmpty() && !stack2.isEmpty()) { 
+		
+			if (stack1.peek() < stack2.peek()) 
+			{ 
+				ans = ans * 10 + stack1.pop(); 			
+			} 
+			else 
+			{ 
+				ans = ans * 10 + stack2.pop(); 			
+			} 
+		} 	
+	
+		while (!stack1.isEmpty()) 
+		{ 
+			ans = ans * 10 + stack1.pop(); 			
+		} 	
+	
+		while (!stack2.isEmpty()) 
+		{ 
+			ans = ans * 10 + stack2.pop(); 			
+		} 
+		return ans; 
+	}   

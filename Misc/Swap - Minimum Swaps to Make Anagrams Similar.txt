@@ -1,0 +1,61 @@
+K-Similar Strings
+
+Strings A and B are K-similar (for some non-negative integer K) if we can swap the positions of two letters in A exactly K times so that the resulting string equals B.
+
+Given two anagrams A and B, return the smallest K for which A and B are K-similar.
+
+Example 1:
+
+Input: A = "ab", B = "ba"
+Output: 1
+
+Example 2:
+
+Input: A = "abc", B = "bca"
+Output: 2
+
+Example 3:
+
+Input: A = "abac", B = "baca"
+Output: 2
+
+// Breadth first search to find minimum swaps
+// start with string A and iterate through each char of A
+// swap the mismatch char index of string A in string B, check if matches and return count
+
+	public int kSimilarity(String A, String B) {
+		if(A.equals(B)) return 0;
+		Set<String> visited = new HashSet<>();
+		Queue<String> que = new LinkedList<>();
+		visited.add(A);
+		que.add(A);
+		int k = 1;
+		
+		while(!que.isEmpty()) {            
+			for(int sz=que.size();sz>0;sz--) {
+				String s = que.poll();
+				int i= 0;
+				while(s.charAt(i) == B.charAt(i))
+					i++;
+				
+				for(int j=i+1;j<s.length();j++) {
+					if(s.charAt(i) == B.charAt(j)) {
+						String temp = swap(s, i, j);
+						if(temp.equals(B)) return k;
+						if(visited.add(temp))
+							que.add(temp);
+					}
+				}
+			}
+			k++;
+		}
+		return k;        
+	}
+	
+	public String swap(String s, int i, int j) {
+		char[] arr = s.toCharArray();
+		char temp = arr[i];
+		arr[i] = arr[j];
+		arr[j] = temp;
+		return new String(arr);
+	}

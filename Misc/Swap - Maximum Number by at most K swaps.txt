@@ -1,0 +1,69 @@
+Find Maximum number possible by doing at-most K swaps
+
+Given a positive integer, find maximum integer possible by doing at-most K swap operations on its digits.
+
+Examples:
+
+Input: M = 254, K = 1
+Output: 524
+Swap 5 with 2 so number becomes 524
+
+Input: M = 254, K = 2
+Output: 542
+Swap 5 with 2 so number becomes 524
+Swap 4 with 2 so number becomes 542
+
+// get the Maximum number next to the index, if present decrement k -  1 swap
+// recursion and backtrack to check the Maximum number
+// O(N ^ K)
+
+	int main() 
+	{ 
+		string str = "129814999"; 
+		int k = 4; 
+	
+		return findMaximumNum(str, k, str, 0);   
+	} 
+
+	public String findMaximumNum(String str, int k, String max, int idx) { 
+		
+		if (k <= 0) 
+			return max; 
+	
+		int n = str.length(); 	
+		
+		char maxChar = str.charAt(idx); 	// Find minimum digit greater than at idx 
+		for (int i = idx + 1; i < n; i++) {         
+			if (str.charAt(i) > maxChar) 
+				maxChar = str.charAt(i); 
+		} 
+	
+		// If maxChar is not Current Character, decrement k 
+		if (maxChar != str.charAt(idx)) 
+			k--; 
+	
+		
+		for (int i = idx; i < n; i++) { 			
+			if (str.charAt(i) == maxChar) { 
+				
+				str = swap(str, idx, i); 	
+				
+				if (str.compare(max) > 0) 
+					max = str; 	
+				
+				findMaximumNum(str, k, max, idx + 1); 	
+				
+				str = swap(str, idx, i); 
+			} 
+		} 
+	} 
+	
+	private String swap(String str, int i, int j) {
+		char[] c = str.toCharArray();
+		char temp = c[i];
+		c[i] = c[j];
+		c[j] = temp;
+		return new String(c);
+	}
+  
+

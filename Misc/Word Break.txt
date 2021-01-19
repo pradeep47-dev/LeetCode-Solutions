@@ -1,0 +1,128 @@
+Word Break
+
+Given a non-empty string s and a dictionary wordDict containing a list of non-empty words, determine if s can be segmented into a space-separated sequence of one or more dictionary words.
+
+The same word in the dictionary may be reused multiple times in the segmentation.
+    
+Example:
+
+Input: s = "applepenapple", wordDict = ["apple", "pen"]
+Output: true
+Explanation: Return true because "applepenapple" can be segmented as "apple pen apple".
+             Note that you are allowed to reuse a dictionary word.
+
+
+// Dynamic Programming - Top Down Approach 
+
+	public boolean wordBreak(String s, List<String> wordDict) {     
+        if (s == null || s.isEmpty()) return false;        
+        if(wordDict.contains(s)) return true;
+        
+		int maxlen = 0;
+        for (String word : wordDict) {
+            maxlen = Math.max(maxlen, word.length());
+        }
+		
+		int n = s.length();        
+        boolean[] words = new boolean[n + 1];
+        words[0] = true;
+        
+        for(int i=1;i<=n;i++) {
+           for (int j = 0; j < i; j++) {
+				if (i - j > maxlen) continue;
+				
+                if(words[j] && wordDict.contains(s.substring(j,i))) {
+                    words[i] = true;
+                    break;
+                }
+            }
+        }
+        
+        return words[n];
+    }
+	
+	Time - Quadratic O(n^2) without considering substring time  O(n)
+	space - O(n) 
+	
+	
+Example:	// return Words
+
+Input: s = "catsandog", wordDict = ["cats", "dog", "sand", "and", "cat"]
+Output: [cat sand dog]
+		[cats and dog]
+
+
+// return broken words using DFS + Memoization = DP
+// StringBuilder memo - is used to store the sub problem solution
+
+
+     public List<String> wordBreak(String s, List<String> words) {
+        if (s == null || s.length() > 100) {
+            return new ArrayList<>();
+        }
+		
+		HashSet<String> wordDict = new HashSet<String>(words);
+        List<String> list = new ArrayList<>();
+        dfs(s, wordDict, list, new StringBuilder());
+		
+		
+		/* for returning all broken words
+		
+			for(String word : wordDict) {
+				set.remove(word);
+				List<String> list = new ArrayList<>();
+				dfs(s, wordDict, list, new StringBuilder());
+				result.add(list);
+				set.add(word);
+			}
+		*/
+		
+        return list;
+    }
+
+    public void dfs(String s, HashSet<String> wordDict, List<String> list, StringBuilder memo) {
+        if (memo.length() != 0) {
+            memo.append(" ");
+        }
+
+        for (String word : wordDict) {
+            if (s.startsWith(word)) {
+                StringBuilder sb = new StringBuilder(memo);
+                sb.append(word);
+                if (s.equals(word)) {
+                    list.add(sb.toString());
+                } else {
+                    dfs(s.substring(word.length()), wordDict, list, sb);
+                }
+            }
+        }
+    }
+	
+	Time complexity : O(len(wordDict) ^ len(s / minWordLenInDict))
+	
+	
+// Using HashMap - DFS with Memoization
+
+	HashMap<String, List<String>> map = new HashMap<String, List<String>>();
+    
+    public List<String> wordBreak(String s, List<String> wordDict) {
+        if(map.containsKey(s)) return map.get(s);
+        
+        ArrayList<String> list = new ArrayList<String>();
+        if(wordDict.contains(s)) list.add(s);
+        
+        for(int i=1;i<s.length();i++) {
+            String str = s.substring(i);
+            if(wordDict.contains(str)) {
+                List<String> temp = wordBreak(s.substring(0, i), wordDict);
+               
+                for(int j=0;j<temp.size();j++)
+                    list.add(temp.get(j) + " " + str);
+            }
+        }
+        map.put(s, list);
+        return list;
+    }
+
+	Time complexity : O(len(wordDict) ^ len(s / minWordLenInDict))
+	space - O(n)

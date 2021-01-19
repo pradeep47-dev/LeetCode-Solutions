@@ -1,0 +1,62 @@
+Minimum Number by doing at most K swaps
+
+Example:
+
+Input : 934651, K = 1
+output : 134659
+
+// get the minimum number next to the index, if present decrement k -  1 swap
+// recursion and backtrack to check the minimum number
+// O(N ^ K)
+ 
+	public static int main(String[] args)
+	{		
+		String num = 934651;
+		int k = 2;		
+		
+		return findMinimum(num, k, num, 0);
+	}	
+	
+	public String findMinimum(String str, int k, String min, int idx) { 
+		
+		if (k <= 0) 
+			return min; 
+	
+		int n = str.length(); 	
+		
+		char minChar = str.charAt(idx); 	// Find minimum digit greater than at idx 
+		for (int i = idx + 1; i < n; i++) {         
+			if (str.charAt(i) < minChar) 
+				minChar = str.charAt(i); 
+		} 
+	
+		// If minChar is not Current Character, decrement k 
+		if (minChar != str.charAt(idx)) 
+			k--; 
+	
+		
+		for (int i = idx; i < n; i++) { 			
+			if (str.charAt(i) == minChar) { 
+				
+				str = swap(str, idx, i); 	
+				
+				if (str.compare(min) < 0) 
+					min = str; 	
+				
+				findMaximumNum(str, k, min, idx + 1); 	
+				
+				str = swap(str, idx, i); 
+			} 
+		} 
+	} 
+	
+	
+	private String swap(String str, int i, int j) {
+		char[] c = str.toCharArray();
+		char temp = c[i];
+		c[i] = c[j];
+		c[j] = temp;
+		return new String(c);
+	}
+	
+	
