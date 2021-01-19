@@ -1,0 +1,73 @@
+Jack has two errands he needs to run before he can go to school, and they need to be done in order. Time is getting tight, so he needs to take the quickest route. Determine the fastest route from where he starts, through the two errand locations, and on to his school. The city will be represented as an undirected graph of nodes labeled incrementally from 1.
+
+For example, there are g_nodes=5, labeled 1 to g_nodes, inclusive. Nodes represent junctions or milestones along a route. Jack's route always starts at node 1 and the school is always at node g_nodes, in this case, node 5. The starting nodes for roads, g_from= [1,2,3,4,5,3], ending nodes g_to= [2,3,4,5,1,5] and times to travel, given as g_weight= [9,11,6,1,4,10], are aligned by index. In this example, he starts at node 1, has to visit x= node 2 then y= node 3, in that order, before going to the school at node 5. A graphical representation follows.
+
+There are two paths he can take to get to school: 1->2->3->5 and 1->2->3->4->5. The first route takes 9+11+10=30 travel time while the second route only takes 9+11+6+1=27. The functions should return 27 in this case.
+
+Note: Jack can visit any node multipe times.
+
+Function Description
+Complete the function minCostPath in the editor below. The function must return the times it takes to travel the shortest path from node 1 through x and then y, arriving fially at node g_nodes
+
+Input description:
+
+The first line contains two space-separated integer, g_nodes and g_edges, denoting the number of nodes and the number of roads. Each line i of the g_nodes subsequent lines (where 0<= i< g_nodes) contains three space-separated integers describing g_from[i], g_to[i] and g_weight[i].
+The next line contains an integer, x.
+The last line contains an integer, y.
+
+Sample Case 0
+4 5
+1 2 6
+1 4 9
+2 4 10
+2 3 6
+3 4 11
+2
+3
+
+Sample output: 23
+
+	public static void main(String[] args) {
+		
+		int[][] nodes1 = {{1,2,9}, {2,3,11}, {3,4,6},{4,5,1},{5,1,4},{3,5,10}};
+		int x1=2, y1=3, numOfNodes1=5;	
+		System.out.println(getMinPath(nodes1, numOfNodes1, x1, y1));		
+	}
+
+
+// Undirected graph
+// HashSet to marked visited nodes
+// DFS - Backtrack - both x and y are visited, get the min distance
+
+	
+	static int res = Integer.MAX_VALUE;
+	
+	private static int getMinPath(int[][] nodes, int numOfNodes, int x, int y) {
+		res = Integer.MAX_VALUE;
+		Set<Integer> visited = new HashSet<>();
+		Map<Integer, Map<Integer, Integer>> map = new HashMap<>();
+		for(int[] n : nodes) {
+			map.putIfAbsent(n[0], new HashMap<>());
+			map.putIfAbsent(n[1], new HashMap<>());
+			map.get(n[0]).put(n[1], n[2]);
+			map.get(n[1]).put(n[0], n[2]);
+		}
+		dfs(map, visited, x, y, 0, 1);
+		return res;
+	}
+	
+	private static void dfs(Map<Integer, Map<Integer, Integer>> map, Set<Integer> visited, int x, int y, int distance, int cur) {
+		if((visited.contains(y) && !visited.contains(x)) || distance > res)
+			return;
+		if(cur == map.size() && visited.contains(x) && visited.contains(y)) {
+			res = Math.min(distance,  res);
+			return;
+		}
+		visited.add(cur);
+		for(Map.Entry<Integer, Integer> entry : map.get(cur).entrySet()) {
+			if(!visited.contains(entry.getKey())) {
+				dfs(map, visited, x, y, distance + entry.getValue(), entry.getKey());
+			}
+		}
+		visited.remove(cur);
+	}

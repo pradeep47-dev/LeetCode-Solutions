@@ -1,0 +1,106 @@
+Possible Bipartition
+
+Given a set of N people (numbered 1, 2, ..., N), we would like to split everyone into two groups of any size.
+
+Each person may dislike some other people, and they should not go into the same group. 
+
+Formally, if dislikes[i] = [a, b], it means it is not allowed to put the people numbered a and b into the same group.
+
+Return true if and only if it is possible to split everyone into two groups in this way.
+
+ 
+Example 1:
+
+Input: N = 4, dislikes = [[1,2],[1,3],[2,4]]
+Output: true
+Explanation: group1 [1,4], group2 [2,3]
+
+Example 2:
+
+Input: N = 3, dislikes = [[1,2],[1,3],[2,3]]
+Output: false
+
+// Undirected Graph - DFS
+
+    public boolean possibleBipartition(int N, int[][] dislikes) {
+        Map<Integer, List<Integer>> graph = new HashMap<>();
+        for(int i=0;i<=N;i++) {
+            graph.put(i, new ArrayList<>());
+        }
+        
+        for(int[] d : dislikes) {
+            graph.get(d[0]).add(d[1]);
+            graph.get(d[1]).add(d[0]);
+        }
+        
+        int[] grouping = new int[N+1]; // Map people with the group (0: None, 1: GroupA, -1: GroupB)
+        
+        for(int i=1;i<=N;i++) {
+            if(grouping[i] == 0 && !HasCycle(graph, grouping, i, 1))
+                return false;
+        }
+        return true;
+    }
+    
+    public boolean HasCycle(Map<Integer, List<Integer>> graph, int[] grouping, int i, int group) {
+        if(grouping[i] == -group) return false; // Found `src` in the competitor group
+        if(grouping[i] == group) return true; // Already visited
+        
+        grouping[i] = group; // Assign `src` to `group`
+        if(graph.containsKey(i)) {
+            for(int val : graph.get(i)) {                
+                if(!HasCycle(graph, grouping, val, -group))
+                    return false;
+            }
+        }
+        return true;
+    }
+
+// Group Pairs - Return Group
+
+Given a list of Product Id pairs, group them according to their categories and return the new list containing categorized Product Ids.
+
+Input: ((1,2), (2,5), (3,4), (4,6), (6,8), (5,7), (5,2), (5,2))
+
+Output: ((1,2,5,7), (3,4,6,8))
+ 
+
+// Undirected Graph - DFS
+
+    public List<List<Integer>> getCatagories(List<int[]> productlist){
+		Map<Integer, List<Integer>> graph = new HashMap<>();
+		
+        for(int[] prods : productlist){
+            graph.putIfAbsent(prods[0], new ArrayList<>());
+            graph.putIfAbsent(prods[1], new ArrayList<>());
+
+            graph.get(prods[0]).add(prods[1]);
+            graph.get(prods[1]).add(prods[0]);
+        }
+
+        Set<Integer> visited = new HashSet<>();
+        List<List<Integer>> result = new ArrayList();
+
+        for(int key: graph.keySet()){
+            if(!visited.contains(key)){
+                List<Integer> group = new ArrayList();
+                dfs(key, graph, group, visited);
+                result.add(group);
+            }
+        }
+        return result;
+    }
+
+    private List<Integer> dfs(int node, Map<Integer, List<Integer>> graph, List<Integer> group, Set<Integer> visited){
+        if(!graph.containsKey(node) || visited.contains(node)) return group;
+
+        visited.add(node);
+        group.add(node);
+        
+        for(Integer child : graph.get(node)){
+            if(!visited.contains(child)){
+                dfs(child, group, visited);
+            }
+        }
+        return group;
+    }

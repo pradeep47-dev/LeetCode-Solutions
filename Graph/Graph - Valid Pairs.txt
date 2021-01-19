@@ -1,0 +1,58 @@
+Baby blocks - given a target word Ex:"baby" . we need to identify whether we can form the target from below pairs . we should use one pair only once .
+
+Target - ------------Pairs--------------output
+baby - <b,a><a,b><b,c><x,y><e,f> - Yes
+able - <b,a><a,b><l,e><c,d> - No
+	
+	public static void main(String[] args) {
+        valid("baby", Arrays.asList(new Pair('b', 'a'), new Pair('a', 'b'), new Pair('b', 'c'), new Pair('x', 'y'), new Pair('e', 'f'))));
+    }
+
+
+// Add the pairs as a undirected graph - adjacent graph
+// DFS - Backtracking - search if we reach the end index of word
+
+
+	public class Pair {
+        public char c1, c2;
+        public boolean used = false;
+        public Pair(char c1, char c2) {
+            this.c1 = c1;
+            this.c2 = c2;
+        }
+    }
+    
+	public static boolean valid(String word, List<Pair> pairs) {
+        Map<Character, Set<Pair>> map = new HashMap<>();
+        for (Pair p : pairs) {
+            map.putIfAbsent(p.c1, new HashSet<>());
+            map.putIfAbsent(p.c2, new HashSet<>());
+			
+			map.get(p.c1).add(p);
+			map.get(p.c2).add(p);
+        }
+        
+        return backTracking(word, 0, map);
+    }
+	
+    private boolean backTracking(String word, int i, Map<Character, Set<Pair>> map) {
+        if (i == word.length()) return true;
+        
+        boolean valid = false;
+        Set<Pair> pairs = map.get(word.charAt(i));
+        if (pairs == null) return false;
+        
+        for (Pair p : pairs) {
+            if (p.used == false) {
+                p.used = true;
+                valid = valid || backTracking(word, i + 1, map);
+                p.used = false;
+            }
+        }
+            
+        return valid;
+    }
+    
+    
+    
+    

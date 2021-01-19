@@ -1,0 +1,113 @@
+Friend Circle Queries
+
+In order to start a friendship, two persons and have to shake hands, where the friendship relation is transitive,
+that is if and shake hands with each other, and friends of become friends with and friends. 
+You will be given queries. After each query, you need to report the size of the largest friend circle 
+(the largest group of friends) formed after considering that query.
+
+
+Sample Input 
+
+6
+1 2
+3 4
+1 3
+5 7
+5 6
+7 4
+
+Sample Output 2
+
+2
+2
+4
+4
+4
+7
+
+Explanation 2
+
+Friend circles after each iteration:
+
+1   [1,2]
+2   [1,2],[3,4]
+3   [1,2,3,4]
+4   [1,2,3,4],[5,7]
+5   [1,2,3,4],[5,7,6]
+6   [1,2,3,4,5,6,7]
+
+
+// DisjointSets - solve by UnionFind
+	
+    public int[] maxCircle(int[][] queries) { 
+
+        UnionFind ds = new UnionFind();
+        int[] result = new int[queries.Length]; 
+		
+        for(int[] q : queries) {
+			ds.MakeSet(q[0]);
+			ds.MakeSet(q[1]); 
+        }
+      
+		for(int i=0;i< queries.length;i++) {
+			ds.UnionSet(queries[i][0], queries[i][1]); 
+			result[i] = ds.max;      
+		}
+		return result;
+    }
+	
+	public class UnionFind {
+	
+		public Map<Integer,Node> parent = new HashMap<>();
+		public int max = 0; 
+      
+		public class Node {
+			public int rank;        
+			public int data;  
+			public Node parent;	
+	
+			public Node(int d) {			
+				this.data = d;
+				this.rank = 1;
+				this.parent = this;
+			}
+		}
+
+		public void MakeSet(int n) {       
+			parent.put(n, new Node(n));
+		}     
+
+		public Node Findset(Node node){
+			Node parent = node.parent;
+			if(parent == node) {
+				return parent;
+			}
+			node.parent = Findset(node.parent);
+			return node.parent;
+		}
+
+		public void UnionSet(int a, int b) {
+			Node node1 = parent.get(a);
+			Node node2 = parent.get(b);
+			Node parent1 = Findset(node1);
+			Node parent2 = Findset(node2);
+		
+			if (parent1.data == parent2.data) {
+				return;
+			}
+			if (parent1.rank >= parent2.rank) {
+				parent1.rank += parent2.rank;
+				parent2.parent = parent1;
+				max = Math.max(max,parent1.rank);
+			} else {
+				parent2.rank += parent1.rank;
+				parent1.parent = parent2;
+				max = Math.max(max,parent2.rank); 
+			}
+	   }
+    }
+    
+
+
+
+

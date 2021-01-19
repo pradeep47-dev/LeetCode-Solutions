@@ -1,0 +1,94 @@
+Maximum Edge Removal
+
+Given an undirected tree with an even number of nodes. Consider each connection between a parent and child node to be an edge.
+
+You need to remove maximum number of these edges, such that the disconnected subtrees that remain each have an even number of nodes.
+
+Return the maximum number of edges you can remove.
+
+Example Input
+
+Input 1:
+
+ A = 6
+ B = [
+       [1, 2]
+       [1, 3]
+       [1, 4]
+       [3, 5]
+       [4, 6]
+     ]
+
+Output 1:
+
+ 2
+ 
+Explanation 1:
+
+      1
+    / | \
+   2  3  4
+      |   \
+      5    6
+ Maximum number of edges we can remove is 2, i.e (1, 3) and (1, 4)
+ 
+ 
+ 
+	1) Do DFS from any starting node as tree is connected.
+
+	2) Initialize count of nodes in subtree rooted under current node as 0.
+
+	3) Do following recursively for every subtree of current node.
+		a) If size of current subtree is even,
+			increment result by 1 as we can 
+			disconnect the subtree.
+		b) Else add count of nodes in current 
+			subtree to current count.
+	   
+	   
+	static int res; 
+	
+	/* returns max edge that we can remove */
+	static int maxEdgeRemovalToMakeForestEven( int N)  
+	{  
+		// visited array for DFS 
+		boolean visit[]=new boolean[N + 1];  
+		for (int i = 0; i <= N; i++)  
+			visit[i] = false;  
+	
+		res = 0; 
+		dfs(0, visit);  
+		return res;  
+	}
+	
+	// DFS of the graph and count edge deletion for even   
+	static int dfs( int u, boolean visit[])  
+	{  
+		visit[u] = true;  
+		int currComponentNode = 0;  
+	
+		// iterate over all neighbor of node u  
+		for (int i = 0; i < g.get(u).size(); i++)  
+		{  
+			int v = g.get(u).get(i);  
+			if (!visit[v])  
+			{  
+				// Count the number of nodes in a subtree  
+				int subtreeNodeCount = dfs(v, visit);  
+	
+				// if returned node count is even, disconnect the subtree and increase result by one.  
+				if (subtreeNodeCount % 2 == 0)  
+					res++;  
+	
+				// else add subtree nodes in current component  
+				else
+					currComponentNode += subtreeNodeCount;  
+			}  
+		}  
+	
+		// number of nodes in current component plus current node  
+		return (currComponentNode + 1);  
+	}  
+ 
+ 
+	Time Complexity : O(n) where n is number of nodes in tree.

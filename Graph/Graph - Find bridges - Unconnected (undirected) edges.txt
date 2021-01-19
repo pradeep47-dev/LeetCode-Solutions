@@ -1,0 +1,81 @@
+  Given an undirected connected graph with n nodes labeled 1..n. A bridge (cut edge) is defined as an edge which, 
+  when removed, makes the graph disconnected (or more precisely, decreases the number of connected components in the graph). 
+  Equivalently, an edge is a bridge if and only if it is not contained in any cycle. The task is to find all bridges in the given graph
+  Output an empty list if there are no bridges.
+
+Input:
+
+    n, an int representing the total number of nodes.
+    edges, a list of pairs of integers representing the nodes connected by an edge.
+
+Example 1:
+
+Input: n = 5, edges = [[1, 2], [1, 3], [3, 4], [1, 4], [4, 5]]
+
+Output: [[1, 2], [4, 5]]
+Explanation:
+There are 2 bridges:
+1. Between node 1 and 2
+2. Between node 4 and 5
+If we remove these edges, then the graph will be disconnected.
+If we remove any of the remaining edges, the graph will remain connected.
+
+
+	public class Bridges
+    {
+        private int id;
+        private int[] ids;
+        private int[] low;
+        private List<int>[] graph;
+
+        public List<List<int>> FindBridges(int n, int[][] edges)
+        {
+            List<List<int>> bridges = new List<List<int>>();
+            graph = buildGraph(n, edges);
+            ids = new int[n + 1];
+            low = new int[n + 1];
+            id = 1;
+            visit(1, -1, bridges);
+            return bridges;
+        }
+
+        private void visit(int x, int parent, List<List<int>> bridges)
+        {
+            low[x] = ids[x] = id++;
+            foreach (int y in graph[x])
+            {
+                if (y == parent) continue;
+                if (ids[y] == 0)
+                { 
+                    // not visited
+                    visit(y, x, bridges);
+                    low[x] = Math.min(low[x], low[y]);
+                    if (ids[x] < low[y])
+                    {
+                        bridges.add(new List<int> { x, y });
+                    }
+                }
+                else
+                {
+                    // visited
+                    low[x] = Math.min(low[x], ids[y]);
+                }
+            }
+        }
+
+        private List<int>[] buildGraph(int n, int[][] edges)
+        {
+            graph = new List<int>[n + 1];
+            for (int i = 0; i < n + 1; i++)
+                graph[i] = new List<int>();
+
+            foreach (int[] edge in edges)
+            {
+                int u = edge[0];
+                int v = edge[1];
+                graph[u].Add(v);
+                graph[v].Add(u);
+            }
+            return graph;
+        }
+    }

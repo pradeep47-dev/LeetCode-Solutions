@@ -1,0 +1,81 @@
+Kth Smallest Element in a Sorted Matrix
+
+Given a n x n matrix where each of the rows and columns are sorted in ascending order, find the kth smallest element in the matrix.
+
+Note that it is the kth smallest element in the sorted order, not the kth distinct element.
+
+Example:	// all rows are sorted
+
+matrix = [
+   [ 1,  5,  9],
+   [10, 11, 13],
+   [12, 13, 15]
+],
+k = 8,
+
+return 13.
+
+
+// return Kth smallest element
+
+
+	public int kthSmallest(int[][] matrix, int k) {
+        int m = matrix.length;
+        int n = matrix[0].length;   
+        int low = matrix[0][0], high = matrix[m-1][n-1] + 1;
+        
+        while(low<high) {
+            int mid = low + (high-low) / 2;
+            int count = 0, j=n-1;
+            
+            for(int i=0;i<m;i++) {
+                while(j>=0 && matrix[i][j] > mid) 
+					j--;
+                count += (j+1);
+            }
+            
+            if(count < k) low = mid + 1;
+            else high = mid;
+        }
+        return low;
+    }
+	
+	
+* return all K Smallest Numbers from Matrix
+
+	
+// find the smallest K numbers from the 2D array. The rows were sorted.	
+// Using PriorityQueue	
+	
+	public static void main(String[] args) {
+        topKMinimum(new int[][]{{-3,4,9,11,15}, {-1,0,3,20,21}, {-4,-2,9,10,11}}, 3));
+    }
+  
+  
+    private static List<Integer> topKMinimum(int[][] arr, int k) {
+		PriorityQueue<int[]> pq = new PriorityQueue<int[]>
+			((rc1, rc2) -> Integer.compare(arr[rc1[0]][rc1[1]], arr[rc2[0]][rc2[1]]));
+		
+		for (int i = 0; i < arr.length; i++) {
+			pq.add(new int[] {i, 0});
+		}
+		
+		List<Integer> ans = new ArrayList<>();
+		
+		while (k > 0 && !pq.isEmpty()) {
+			int[] rc = pq.poll();
+			
+			ans.add(arr[rc[0]][rc[1]]);
+			
+			if (rc[1] < arr[rc[0]].length - 1) {
+				pq.add(new int[] {rc[0], rc[1] + 1});
+			}
+			
+			k--;
+		}
+		
+		return ans;
+    }
+
+
+Time: O(Klog(N)), memory: O(N)

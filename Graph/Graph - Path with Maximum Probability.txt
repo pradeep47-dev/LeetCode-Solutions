@@ -1,0 +1,90 @@
+Path with Maximum Probability
+
+You are given an undirected weighted graph of n nodes (0-indexed), represented by an edge list where edges[i] = [a, b] is an undirected edge connecting the nodes a and b with a probability of success of traversing that edge succProb[i].
+
+Given two nodes start and end, find the path with the maximum probability of success to go from start to end and return its success probability.
+
+If there is no path from start to end, return 0. Your answer will be accepted if it differs from the correct answer by at most 1e-5.
+
+
+Example 1:
+
+Input: n = 3, edges = [[0,1],[1,2],[0,2]], succProb = [0.5,0.5,0.2], start = 0, end = 2
+Output: 0.25000
+Explanation: There are two paths from start to end, one having a probability of success = 0.2 and the other has 0.5 * 0.5 = 0.25.
+
+Example 2:
+
+Input: n = 3, edges = [[0,1],[1,2],[0,2]], succProb = [0.5,0.5,0.3], start = 0, end = 2
+Output: 0.30000
+
+
+// Floyd–Warshall Algorithm for Every Pair of Nodes. Maximum Probability for every pair of nodes
+
+	double[][] probs = new double[n][n];
+	
+	for (int i = 0; i < succProb.length; ++i) {
+		int a = edges[i][0];
+		int b = edges[i][1];
+		probs[a][b] = probs[b][a] = succProb[i];
+	}
+	
+	for (int k = 0; k < n; ++k) {
+		for (int i = 0; i < n; ++i) {
+			for (int j = 0; j < n; ++j) {
+				probs[i][j] = Math.max(probs[i][j], probs[i][k] * probs[k][j]);
+			}
+		}
+	}
+
+	return probs[start][end];
+
+
+
+// Dijkstra Algorithm: 
+
+// Undirected Graph 
+// PriorityQueue to Save Some Searches
+
+	public class State {
+	    int edge;
+	    double prob;
+        
+	    public State(int e, double p) {
+		    edge = e;
+		    prob = p;
+	    }
+    }
+    
+    public double maxProbability(int n, int[][] edges, double[] succProb, int start, int end) {
+        Map<Integer, List<State>> graph = new HashMap<>();
+        for(int i=0;i<n;i++)
+            graph.put(i, new ArrayList<>());
+        
+        for(int i=0;i<edges.length;i++) {
+            graph.get(edges[i][0]).add(new State(edges[i][1], succProb[i]));
+            graph.get(edges[i][1]).add(new State(edges[i][0], succProb[i]));
+        }
+        
+        double[] probs = new double[n];
+        PriorityQueue<State> pq = new PriorityQueue<>((a, b) -> (((Double) b.prob).compareTo((Double) a.prob)));
+        pq.offer(new State(start, 1.0));
+        
+        while(!pq.isEmpty()) {
+            State state = pq.poll();
+		    int parent = state.edge;
+		    double prob = state.prob;
+
+		    if (parent == end) return prob;
+            
+            if(graph.containsKey(parent)) {
+		        for (State child : graph.get(parent)) {			
+			        if (probs[child.edge] >= prob * child.prob) continue;
+
+			        pq.add(new State(child.edge, prob * child.prob));
+			        probs[child.edge] = prob * child.prob;
+		        }
+            }
+        }
+        return 0;                         
+    }

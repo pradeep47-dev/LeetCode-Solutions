@@ -1,0 +1,135 @@
+Spiral Matrix
+
+Given a matrix of m x n elements (m rows, n columns), return all elements of the matrix in spiral order.
+
+Example 1:
+
+Input:
+[
+ [ 1, 2, 3 ],
+ [ 4, 5, 6 ],
+ [ 7, 8, 9 ]
+]
+Output: [1,2,3,6,9,8,7,4,5]			// return spiral order
+
+
+									public List<Integer> spiralOrder(int[][] matrix) {
+										List<Integer> result = new ArrayList<>();
+										if(matrix == null || matrix.length ==0) return result;
+										
+										int m = matrix.length, n = matrix[0].length;
+										int row = 0, col = 0;
+										
+										while(row <m && col<n) {
+											for(int i=col;i<n;i++){
+												result.add(matrix[row][i]);
+											}
+											row++;
+											for(int i=row;i<m;i++) {
+												result.add(matrix[i][n-1]);
+											}
+											n--;
+											
+											if(row < m) {
+												for(int i=n-1;i>=col;i--)
+													result.add(matrix[m-1][i]);
+											}
+											m--;
+											
+											if(col < n) {
+												for(int i=m-1;i>=row;i--)
+													result.add(matrix[i][col]);
+											}
+											col++;
+										}
+										return result;
+									}
+	
+
+Spiral Matrix - generate a N square matrix 
+
+Given a positive integer n, generate a square matrix filled with elements from 1 to n2 in spiral order.
+
+Example:
+
+Input: 3
+Output:
+[
+ [ 1, 2, 3 ],
+ [ 8, 9, 4 ],
+ [ 7, 6, 5 ]
+]										// generate spiral matrix from N
+
+											public int[][] generateMatrix(int n) {
+												int[][] dp = new int[n][n];
+												int row = 0, col = 0, k = 1, m = n;
+												
+												while(row < m && col < n) {
+													for(int i=col;i<n;i++)
+														dp[row][i] = k++;
+													
+													row++;
+													
+													for(int i=row;i<m;i++) 
+														dp[i][n-1] = k++;
+													
+													n--;
+													
+													if(row < m) {
+														for(int i=n-1;i>=col;i--)
+															dp[m-1][i] = k++;
+													}
+													m--;
+													
+													if(col < n) {
+														for(int i=m-1;i>=row;i--)
+															dp[i][col] = k++;
+													}
+													col++;
+												}
+												return dp;
+											}
+	
+
+Spiral Matrix III
+
+
+On a 2 dimensional grid with R rows and C columns, we start at (r0, c0) facing east.
+
+Here, the north-west corner of the grid is at the first row and column, and the south-east corner of the grid is at the last row and column.
+
+Now, we walk in a clockwise spiral shape to visit every position in this grid. 
+
+Whenever we would move outside the boundary of the grid, we continue our walk outside the grid (but may return to the grid boundary later.) 
+
+Eventually, we reach all R * C spaces of the grid.
+
+Return a list of coordinates representing the positions of the grid in the order they were visited.
+ 
+
+Example 1:
+
+Input: R = 1, C = 4, r0 = 0, c0 = 0
+Output: [[0,0],[0,1],[0,2],[0,3]]
+									
+									// given row and colum, return spiral visited order
+
+									public int[][] spiralMatrixIII(int R, int C, int r0, int c0) {
+										int[][] result = new int[R*C][2];        
+										int[][] dirs = new int[][]{{0,1},{1,0},{0,-1},{-1,0}};
+										int len = 0, d = 0, i = 0;
+										
+										result[i++] = new int[] {r0, c0};
+										while(i < R*C) {
+											if(d==0 || d==2) len++;
+											for(int j=0;j<len;j++) {
+												r0 += dirs[d][0];
+												c0 += dirs[d][1];
+												
+												if(r0 >=0 && r0<R && c0>=0 && c0<C)
+													result[i++] = new int[] {r0, c0};
+											}
+											d =(d+1) % 4;
+										}
+										return result;
+									}

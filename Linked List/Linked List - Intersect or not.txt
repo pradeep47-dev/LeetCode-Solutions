@@ -1,0 +1,45 @@
+Given two singly linked lists that intersect at some point, find the intersecting node. The lists are non-cyclical.
+
+For example, given A = 3 -> 7 -> 8 -> 10 and B = 99 -> 1 -> 8 -> 10, return the node with value 8.
+
+In this example, assume nodes with the same value are the exact same node objects.
+
+Do this in O(M + N) time (where M and N are the lengths of the lists) and constant space.
+
+
+    public ListNode getIntersectionNode(ListNode headA, ListNode headB) {
+                
+        ListNode a = headA;
+        ListNode b = headB;
+        
+        while(a != b) {
+            a = a==null ? headB : a.next;
+            b = b==null ? headA : b.next;
+			
+			if(a==b) return true; // intersect;
+        }
+        
+        return a;
+		// return false;
+    }
+	
+	
+	// return intersection point - Y shapes lists
+	
+	int intersectPoint(Node headA, Node headB)
+	{
+         while(headA != null){
+            headA.data= (headA.data + 1) *-1;
+            headA = headA.next;
+        }
+        
+        while(headB != null){
+            if(headB.data < 0){
+                return (headB.data*-1)-1;
+            }
+            headB=headB.next;
+        }
+        return -1;
+	}
+
+

@@ -1,0 +1,106 @@
+Shortest Distance from All Buildings
+
+You want to build a house on an empty land which reaches all buildings in the shortest amount of distance. 
+You can only move up, down, left and right. You are given a 2D grid of values 0, 1 or 2, where:
+
+    Each 0 marks an empty land which you can pass by freely.
+    Each 1 marks a building which you cannot pass through.
+    Each 2 marks an obstacle which you cannot pass through.
+
+Example:
+
+Input: [[1,0,2,0,1],[0,0,0,0,0],[0,0,1,0,0]]
+
+1 - 0 - 2 - 0 - 1
+|   |   |   |   |
+0 - 0 - 0 - 0 - 0
+|   |   |   |   |
+0 - 0 - 1 - 0 - 0
+
+Output: 7 
+
+Explanation: Given three buildings at (0,0), (0,4), (2,2), and an obstacle at (0,2),
+             the point (1,2) is an ideal empty land to build a house, as the total 
+             travel distance of 3+3+1=7 is minimal. So return 7.
+
+
+// BFS traversal
+// get the shortest distance from one building for all building
+// now get the minimum of all shortest distances
+
+public class Solution {
+    private int[] directions = { 0,1,0,-1,0 };
+    private int M = 0;
+    private int N = 0;
+    
+    public int ShortestDistance(int[][] grid) {
+        
+        if(grid == null || grid[0].length ==0) return 0;
+        
+        M = grid.length;
+        N = grid[0].length;
+        
+        int buildings = 0;
+        int[][] distance = new int[M][N];
+        int[][] reach = new int[M][N];
+        
+        for(int i=0;i<M;i++) {       
+            for(int j=0;j<N;j++) {
+                if(grid[i][j] == 1) {
+                
+                    buildings++;
+                    
+                    bool[][] visited = new bool[M][N];    
+                    visited[i][j] = true;
+                    int level = 0;
+                    Queue<int[]> queue = new Queue<int[]>();
+                    queue.offer(new int[] { i, j});
+                    
+                    while(!queue.isEmpty())
+                    {                           
+                        for(int q=queue.size();q>0;q--)
+                        {
+                            int[] temp = queue.poll();                            
+                            int x = temp[0];
+                            int y = temp[1];        
+                            
+                            reach[x][y]++;
+                            distance[x][y]+= level;                            
+                            
+                            for(int k=0;k<4;k++)
+                            {
+                                int nx = x + directions[k];
+                                int ny = y + directions[k+1];
+                                
+                                if(InBounds(nx,ny) && !visited[nx][ny] && grid[nx][ny] == 0 && reach[nx,ny] == buildings-1)
+                                {                                    
+                                    visited[nx][ny] = true;  
+                                    queue.offer(new int[] {nx,ny});
+                                }                                
+                            }  
+                        }
+                        level++;
+                    }
+                }                
+            }
+        }
+        
+        int ShortestPath = int.MaxValue;
+        for(int i=0;i<M;i++) {       
+            for(int j=0;j<N;j++) {
+                if(grid[i][j] ==0 && reach[i,j] == buildings && distance[i][j] < ShortestPath) 
+				{
+                    ShortestPath = distance[i][j];
+                }
+            }
+        }
+        return ShortestPath == int.MaxValue ? -1 : ShortestPath;
+    }
+    
+    public bool InBounds(int x, int y)
+    {
+        if(x>=0 && x<M && y >=0 && y<N)
+            return true;
+        return false;
+    }
+}

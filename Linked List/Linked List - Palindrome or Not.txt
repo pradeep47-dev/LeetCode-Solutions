@@ -1,0 +1,55 @@
+Palindrome Linked List
+
+Given a singly linked list, determine if it is a palindrome.
+
+Example 1:
+
+Input: 1->2->2->1
+Output: true
+
+
+// Reverse half the List
+// check odd length of node
+// compare both nodes are equal or not
+
+    public bool IsPalindrome(ListNode head) {
+        
+        ListNode fast = head, slow = head;
+        
+        /// Reverse half the List
+        
+        while (fast != null && fast.next != null) {
+                fast = fast.next.next;
+                slow = slow.next;
+        }
+            
+        if (fast != null)  // odd length of node
+            slow = slow.next;
+                
+        slow = Reverse(slow);
+        fast = head;
+    
+        while (slow != null) {
+            if (fast.val != slow.val) {
+                return false;
+            }
+            fast = fast.next;
+            slow = slow.next;
+        }
+        return true;
+    }
+    
+    public ListNode Reverse(ListNode head)
+    {
+        ListNode prev = null;
+        
+        while(head != null)
+        {
+            ListNode node = head.next;
+            head.next = prev;
+            prev = head;
+            head = node;
+        }
+        return prev;
+    }
+

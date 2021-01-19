@@ -1,0 +1,183 @@
+Unique Paths I
+
+The robot can only move either down or right at any point in time. The robot is trying to reach the bottom-right corner of the grid (marked 'Finish' in the diagram below).
+
+How many possible unique paths are there?
+
+Input: m = 3, n = 2
+Output: 3
+Explanation:
+From the top-left corner, there are a total of 3 ways to reach the bottom-right corner:
+1. Right -> Right -> Down
+2. Right -> Down -> Right
+3. Down -> Right -> Right
+
+										public int UniquePaths(int m, int n) {
+											
+											int[][] arr = new int[m][n];        
+											for(int i=0;i<m;i++) {
+												Arrays.fill(arr[i], 1);
+											}
+											
+											for(int i=1;i<m;i++)  {
+												for(int j=1;j<n;j++) {
+													arr[i][j] = arr[i-1][j] + arr[i][j-1];
+												}
+											}        
+											return arr[m-1][n-1];
+										}
+	
+	
+Unique Paths - With obstacles
+
+The robot can only move either down or right at any point in time. The robot is trying to reach the bottom-right corner of the grid (marked 'Finish' in the diagram below).
+
+Now consider if some obstacles are added to the grids. How many unique paths would there be?
+
+Input:
+[
+  [0,0,0],
+  [0,1,0],
+  [0,0,0]
+]
+Output: 2
+
+There is one obstacle in the middle of the 3x3 grid above.
+There are two ways to reach the bottom-right corner:
+1. Right -> Right -> Down -> Down
+2. Down -> Down -> Right -> Right
+
+									// DP - array of columns - if obstacle set to zero
+									
+										public int UniquePathsWithObstacles(int[][] obstacleGrid) {        
+											int m = obstacleGrid.Length;
+											int n = obstacleGrid[0].Length;
+											int[] dp = new int[n];        
+											dp[0] = 1;
+											
+											for(int i=0;i<m;i++)
+											{
+												for(int j=0;j<n;j++)
+												{
+													if(obstacleGrid[i][j] == 1)
+														dp[j] = 0;
+													else if(j>0)
+														dp[j] += dp[j-1];
+												}
+											}
+											
+											return dp[n-1];
+										}
+	
+	
+
+Unique Paths - Number of path from A to B with obstacles
+
+On a 2-dimensional grid, there are 4 types of squares:
+
+    1 represents the starting square.  There is exactly one starting square.
+    2 represents the ending square.  There is exactly one ending square.
+    0 represents empty squares we can walk over.
+    -1 represents obstacles that we cannot walk over.
+
+Return the number of 4-directional walks from the starting square to the ending square, that walk over every non-obstacle square exactly once.
+
+Example:
+
+Input: [[1,0,0,0],[0,0,0,0],[0,0,0,2]]
+Output: 4
+Explanation: We have the following four paths: 
+1. (0,0),(0,1),(0,2),(0,3),(1,3),(1,2),(1,1),(1,0),(2,0),(2,1),(2,2),(2,3)
+2. (0,0),(0,1),(1,1),(1,0),(2,0),(2,1),(2,2),(1,2),(0,2),(0,3),(1,3),(2,3)
+3. (0,0),(1,0),(2,0),(2,1),(2,2),(1,2),(1,1),(0,1),(0,2),(0,3),(1,3),(2,3)
+4. (0,0),(1,0),(2,0),(2,1),(1,1),(0,1),(0,2),(0,3),(1,3),(1,2),(2,2),(2,3)
+
+
+
+										// DFS BackTrack - from start to end, if reached add to output
+																				
+											
+											public int result = 0,path=1,m,n,sx,sy,ex,ey;
+											
+											public int UniquePathsIII(int[][] grid) {
+												
+												m = grid.Length;
+												n = grid[0].Length;
+												
+												for(int i=0;i<m;++i) {
+													for(int j=0;j<n;++j) {            
+														int val = grid[i][j];
+														
+														if(val == 0)             
+															path++;
+														else if(val ==1)
+														{
+															sx= i;
+															sy =j;
+														}
+														else if(val ==2)
+														{
+															ex= i;
+															ey =j;
+														}             
+													}
+												}
+												
+												UniquefindPath(grid, sx, sy);
+												
+												//  Stack<int[]> paths = new Stack<int[]>();
+												//  List<Stack<int[]>> Finalpaths = new List<Stack<int[]>>();
+												//  boolean[][] visited = new boolean[m][n];
+												//  printPathUtil(grid, sx, sy, paths, Finalpaths, visited);
+													
+												return result;
+											}
+											
+											public void UniquefindPath(int[][] grid, int x, int y)
+											{
+												if(!(x>= 0 && x<m && y<n && y>=0 && grid[x][y]>=0))
+													return;       
+												
+												if(x==ex && y==ey)
+												{
+													if(path ==0) result++; 
+													return;
+												}
+												
+												grid[x][y] = -2;
+												path--;
+												findPath(grid,x+1,y);
+												findPath(grid,x-1,y);
+												findPath(grid,x,y+1);
+												findPath(grid,x,y-1);
+											
+												grid[x][y] = 0;      
+												path++;
+											}   
+
+/// store all paths
+
+	void printPathUtil(int[][] grid, int x, int y, Stack<int[]> paths, List<Stack<int[]>> Finalpaths, boolean[][] visited)
+    {
+        if (!(x >= 0 && x < m && y < n && y >= 0 && grid[x][y] >= 0) || visited[x][y])
+            return;
+
+        if (x == ex && y == ey)
+        {
+            Finalpaths.Add(new Stack<int[]>(paths));
+            return;
+        }
+      
+        visited[x][y] = true;
+        paths.Push(new int[] { x, y });
+
+        printPathUtil(grid, x + 1, y, paths, Finalpaths, visited);       
+        printPathUtil(grid, x , y - 1, paths, Finalpaths, visited); 
+        printPathUtil(grid, x, y + 1, paths, Finalpaths, visited);
+        printPathUtil(grid, x - 1, y, paths, Finalpaths, visited);
+
+        paths.Pop();      
+        visited[x][y] = false;	
+	}
+
+

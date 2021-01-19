@@ -1,0 +1,176 @@
+Given a list of item association relationships, write an algorithm that outputs the largest item association group. If two groups have the same number of items then select the group which contains the item that appears first in lexicographic order.
+
+Input
+itemAssociation a list containing pairs of items that are ordered together.
+
+Output
+Return a list representing the largest association group.
+
+Example
+Input:
+
+[[Item1, Item2] 
+[Item3, Item4] 
+[Item4, Item5]
+
+Output:
+
+[Item3, Item4, Item5] 
+
+Explanation:
+There are two item association groups
+
+group1 : [Item1, Item2] 
+group2 : [Item3, Item4, Item5] 
+
+In the availabie item associations group2 has the largest association. So, the output is [Item3. Item4, Item5]
+
+
+1) Union Find
+       
+        
+
+        public class UnionFind {
+			
+			int size;
+			private Map<String, String> parent = new HashMap();        			     
+			private Map<String, Integer> rank = new HashMap<>();
+		
+			public UnionFind(String[][] products)	// MakeSet operation
+			{   
+				parent = new HashMap();  
+				rank = new HashMap<>();
+				size = products.length;
+				
+				for (String[] i : products) {					
+	
+					parent.putIfAbsent(i[1], i[1]);
+					parent.putIfAbsent(i[0], i[0]);
+	
+					rank.putIfAbsent(i[0], 1);
+					rank.putIfAbsent(i[1], 1);
+				}
+			}
+			
+			private String Find(String product)
+			{
+				while(parent.get(product) != product){
+					parent.put(product, parent.get(parent.get(product)));
+					product = parent.get(product);
+				}
+				return product;
+			}
+	
+			
+			private void Union(String a, String b)
+			{
+				String rootA = Find(a);
+				String rootB = Find(b);
+				
+				if(rootA.equals(rootB)) 
+					return;
+				
+				int rankA = rank.get(rootA);
+				int rankB = rank.get(rootB);
+	
+				if(rankA > rankB){
+					parent.put(rootB, rootA);                   
+					rank.put(rootA, rankA + rankB);
+				}else {
+					parent.put(rootA, rootB);
+					rank.put(rootB, rankA + rankB);
+				} 
+			 size--;				
+			}
+		}
+
+        public List<String> findLargestGroup(String[][] products){
+			private Set<String> items = new HashSet<>();	
+			
+			UnionFind uf = new UnionFind(products);			
+           
+            for(String[] prod: products){
+				items.add(i[0]);
+				items.add(i[1]);
+                uf.Union(prod[0], prod[1]);
+            }
+			
+			Map<String, List<String>> group = new HashMap<>();
+            for(String item: items){
+                if(uf.parent.containsKey(item)){
+                    group.putIfAbsent(uf.parent.get(item), new ArrayList());
+                    group.get(uf.parent.get(item)).add(item);
+                }
+
+            }
+
+           List<String> result = new ArrayList();
+            for(String key : group.keySet()){
+                if(group.get(key).size() > result.size()){
+                     result = new ArrayList(group.get(key));
+                }
+				else if(group.get(key).size() == result.size() && result.size() > 0){
+					final String groupStr = String.join("", group.get(key));
+					if(String.join("", result.get(0)).compareTo(groupStr) > 0) {
+						result = new ArrayList(group.get(key));
+					}
+				}
+            }
+
+            return result;
+        }
+		
+
+2) DFS in java:
+
+
+    public List<Integer> findLargestGroup(List<int[]> productlist){
+		
+		Map<Integer, List<Integer>> graph = new HashMap<>();
+		 
+        for(int[] prods : productlist){
+            graph.putIfAbsent(prods[0], new ArrayList<>());
+            graph.putIfAbsent(prods[1], new ArrayList<>());
+
+            graph.get(prods[0]).add(prods[1]);
+            graph.get(prods[1]).add(prods[0]);
+        }
+
+        Set<Integer> visited = new HashSet<>();
+        List<String> result = new ArrayList();
+		
+		int max = 0, i = 0, idx = 0;
+		
+        for(int key: graph.keySet()){
+            if(!visited.contains(key)){
+                List<Integer> group = new ArrayList<>();
+				dfs(key, graph, group, visited);   	
+
+				if(group.size() > result.size()){
+                     result = new ArrayList(group);
+                }
+				else if(group.size() == result.size() && result.size() > 0){
+					if(group.get(0).compareTo(result.get(0)) < 0)
+						result = new ArrayList(group);
+				}				
+            }
+        }		
+	
+        return result;
+    }
+
+    private List<Integer> dfs(int node, Map<Integer, List<Integer>> graph, List<Integer> group, Set<Integer> visited){
+        if(!graph.containsKey(node) || visited.contains(node)) return group;
+
+        visited.add(node);
+        group.add(node);
+       
+        for(Integer child: graph.get(node)){
+            if(!visited.contains(child)){
+                dfs(child, graph, group, visited);
+            }
+        }
+        return group;
+    }
+
+ 

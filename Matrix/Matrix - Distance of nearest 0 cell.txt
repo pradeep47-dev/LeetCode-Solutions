@@ -1,0 +1,55 @@
+Matrix distance of the nearest 0
+
+Given a matrix consists of 0 and 1, find the distance of the nearest 0 for each cell.
+
+The distance between two adjacent cells is 1.
+
+Input:
+[[0,0,0],
+ [0,1,0],
+ [1,1,1]]
+
+Output:
+[[0,0,0],
+ [0,1,0],
+ [1,2,1]]
+
+// by two pass - add the distance
+// Check for top and left direction
+// check for bottom and right direction
+
+class Solution {
+    public int[][] updateMatrix(int[][] matrix) {
+        int m = matrix.length;
+        int n = matrix[0].length;
+        
+        int[][] dp = new int[m][n];
+		
+		// Check for top and left direction
+		
+        for(int i=0;i<m;i++) {
+            for(int j=0;j<n;j++) {
+                if(matrix[i][j] == 0)
+                    dp[i][j] = 0;
+                else {
+                    dp[i][j] = Integer.MAX_VALUE - 10000;
+                    if(i>0)
+                        dp[i][j] = Math.min(dp[i][j], dp[i-1][j] + 1);
+                    if(j>0)
+                        dp[i][j] = Math.min(dp[i][j], dp[i][j-1] + 1);
+                }
+            }
+        }
+		
+        // check for bottom and right direction
+        for(int i=m-1;i>=0;i--) {
+            for(int j=n-1;j>=0;j--) {
+                if(i < m-1)
+                    dp[i][j] = Math.min(dp[i][j], dp[i+1][j] + 1);
+                if(j < n-1)
+                    dp[i][j] = Math.min(dp[i][j], dp[i][j+1] + 1);
+            }
+        }
+        return dp;
+    }
+}

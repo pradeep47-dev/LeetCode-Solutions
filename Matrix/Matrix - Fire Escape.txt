@@ -1,0 +1,106 @@
+Given a room represented like a grid, you have to escape from the fire. The grid looks like the following 
+where 0 represents empty place you can move through, 1 represents you (a person) and 2 represents fire. 
+You can consider yourself escaped if you reach any of the sides that's not on fire 
+(ie., grid[i][j]!=2 && i = 0 || j == 0 || i == m-1 || j == n-1 where 0<=i<m , 0 <=j<n).
+
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 
+0 2 0 0 0 0 0 0 0 0 0 0 0 0 0 2 0 0 
+0 0 0 0 0 0 0 0 0 0 2 0 0 0 0 0 0 0 
+0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 
+0 0 0 0 0 0 0 0 0 0 0 0 0 2 0 0 0 0 
+0 0 2 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 
+0 0 0 0 0 0 0 0 2 0 0 0 0 0 0 0 0 0 
+
+Find the shortest distance from 1 to any of the sides. I was able to solve this with plain BFS.
+
+Followup:
+
+Now for every step you take, the fire grows a step in all four directions. For the example above, for the next step you make, the room would look like this.
+
+0 2 0 0 0 0 0 0 0 0 0 0 0 0 0 2 0 0 
+2 2 2 0 0 0 0 0 0 0 2 0 0 0 2 2 2 0 
+0 2 0 0 0 0 0 0 0 2 2 2 0 0 0 2 0 0 
+0 0 0 0 0 0 0 1 0 0 2 0 0 0 0 0 0 0 
+0 0 0 0 0 0 0 0 0 0 0 0 0 2 0 0 0 0 
+0 0 2 0 0 0 0 0 0 0 0 0 2 2 2 0 0 0 
+0 2 2 2 0 0 0 0 2 0 0 0 0 2 0 0 0 0 
+0 0 2 0 0 0 0 2 2 2 0 0 0 0 0 0 0 0 
+
+//  Multisource BFS for Fire locations and person Location
+
+	public int FireEscape(int[][] grid) {
+		int m = grid.length;
+		int n = grid[0].length;
+		
+		queue<int[]> personLoc = new LinkedList<>();
+		queue<int[]> fireLoc = new LinkedList<>();
+	
+		for(int i = 0; i < m; i++)
+			for(int j = 0; j < n; j++) {
+				
+				if(grid[i][j] == 1) {
+					if(isborder(i, j)) return 0;
+					personLoc.add(new int[]{i, j});
+				} else if(x == 2) {
+					fireLoc.add(new int[]{i, j});
+				}
+			}
+				
+		return helper_BFS(grid, personLoc, fireLoc, new boolean[m][n]);
+	}
+	
+	public bool isborder(int x,int y){
+        return (x==0||x==m-1||y==0||y==n-1);
+    }
+	
+	public bool valid(int x,int y){
+        return (x >=0 && x<m && y>=0 && y<n);
+    }
+	
+	public int helper_BFS(int[][] grid, queue<int[]> personLoc, queue<int[]> fireLoc, boolean[][] visited) {	
+		
+		int[] dirs = {0, 1, 0, -1, 0};
+		int dist = 0;
+		
+		while(!personLoc.isEmpty()) {
+			dist++;
+		
+			 for(int i= personLoc.size(); i > 0;i--) {
+				int[] curr = personLoc.poll();
+				int x = curr[0], y = curr[1];
+				if(grid[x][y] == 2) continue;
+				
+				for(int k = 0; k<4; k++) {
+					int nx = x + dirs[k];
+					int ny = y + dirs[k+1];
+					if(valid(nx, ny) && grid[x][y]!=2 && visited[nx][ny] == false ) {
+						visited[nx][ny] = true;
+						personLoc.add(new int[]{nx, ny, type});
+						
+						if(border(nx,ny)) return dist;					
+					}					
+				}
+			}
+			
+		/// For second scenario
+		
+			for(int i = fireLoc.size(); i > 0;i--) {
+				int[] curr = fireLoc.poll();
+				int x = curr[0], y = curr[1];
+				if(grid[x][y] == 2) continue;
+				
+				for(int k = 0; k<4; k++) {
+					int nx = x + dirs[k];
+					int ny = y + dirs[k+1];
+					if(valid(nx, ny) && grid[x][y]!=2) {
+						grid[nx][ny] = 2;
+						fireLoc.add(new int[]{nx, ny, type});
+					}					
+				}
+			}
+		}
+		return -1;
+	}
+
+

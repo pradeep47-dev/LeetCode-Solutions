@@ -1,0 +1,104 @@
+Accounts Merge
+
+Given a list accounts, each element accounts[i] is a list of strings, where the first element accounts[i][0] is a name, 
+and the rest of the elements are emails representing emails of the account.
+
+Now, we would like to merge these accounts. Two accounts definitely belong to the same person if there is some email that is common to both accounts. Note that even if two accounts have the same name, they may belong to different people as people could have the same name. A person can have any number of accounts initially, but all of their accounts definitely have the same name.
+
+After merging the accounts, return the accounts in the following format: the first element of each account is the name, and the rest of the elements are emails in sorted order. The accounts themselves can be returned in any order.
+
+Example 1:
+
+Input: 
+accounts = [["John", "johnsmith@mail.com", "john00@mail.com"], ["John", "johnnybravo@mail.com"], ["John", "johnsmith@mail.com", "john_newyork@mail.com"], ["Mary", "mary@mail.com"]]
+Output: [["John", 'john00@mail.com', 'john_newyork@mail.com', 'johnsmith@mail.com'],  ["John", "johnnybravo@mail.com"], ["Mary", "mary@mail.com"]]
+Explanation: 
+The first and third John's are the same person as they have the common email "johnsmith@mail.com".
+The second John and Mary are different people as none of their email addresses are used by other accounts.
+We could return these lists in any order, for example the answer [['Mary', 'mary@mail.com'], ['John', 'johnnybravo@mail.com'], 
+['John', 'john00@mail.com', 'john_newyork@mail.com', 'johnsmith@mail.com']] would still be accepted.
+
+
+
+// DisJoint Set - UnionFind Algorithm
+
+
+    public List<List<String>> accountsMerge(List<List<String>> accounts) {
+        int n = accounts.size();        
+        if(n == 0) return new ArrayList<>();
+        
+        UnionFind uf = new UnionFind(n);
+        int p = 0;
+        Map<String, Integer> mailIndex = new HashMap<>();
+        for(List<String> account : accounts) {
+            for(int j=1;j<account.size();j++) {
+                String mail = account.get(j);
+                if(mailIndex.containsKey(mail))
+                    uf.Union(mailIndex.get(mail), p);
+                else
+                    mailIndex.put(mail, p);
+            }
+            p++;
+        }        
+        
+        Map<Integer, List<String>> disjointSet = new HashMap<>();
+        for (int i = 0; i < n; i++) {
+            int pIdx = uf.find(i);
+            disjointSet.putIfAbsent(pIdx, new ArrayList<>());
+                        
+             for(int j=1;j<accounts.get(i).size();j++) {
+                disjointSet.get(pIdx).add(accounts.get(i).get(j));
+            }
+        }
+        
+        List<List<String>> result = new ArrayList<>();
+        for (int index : disjointSet.keySet()) {
+            List<String> curList = disjointSet.get(index);
+			Collections.sort(curList);
+			
+            curList.add(0, accounts.get(index).get(0));            
+            
+            result.add(curList);
+        }
+        return result;
+    }
+    
+    public class UnionFind {
+        int[] parent;
+        int[] rank;
+        int n;
+        
+        public UnionFind(int size) {
+            n = size;
+            parent = new int[n];
+            rank = new int[n];
+            for(int i=0;i<n;i++) {
+                parent[i] = i;
+                rank[i] = 1;
+            }
+        }
+        
+        public int find(int p) {
+            while(p != parent[p]) {
+                parent[p] = parent[parent[p]];
+                p = parent[p];
+            }
+            return p;
+        }
+        
+        public void Union(int a, int b) {
+            int rootA = find(a);
+            int rootB = find(b);
+            
+            if(rootA != rootB) {   
+                if(rank[rootA] > rank[rootB]) {
+                    parent[rootB] = rootA;
+                    rank[rootA] += rank[rootB]; 
+                }
+                else {
+                    parent[rootA] = rootB;
+                    rank[rootB] += rank[rootA]; 
+                }
+            }
+        }
+    }

@@ -1,0 +1,50 @@
+Find the row with maximum number of 1s
+
+Given a boolean 2D array, where each row is sorted. Find the row with the maximum number of 1s.
+Example:
+
+Input matrix
+0 1 1 1
+0 0 1 1
+1 1 1 1  // this row has maximum 1s
+0 0 0 0
+
+
+// Binary search + search in each row
+
+	public static int MaxRownumber(int[][] arr)
+    {
+        int m = arr.Length;
+        int n = arr[0].Length;
+        
+        int j = MaxRowNumberofone(arr[0], 0, n -1);
+	
+		int MaxRowIdx = 0;
+        for(int i=1;i<m;i++)
+        {
+            while (j >= 0 && arr[i][j] == 1)
+            {
+                j--;  			// Update the index of leftmost 1 seen so far 
+                MaxRowIdx = i;  // Update max_row_index 
+            }
+        }
+
+        return MaxRowIdx;
+    } 
+
+    public static int MaxRowNumberofone(int[] arr, int start, int end)
+    {
+        if(start <= end)
+        {
+            int mid = start + (end - start) / 2;
+
+            if ((mid == 0 || arr[mid - 1] == 0) && arr[mid] == 1)
+                return mid;
+            else if (arr[mid] == 0)
+                start = mid + 1;
+            else
+                end = mid - 1;
+        }
+
+        return end;
+    }

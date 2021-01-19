@@ -1,0 +1,60 @@
+
+Given N, write a function to return the number of knight's tours on an N by N chessboard.
+
+A knight's tour is a sequence of moves by a knight on a chessboard such that all squares are visited once.
+
+
+// DFS - BrackTracking
+
+	public boolean solveKT(int N)
+    {
+        int[][] grid = new int[N][N];
+        for (int i = 0; i < N; i++)
+        {
+            Arrays.fill(grid[i], -1);
+        }
+
+        int[] xMove = { 2, 1, -1, -2, -2, -1, 1, 2 };
+        int[] yMove = { 1, 2, 2, 1, -1, -2, -2, -1 };
+
+        grid[0][0] = 0;
+
+        if (!solveKTUtil(0, 0, N, 1, grid, xMove, yMove))
+        {
+            Console.WriteLine("Solution does not exist");
+            return false;
+        }
+        else
+        {
+            result = N*N;
+        }
+
+        return true;
+    }
+
+    static bool solveKTUtil(int x, int y, int N, int index, int[][] grid, int[] xMove, int[] yMove)
+    {            
+        if (index == N * N)
+            return true;
+
+        for (int k = 0; k < 8; k++)
+        {
+            int nx = x + xMove[k];
+            int ny = y + yMove[k];
+            if (isSafe(nx, ny, N, grid))
+            {
+                grid[nx][ny] = index;
+                if (solveKTUtil(nx, ny, N, index + 1, grid, xMove, yMove))
+                    return true;
+                else
+                    grid[nx][ny] = -1;
+            }
+        }
+
+        return false;
+    }
+
+    static bool isSafe(int x, int y, int N, int[][] grid)
+    {
+        return (x >= 0 && x < N && y >= 0 && y < N && grid[x][y] == -1);
+    }

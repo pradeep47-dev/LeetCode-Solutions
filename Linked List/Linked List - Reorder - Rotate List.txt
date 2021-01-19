@@ -1,0 +1,152 @@
+Reorder List - Start - End nodes
+
+Given a singly linked list L: L0→L1→…→Ln-1→Ln,
+reorder it to: L0→Ln→L1→Ln-1→L2→Ln-2→…
+
+You may not modify the values in the list's nodes, only nodes itself may be changed.
+
+Example 1:
+
+Given 1->2->3->4, reorder it to 1->4->2->3.
+
+Example 2:
+
+Given 1->2->3->4->5, reorder it to 1->5->2->4->3.
+
+
+// Reverse half the List and merge them
+
+    public void reorderList(ListNode head) {
+        if(head == null) return;
+        
+        ListNode slow = head, fast = head.next;
+        while(fast != null && fast.next != null) {
+            slow = slow.next;
+            fast = fast.next.next;
+        }
+        
+        ListNode head2 = reverse(slow.next); 
+        slow.next = null;
+        
+		// merge
+         while(head != null && head2 != null) {
+            ListNode t1 = head.next;
+            ListNode t2 = head2.next;
+            head2.next = head.next;
+            head.next = head2;            
+            head = t1;
+            head2 = t2;
+        }    
+    }
+    
+    public ListNode reverse(ListNode head) {
+        ListNode prev = null;
+        ListNode curr = head;
+		
+        while(curr != null) {
+            ListNode temp = curr.next;
+            curr.next = prev;
+            prev = curr;
+            curr = temp;
+        }
+        return prev;
+    }  
+
+
+
+Reverse even elements in a Linked List
+
+Given a linked list, the task is to reverse the contiguous even elements and print the updated linked list.
+
+    Input: 1 -> 2 -> 3 -> 3 -> 4 -> 6 -> 8 -> 5 -> NULL
+    Output: 1 2 3 3 8 6 4 5
+    Initial list: 1 -> 2 -> 3 -> 3 -> 4 -> 6 -> 8 -> 5 -> NULL
+    Reversed list: 1 -> 2 -> 3 -> 3 -> 8 -> 6 -> 4 -> 5 -> NULL
+
+    Input: 11 -> 32 -> 7 -> NULL
+    Output: 11 32 7 
+	
+	
+	 head = reverse(head, null); 
+	 
+	public node reverse(node head, node prev) 
+	{ 	
+		// Base case 
+		if (head == null) return null; 
+	
+		node temp; 
+		node curr; 
+		curr = head; 
+	
+		// Reversing nodes until curr node's value 
+		// turn odd or Linked list is fully traversed 
+		while (curr != null && curr.data % 2 == 0)  
+		{ 
+			temp = curr.next; 
+			curr.next = prev; 
+			prev = curr; 
+			curr = temp; 
+		} 
+	
+		// If elements were reversed then head 
+		// pointer needs to be changed 
+		if (curr != head)  
+		{ 
+			head.next = curr; 
+	
+			// Recur for the remaining linked list 
+			curr = reverse(curr, null); 
+			return prev; 
+		} 
+	
+		// Simply iterate over the odd value nodes 
+		else
+		{ 
+			head.next = reverse(head.next, head); 
+			return head; 
+		} 
+	}  
+
+
+Rotate List
+
+Given a linked list, rotate the list to the right by k places, where k is non-negative.
+
+Example 1:
+
+Input: 1->2->3->4->5->NULL, k = 2
+Output: 4->5->1->2->3->NULL
+Explanation:
+rotate 1 steps to the right: 5->1->2->3->4->NULL
+rotate 2 steps to the right: 4->5->1->2->3->NULL
+
+Example 2:
+
+Input: 0->1->2->NULL, k = 4
+Output: 2->0->1->NULL
+Explanation:
+rotate 1 steps to the right: 2->0->1->NULL
+rotate 2 steps to the right: 1->2->0->NULL
+rotate 3 steps to the right: 0->1->2->NULL
+rotate 4 steps to the right: 2->0->1->NULL
+
+	public ListNode rotateRight(ListNode head, int k) {
+        if(head==null) return null;
+	    int size = 1; 
+	    ListNode fast=head, slow = head;
+	
+	    while(fast.next!=null){
+	        size++;
+	        fast = fast.next;
+	    }
+	
+	    for(int i= size-k % size; i>1 ; i--) 
+		    slow = slow.next;
+	
+   
+	    fast.next = head;
+	    head = slow.next;
+	    slow.next = null;
+	
+	    return head;
+    }

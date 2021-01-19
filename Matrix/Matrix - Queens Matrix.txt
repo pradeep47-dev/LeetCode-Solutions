@@ -1,0 +1,102 @@
+N-Queens
+
+The n-queens puzzle is the problem of placing n queens on an n×n chessboard such that no two queens attack each other.
+
+Given an integer n, return all distinct solutions to the n-queens puzzle.
+
+Each solution contains a distinct board configuration of the n-queens' placement, where 'Q' and '.' both indicate a queen and an empty space respectively.
+
+Example:
+
+Input: 4
+Output: [
+ [".Q..",  // Solution 1
+  "...Q",
+  "Q...",
+  "..Q."],
+
+ ["..Q.",  // Solution 2
+  "Q...",
+  "...Q",
+  ".Q.."]
+]
+Explanation: There exist two distinct solutions to the 4-queens puzzle as shown above.
+
+// DFS BrackTracking
+
+
+public class Solution {
+     public List<List<String>> solveNQueens(int n) {
+        char[][] board = new char[n][n];
+        for(int i=0;i<n;i++) {
+            Arrays.fill(board[i], '.');
+        }
+        
+        boolean[] row_used = new boolean[n];
+        boolean[] diag45 = new boolean[2 * n - 1];
+        boolean[] diag135 = new boolean[2 * n - 1];
+        
+        List<List<String>> result = new ArrayList<>();
+        DFS_BackTrack(board, 0, n, result, row_used, diag45, diag135);
+        return result;
+    }
+    
+    public void DFS_BackTrack(char[][] board, int col, int n, List<List<String>> result, boolean[] row_used, boolean[] diag45, boolean[] diag135) {
+        if(col == n) {
+            result.add(constructBoard(board));
+            return;
+        }
+        
+        for(int row = 0; row < n; row++) {
+            int diag45_i = row + col;
+            int diag135_i = row - col + (n-1);
+            if(row_used[row] || diag45[diag45_i] || diag135[diag135_i]) continue;
+            
+            board[row][col] = 'Q';
+            row_used[row] = diag45[diag45_i] = diag135[diag135_i] = true;
+			
+            DFS_BackTrack(board, col+1, n, result, row_used, diag45, diag135);
+			
+            row_used[row] = diag45[diag45_i] = diag135[diag135_i] = false;
+            board[row][col] = '.';            
+        }
+    }
+    
+    public List<String> constructBoard(char[][] board) {
+        List<String> temp = new ArrayList<>();
+        for(char[] c : board) {
+            temp.add(new String(c));
+        }
+        return temp;
+    }
+}
+
+
+// return the Count of solutions possible
+
+
+	public int totalNQueens(int n) {        
+        boolean[] row_used = new boolean[n];
+        boolean[] diag45 = new boolean[2 * n - 1];
+        boolean[] diag135 = new boolean[2 * n - 1];        
+       
+        return DFS_BackTrack(0, 0, n, row_used, diag45, diag135);       
+    }
+    
+    public int DFS_BackTrack(int count, int col, int n, boolean[] row_used, boolean[] diag45, boolean[] diag135) {
+        if(col == n) {
+            count++;
+            return count;
+        }
+        
+        for(int row = 0; row < n; row++) {
+            int diag45_i = row + col;
+            int diag135_i = row - col + (n-1);
+            if(row_used[row] || diag45[diag45_i] || diag135[diag135_i]) continue;
+                       
+            row_used[row] = diag45[diag45_i] = diag135[diag135_i] = true;
+            count = DFS_BackTrack(count, col+1, n, row_used, diag45, diag135);
+            row_used[row] = diag45[diag45_i] = diag135[diag135_i] = false;                       
+        }
+        return count;
+    }

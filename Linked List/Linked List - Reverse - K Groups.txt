@@ -1,0 +1,166 @@
+Reverse Linked List
+
+Example:
+
+Input: 1->2->3->4->5->NULL
+Output: 5->4->3->2->1->NULL
+
+// Iterative
+
+	public ListNode reverseList(ListNode head) {
+        ListNode prev = null;
+        ListNode curr = head;
+        
+        while(curr != null) {
+            ListNode temp = curr.next;
+            curr.next = prev;
+            prev = curr;
+            curr = temp;
+        }
+        
+        return prev;
+    }
+	
+// Recursive
+	
+	public ListNode reverseList(ListNode head) {
+		if (head == null || head.next == null) return head;
+		ListNode p = reverseList(head.next);
+		head.next.next = head;
+		head.next = null;
+		return p;
+	}
+
+
+// Reverse Linked List in K Groups
+
+	Given this linked list: 1->2->3->4->5
+
+	For k = 2, you should return: 2->1->4->3->5
+
+	For k = 3, you should return: 3->2->1->4->5
+
+// recursive
+
+ public ListNode ReverseKGroup(ListNode head, int k) {
+        
+        ListNode curr = head;
+        int count  = 0;
+        
+        while(curr != null && count < k)
+        {
+            curr = curr.next;
+            count++;
+        }
+        
+        if(count == k)
+        {
+            curr = ReverseKGroup(curr, k);
+            
+            while(count > 0)	// reverse
+            {
+                ListNode temp = head.next;
+                head.next = curr;
+                curr = head;
+                head = temp;
+                count --;
+            }
+            head = curr;
+        }
+        
+        return head;
+    }
+	
+
+// Iterative
+	
+	 public ListNode ReverseKGroup(ListNode head, int k) {
+        if(head == null || k ==1) return head;
+        
+        ListNode dummy = new ListNode(0);  
+        dummy.next = head;
+        ListNode curr = dummy, prev= dummy, temp = dummy;        
+        int count  = 0;
+        
+        while(curr.next != null)
+        {
+            curr = curr.next;
+            count++;
+        }
+        
+        while(count >= k)
+        {
+            curr = prev.next;
+            temp = curr.next;
+            
+            for(int i = 1;i<k;i++)
+            {
+                curr.next = temp.next;
+                temp.next = prev.next;
+                prev.next = temp;
+                temp = curr.next;
+            }
+            
+            prev = curr;
+            count = count - k;
+        }
+        
+        return dummy.next;
+    }     
+
+/// Reverse Between M and N iteratively
+	
+	public ListNode ReverseBetween(ListNode head, int m, int n) {
+        
+        if(head == null) return null;
+        ListNode node = new ListNode(-1); 
+        node.next = head;
+        ListNode prev = node; 
+        
+        for(int i = 0; i<m-1; i++) 
+            prev = prev.next;
+    
+        ListNode start = prev.next; // a pointer to the beginning of a sub-list that will be reversed
+        ListNode then = start.next; // a pointer to a node that will be reversed
+    
+		// 1 - 2 -3 - 4 - 5 ; m=2; n =4 ---> pre = 1, start = 2, then = 3
+		// node-> 1 -> 2 -> 3 -> 4 -> 5
+		
+		for(int i=0; i<n-m; i++)
+		{
+			start.next = then.next;
+			then.next = prev.next;
+			prev.next = then;
+			then = start.next;
+		}
+		
+		// first reversing : node->1 - 3 - 2 - 4 - 5; pre = 1, start = 2, then = 4
+		// second reversing: node->1 - 4 - 3 - 2 - 5; pre = 1, start = 2, then = 5 (finish)
+		
+		return node.next;
+    }
+	
+/// Reverse Between M and N Recursive
+	
+	public ListNode reverseBetween(ListNode head, int m, int n) 
+	{
+        if (m <= 1) {           
+            return reverseN(head, n - m + 1);
+        }
+        head.next = reverseBetween(head.next, m - 1, n - 1);
+        return head;
+    }
+	
+	ListNode successor = null;
+	
+    ListNode reverseN(ListNode head, int n) 
+	{
+        if (n == 1) {
+            successor = head.next;
+            return head;
+        }
+        ListNode last = reverseN(head.next, n - 1);
+        head.next.next = head;
+        head.next = successor;
+        return last;
+    }   	

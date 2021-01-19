@@ -1,0 +1,99 @@
+Minimum steps to reach any of the boundary edges of a matrix 
+
+Given an N X M matrix, 
+j = 1 denotes the cell is not empty
+j = 0 denotes the cell is empty 
+j = 2 denotes that you are standing at that cell.
+
+You can move up or down and left or right to any cell which is empty. The task is to find the minimum number of steps to reach any boundary edge of the matrix. 
+Print -1 if not possible to reach any of the boundary edges.
+
+Note: There will be only one cell with value 2 in the entire matrix.
+
+Examples:
+
+Input: matrix[] = {1, 1, 1, 0, 1}
+                  {1, 0, 2, 0, 1} 
+                  {0, 0, 1, 0, 1}
+                  {1, 0, 1, 1, 0} 
+Output: 2
+Move to the right and then move upwards to reach the nearest boundary edge. 
+
+
+// get the start index in matrix
+// DFS - with meoization - to store the minimum path of all possiblities
+
+	public int m,n;
+	
+	static int minimumSteps(int[][] mat) 
+	{ 		
+		m = mat.Length;
+		n = mat[0].Length;
+		
+		int sx = -1; 
+		int sy = -1; 	
+		
+		for (int i = 0; i < n; i++) { 
+			for (int j = 0; j < m; j++) { 
+				if (mat[i,j] == 2) { 
+					sx = i; 
+					sy = j; 
+					break; 
+				} 
+			} 
+			if (sx != -1) 
+				break; 
+		} 
+			
+		int[][] dp = new int[m][n]; 
+		boolean[][] visited= new visited[m][n]; 
+		
+		for(int i=0;i<m;i++) 
+		{
+			Arrays.fill(dp[i], -1);
+		}
+		
+		int res = findMinStepsDFS(mat, sx, sy, dp, vis); 
+		
+		if (res >= 1e9) 
+			return -1; 
+		else
+			return res; 
+	} 
+	
+	static int findMinStepsDFS(int[][] mat, int x, int y, int[][] dp, bool[][] visited) 
+	{ 		
+		if (x == 0 || y == 0 || x == (m - 1) || y == (n - 1)) { 
+			return 0; 
+		} 	
+		
+		if (dp[x][y] != -1) return dp[x][y]; 	
+		
+		visited[x][y] = true; 
+	
+		int ans = (int)1e9; 
+	
+		// vertically up 
+		if (mat[x - 1][y] == 0 && !visited[x - 1][y]) { 
+			ans = Math.Min(ans, 1 + findMinSteps(mat, x - 1, y, dp, visited)); 
+		} 
+	
+		// horizontally right 
+		if (mat[x,y + 1] == 0 && !visited[x][y+1]) { 
+			ans = Math.Min(ans, 1 + findMinSteps(mat, x, y + 1, dp, visited)); 
+		} 
+	
+		// horizontally left 
+		if (mat[x][y - 1] == 0 !visited[x][y-1]) { 
+			ans = Math.Min(ans, 1 + findMinSteps(mat, x, y - 1, dp, visited)); 
+		} 
+	
+		// vertically down 
+		if (mat[x + 1][y] == 0 !visited[x+1][y]) { 
+			ans = Math.Min(ans, 1 + findMinSteps(mat, x + 1, y, dp, visited)); 
+		} 	
+		
+		dp[n][m] = ans; 
+		return dp[n][m]; 
+	} 
+

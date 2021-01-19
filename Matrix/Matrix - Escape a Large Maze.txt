@@ -1,0 +1,78 @@
+Escape a Large Maze
+
+In a 1 million by 1 million grid, the coordinates of each grid square are (x, y) with 0 <= x, y < 10^6.
+
+We start at the source square and want to reach the target square.  Each move, we can walk to a 4-directionally adjacent square in the grid that isn't in the given list of blocked squares.
+
+Return true if and only if it is possible to reach the target square through a sequence of moves.
+ 
+
+Example 1:
+
+Input: blocked = [[0,1],[1,0]], source = [0,0], target = [0,2]
+Output: false
+Explanation: 
+The target square is inaccessible starting from the source square, because we can't walk outside the grid.
+
+Example 2:
+
+Input: blocked = [], source = [0,0], target = [999999,999999]
+Output: true
+Explanation: 
+Because there are no blocked cells, it's possible to reach the target square.
+
+
+// Using HashSet, add all the blocked path
+// DFS traversal from source to target and target to source - to know it can be readched
+
+
+    Long M = 1000000L; 
+    int[][] dirs = {{1,0}, {-1,0}, {0,-1},{0,1}};
+    
+    public boolean isEscapePossible(int[][] blocked, int[] source, int[] target) {
+       
+        /*
+        Only when source and target are separated completely by blocked squares 
+        will it be impossible to reach target from source. 
+        Since the len of blocked is no larger than 200, the closed area will be bounded by 200*200. 
+        */
+		
+        Set<Long> block = new HashSet<>(); //blocked square
+        for (int[] n: blocked) 
+			block.add(n[0]*M + n[1]);
+        
+        
+        return DFS_Check(block, source, target, source, new HashSet<>())
+            && DFS_Check(block, target, source, target, new HashSet<>()); 
+    }
+    
+    /*
+    b: blocked squares (x, y) -> x*M + y
+    s: source square
+    t: target square
+    cur: current square
+    v: visited squares (x, y) -> x*M + y
+    */
+	 //we can stop the search when cur[i][j] is beyond the largest closed area formed by blocked squares.
+	 
+	 
+    boolean DFS_Check(Set<Long> block, int[] s, int[] t, int[] cur, Set<Long> visited) {       
+        
+		if (Math.abs(cur[0] - s[0]) == 200 || Math.abs(cur[1] - s[1]) == 200          
+           || v.size() > 0 && cur[0] == t[0] && cur[1]==t[1]) 
+            return true;
+        
+        visited.add(cur[0]*M + cur[1]); 
+        
+        for (int[] dir : dirs) {
+            int x = cur[0] + dir[0]; 
+            int y = cur[1] + dir[1]; 
+			
+            if (x < 0 || x == M || y < 0 || y == M  || visited.contains(x*M+y) || block.contains(x*M+y))
+                continue;
+				
+            if (DFS_Check(block, s, t, new int[]{x,y}, visited)) 
+				return true; 
+        }
+        return false; 
+    }

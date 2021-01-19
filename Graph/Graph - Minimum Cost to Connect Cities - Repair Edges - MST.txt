@@ -1,0 +1,224 @@
+Min Cost to Repair Edges
+
+There's an undirected connected graph with n nodes labeled 1..n. But some of the edges has been broken disconnecting the graph. 
+Find the minimum cost to repair the edges so that all the nodes are once again accessible from each other.
+Also Min cost to add new roads
+
+Input:
+
+    n, an int representing the total number of nodes.
+    edges, a list of integer pair representing the nodes connected by an edge.
+    edgesToRepair, a list where each element is a triplet representing the pair of nodes between which an edge is currently broken and the cost of repearing that edge, respectively (e.g. [1, 2, 12] means to repear an edge between nodes 1 and 2, the cost would be 12).
+
+Example 1:
+
+Input: n = 5, edges = [[1, 2], [2, 3], [3, 4], [4, 5], [1, 5]], edgesToRepair = [[1, 2, 12], [3, 4, 30], [1, 5, 8]]
+Output: 20
+Explanation:
+There are 3 connected components due to broken edges: [1], [2, 3] and [4, 5].
+We can connect these components into a single component by repearing the edges between nodes 1 and 2, and nodes 1 and 5 at a minimum cost 12 + 8 = 20.
+
+Example 2:
+
+Input: n = 6, edges = [[1, 2], [2, 3], [4, 5], [3, 5], [1, 6], [2, 4]], edgesToRepair = [[1, 6, 410], [2, 4, 800]]
+Output: 410
+
+int numTotalAvailableCities = 6;
+int[][] roadsAvailable = { { 1, 4 }, { 4, 5 }, { 2, 3 } };
+int[][] costNewRoadsToConstruct = { { 1, 2,5 }, { 1,3,10 }, {1,6,2} ,{ 5, 6, 5 } };
+
+
+//// Kruskal's Minimum Spanning Tree - Union Find algorithm
+
+	public int MinimumCost(int N, int[][] edges, int[][] newedges)
+    {
+		UnionFind uf = new UnionFind(N);
+        
+        for (int[] arr : edges)  {                               
+            uf.union(arr[0], arr[1]);             
+         }
+			
+		Arrays.sort(newedges, (a, b) -> a[2] - b[2]);
+        int result = 0;
+		
+        for (int[] arr : newedges) {
+            if (uf.union(arr[0], arr[1]))
+            {                
+                 result += arr[2];
+            }
+         }
+
+        return uf.count == 1 ? result : -1;
+    }
+        
+		
+	public class UnionFind {
+        private int count = 0;
+        private int[] parent, rank;
+        
+        public UnionFind(int n) {
+            count = n;
+            parent = new int[n];
+            rank = new int[n];
+            for (int i = 0; i < n; i++) {
+                parent[i] = i;
+				rank[i] = 1;
+            }
+        }
+        
+        public int find(int p) {
+        	while (p != parent[p]) {
+                parent[p] = parent[parent[p]];    // path compression by halving
+                p = parent[p];
+            }
+            return p;
+        }
+        
+        public boolean union(int p, int q) {
+            int rootP = find(p);
+            int rootQ = find(q);
+            if (rootP == rootQ) // graph has cycle
+				return false;				/// Connected Components
+				
+            if (rank[rootP] > rank[rootQ]) {	// To balance the tree
+                 parent[rootQ] = rootP;
+				 rank[rootP] += rank[rootQ];
+            }
+            else {
+                parent[rootP] = rootQ;
+                rank[rootQ] += rank[rootP];
+            }
+            count--;
+			return true;	
+        }
+        
+        public int count() {
+            return count;
+        }
+    }
+
+
+// Adjecency Matrix - DFS
+
+    public static int getMinimumCostToConstruct(int n, int[][] roadsAvailable, int[][] costNewRoadsConstruct)
+    {
+        int totalCost = 0;
+        bool[] Visited = new bool[n];
+        int[] Keys = new int[n];
+		Arrays.fill(keys, Integer.MAX_VALUE);
+        int[] Parent = new int[n];
+
+        int[][] AdjMatrix = GetAdjecencyMatrix(roadsAvailable, costNewRoadsConstruct, n);
+	
+        Keys[0] = 0;
+        Parent[0] = -1;
+
+        for(int i=0;i< n-1;i++){
+            var u = FindMinIndex(Visited, Keys);
+
+            Visited[u] = true;
+            for(int v=0;v<n;v++)
+            {
+                if(Visited[v]==false && AdjMatrix[u][v]!=Int32.MaxValue && AdjMatrix[u][v]<Keys[v])
+                {
+                    Parent[v] = u;
+                    Keys[v] = AdjMatrix[u][v];
+                }
+            }
+        }
+
+       for(int i=1;i< n;i++)
+        {
+            totalCost = totalCost + AdjMatrix[Parent[i]][i];
+        }
+        return totalCost;
+    }
+
+
+    private static int FindMinIndex(bool[] Visited, int[] Keys)
+    {
+        int min = Int32.MaxValue; int index = -1;
+        for (int i = 0; i < Keys.Length; i++)
+        {
+            if (Visited[i] == false && Keys[i] < min)
+            {
+                min = Keys[i];
+                index = i;
+            }
+        }
+        return index;
+    }
+
+
+    private static int[][] GetAdjecencyMatrix(int[][] roadsAvailable, int[][] costNewRoadsConstruct, int n)
+    {
+        int[][] AdjMatrix = new int[n][n];
+
+        for (int i = 0; i < n; i++) {
+			Arrays.fill(AdjMatrix[i], Integer.MAX_VALUE);                           
+        }
+       
+        for (int i = 0; i < roadsAvailable.GetLength(0); i++) {
+            int start = roadsAvailable[i][0] - 1;
+            int end = roadsAvailable[i][1] - 1;
+            AdjMatrix[start][end] = 0;
+        }
+
+        for (int i = 0; i < costNewRoadsConstruct.GetLength(0); i++) {
+            int start = costNewRoadsConstruct[i][0]-1;
+            int end = costNewRoadsConstruct[i][1]-1;
+            int cost= costNewRoadsConstruct[i][2];
+
+            AdjMatrix[start][end] = cost;
+        }
+        return AdjMatrix;
+    }
+   
+   
+ 
+//	Find necessary and optional edges in minimum spanning tree
+
+Given a weighted undirected graph with V vertices, E edges, each of cost C, find which edges appear in all minimum spanning trees and which ones appear only in some minimum spanning trees. The necessary edges will be printed first, followed by the non-necassary ones. (in the same order as they appear in the input)
+
+Input:
+5 7 // 5 vertices, 7 edges
+1 2 1 // First edge, from node 1 to node 2, with cost 1
+2 3 1
+3 4 2
+4 1 2
+1 5 3
+4 5 3
+2 5 6
+Output:
+// Edges that appear in all minimum spanning trees
+1 2
+2 3
+// Edges that appear in some minimum spanning trees
+3 4
+4 1
+1 5
+4 5
+
+First sort all the edges by weight, the ones with same weight can be sorted by order in which they appear input. (above input is already sorted)
+Initially each vertex is one disjoint set = [[1],[2],[3],[4],[5]], optional edges = [], non Optional edges = []
+Process all the edges of same weight together.
+
+    weight = 1.
+    Edge = [1,2]. (it connects disjoint sets [1] and [2])
+    Edge = [2,3] (it connects disjoint sets [2] and [3])
+    Since both edges of weight 1 connects different disjoint sets, add both in non Optional edges.
+    Disjoint sets after step 1 = [[1,2,3],[4][5]]
+	
+    weight = 2
+    Edge = [3,4] (it connects disjoint sets [1,2,3] and [4])
+    Edge = [4,1] ( it also connects disjoint sets [1,2,3] and [4]]
+    Since both edges of weight 2 connects same disjoint sets, add both in optional edges.
+    Disjoint sets after step 2 = [[1,2,3,4],[5]]
+	
+    weight = 3
+    Edge = [1,5] (it connects disjoint sets [1,2,3,4] and [5])
+    Edge = [4,5] ( it also connects disjoint sets [1,2,3,4] and [5]]
+    Since both edges of weight 3 connects same disjoint sets, add both in optional edges.
+    Disjoint sets after step 3 = [[1,2,3,4,5]]
+    Since now there is only 1 disjoint set, which means we have build the minimum spanning tree and all the vertices are connected !!
+

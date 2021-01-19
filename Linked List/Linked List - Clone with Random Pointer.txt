@@ -1,0 +1,84 @@
+Copy List with Random Pointer
+
+A linked list is given such that each node contains an additional random pointer which could point to any node in the list or null.
+
+Return a deep copy of the list.
+
+Example 1:
+
+Input:
+{"$id":"1","next":{"$id":"2","next":null,"random":{"$ref":"2"},"val":2},"random":{"$ref":"2"},"val":1}
+
+Explanation:
+Node 1's value is 1, both of its next and random pointer points to Node 2.
+Node 2's value is 2, its next pointer points to null and its random pointer points to itself.
+
+
+/// Hash map solution
+
+
+	Map<Node,Node> Map = new HashMap<Node,Node>();
+	
+    public Node CopyRandomList(Node head) {
+        
+        if(head==null) return null;
+        
+        if(Map.containsKey(head)) return Map[head];
+        
+     
+        Node node = new Node(head.val,null,null);
+        Map.add(head,node);
+       
+        node.next = CopyRandomList(head.next);
+        node.random = CopyRandomList(head.random);
+        
+        return node;
+    }
+	
+	
+/// O(1)  solution
+
+	public Node CopyRandomList(Node head) {
+        
+        if(head==null) return null;
+        
+        Node Curr = head;
+        
+        while(Curr != null)		// Merge new nodes next to each node
+        {
+            Node node = new Node(Curr.val,null,null);
+            node.next = Curr.next;
+            Curr.next = node;
+            Curr = Curr.next.next;
+        }
+        
+		// Copy random pointers
+		
+        Curr = head;        
+        while(Curr != null)
+        {            
+			if (Curr.random != null) 
+					Curr.next.random = Curr.random.next;   
+            
+            Curr = Curr.next.next;
+        }
+        
+		// Separate new nodes from old nodes		
+        
+        Node copy = head.next;       
+        Curr = head;
+        while(Curr.next != null)
+        {
+			Node temp = Curr.next;
+			Curr.next = Curr.next.next;
+			Curr = temp;            
+        }    
+        
+        return copy;	
+    }
+	
+	Time : Linear O(n)
+
+	
+	
+	

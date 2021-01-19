@@ -1,0 +1,91 @@
+Remove Duplicates from Sorted List
+
+Given a sorted linked list, delete all duplicates such that each element appear only once.
+
+Example 1:
+
+Input: 1->1->2
+Output: 1->2
+
+Example 2:
+
+Input: 1->1->2->3->3
+Output: 1->2->3
+
+
+// recursive
+
+	 public ListNode deleteDuplicates(ListNode head) {
+        if(head == null || head.next == null)
+			return head;
+			
+        head.next = deleteDuplicates(head.next);
+        return head.val == head.next.val ? head.next : head;
+    }
+
+// Iterative
+	
+	public ListNode deleteDuplicates(ListNode head) {
+        ListNode current = head;
+        ListNode next = null;
+        
+        while (current != null && current.next != null){
+            next = current.next;
+            
+            if (current.val == next.val){
+                //remove next
+                current.next = next.next;
+            }
+            else {
+                current = current.next;
+            }
+            
+        }
+        
+        return head;
+    }
+	
+
+Remove Duplicates from Sorted List II - Delete the duplicate itself
+
+
+Given a sorted linked list, delete all nodes that have duplicate numbers, leaving only distinct numbers from the original list.
+
+Return the linked list sorted as well.
+
+Example 1:
+
+Input: 1->2->3->3->4->4->5
+Output: 1->2->5
+
+Example 2:
+
+Input: 1->1->1->2->3
+Output: 2->3
+
+
+	public ListNode deleteDuplicates(ListNode head) {
+        if(head == null || head.next == null){
+            return head;
+        }
+        
+        ListNode dummy = new ListNode();
+        dummy.next = head;
+        ListNode pre = dummy;
+        ListNode current = head;
+        
+        while(current != null){
+            while(current.next != null && current.val == current.next.val){
+                current = current.next;
+            }
+            if(pre.next == current){
+                pre = pre.next;
+            }else{
+                pre.next = current.next;
+            }
+            current = current.next;
+        }
+        
+        return dummy.next;
+        
+    }

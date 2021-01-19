@@ -1,0 +1,70 @@
+Evaluate Division
+
+Equations are given in the format A / B = k, where A and B are variables represented as strings, and k is a real number (floating point number). Given some queries, return the answers. If the answer does not exist, return -1.0.
+
+Example:
+Given a / b = 2.0, b / c = 3.0.
+queries are: a / c = ?, b / a = ?, a / e = ?, a / a = ?, x / x = ? .
+return [6.0, 0.5, -1.0, 1.0, -1.0 ].
+
+The input is: vector<pair<string, string>> equations, vector<double> values, vector<pair<string, string>> queries , where equations.size() == values.size(), and the values are positive. This represents the equations. Return vector<double>.
+
+According to the example above:
+
+equations = [ ["a", "b"], ["b", "c"] ],
+values = [2.0, 3.0],
+queries = [ ["a", "c"], ["b", "a"], ["a", "e"], ["a", "a"], ["x", "x"] ]. 
+
+ 
+
+The input is always valid. You may assume that evaluating the queries will result in no division by zero and there is no contradiction.
+
+
+// Undirected Graph - DFS
+
+
+	public double[] calcEquation(List<List<String>> equations, double[] values, List<List<String>> queries) {
+     
+        Map<String, Map<String, Double>> graph = new HashMap<>();
+        String u, v;
+        
+        for (int i = 0; i < equations.size(); i++) {
+            u = equations.get(i).get(0);
+            v = equations.get(i).get(1);
+            graph.putIfAbsent(u, new HashMap<>());            
+            graph.putIfAbsent(v, new HashMap<>());
+            
+            graph.get(u).put(v, values[i]);
+            graph.get(v).put(u, 1d/ values[i]);
+        }
+        
+        double[] result = new double[queries.size()];
+        int i = 0;
+        for (List<String> q : queries){
+            Set<String> visited  = new HashSet<>();
+            result[i++] = getPathWeight(q.get(0), q.get(1), visited, graph);
+        }
+        
+        return result;
+    }
+    
+    private double getPathWeight(String start, String end, Set<String> visited, Map<String, Map<String, Double>> graph) {
+        
+        if (graph.containsKey(start)) {              
+       
+			if (start == end) return  1.0;
+				
+			if (graph.get(start).containsKey(end))
+				return graph.get(start).get(end);
+				
+			visited.add(start);
+			for (Map.Entry<String, Double> neighbour : graph.get(start).entrySet()) {
+				if (!visited.contains(neighbour.getKey())) {
+					double productWeight = getPathWeight(neighbour.getKey(), end, visited, graph);
+					if (productWeight != -1.0)
+						return neighbour.getValue() * productWeight;
+				}
+			}
+        }
+        return -1.0;
+    }  

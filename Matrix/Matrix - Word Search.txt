@@ -1,0 +1,108 @@
+Word Search
+
+Given a 2D board and a word, find if the word exists in the grid.
+
+The word can be constructed from letters of sequentially adjacent cell, where "adjacent" cells are those horizontally or vertically neighboring. The same letter cell may not be used more than once.
+
+Example:
+
+board =
+[
+  ['A','B','C','E'],
+  ['S','F','C','S'],
+  ['A','D','E','E']
+]
+
+Given word = "ABCCED", return true.
+Given word = "SEE", return true.
+Given word = "ABCB", return false.
+
+// DFS BackTrack - search all directions in matrix and if we reach end of word then true else false
+
+public class Solution {
+    public int m,n;
+    public bool Exist(char[][] board, string word) {
+        
+        m = board.Length;
+        if(m==0) return false;
+        n = board[0].Length;
+        if(n==0) return false;
+                
+        for(int i = 0;i<m;i++){
+            for(int j=0;j<n;j++){
+                if(board[i][j] == word[0]) {				
+                    if(exists_DFS(board, i, j, word, 0)) 
+						return true;					
+                }
+            }
+        }
+        return false;
+    }
+    
+    public bool exists_DFS(char[][] board, int i, int j,string word, int index){
+        
+        if(index == word.Length) return true;
+        if(!(i>=0 && i<m && j>=0 && j<n && board[i][j] == word[index])) return false;
+                
+        char c = board[i][j]; 
+        board[i][j] = '0';
+        
+        if(exists(board, i + 1, j, word,index+1) || exists(board, i-1, j, word,index+1) || exists(board, i, j+1, word,index+1) || exists(board, i, j-1, word,index+1)) 
+			return true;
+			
+        board[i][j] = c;
+        return false;
+    }
+}
+
+
+
+/// return number of occurrences
+
+	public static void main(String[] args) {
+        char[][] mat = { {'A', 'T', 'T'}, 
+                         {'T', 'E', 'D'}, 
+                         {'T', 'G', 'N'}}; 
+  
+        char[] word ="ATT".toCharArray();   
+         
+       System.out.println(findWords(mat, word, word.length - 1));
+    }    
+    
+    static int count = 0;
+    static int rowNum[] = {-1, -1, -1, 0, 0, 1, 1, 1}; 
+    static int colNum[] = {-1, 0, 1, -1, 1, -1, 0, 1}; 
+    
+    static int findWords(char[][] board, char[] word, int len) { 
+        int m = board.length, n = board[0].length;
+		count = 0;
+		for (int i = 0; i < m; i++) {
+			for (int j = 0; j < n; j++) {
+				if (board[i][j] == word[0]) {                    
+					DFS(board, i, j, -1, -1, word, "", 0, len);
+                }
+			}
+		}
+		return count;
+    } 
+
+    static void DFS(char[][] mat, int row, int col, int prevRow, int prevCol, char[] word, String path, int idx, int n) 
+	{     
+		if (idx > n || mat[row][col] != word[idx]) 
+			return;       
+		
+		path += (word[idx]) + "(" + String.valueOf(row) 
+				+ ", " + String.valueOf(col) + ") "; 
+		if (idx == n) { 
+			count++; 
+			System.out.print(path +"\n"); 
+			return; 
+		}   
+	
+		for (int k = 0; k < 8; k++) {
+			int x = row + rowNum[k], y = col + colNum[k];
+			if(x >= 0 && x < mat.length && y >= 0 && y < mat[0].length && !(x == prevRow && y == prevCol)) {
+				DFS(mat, x, y, row, col, word, path, idx + 1, n); 
+			}
+		}       
+	} 

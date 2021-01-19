@@ -1,0 +1,96 @@
+Merge Sorted Lists
+
+Merge two sorted linked lists and return it as a new sorted list. The new list should be made by splicing together the nodes of the first two lists.
+
+Example:
+
+Input: 1->2->4, 1->3->4
+Output: 1->1->2->3->4->4
+
+
+// Only Arrays using Priority queue - O(n) space
+	
+	private static List<Integer> topKMinimum(int[][] arr) {
+	
+      PriorityQueue<int[]> pq = new PriorityQueue<int[]>
+        ((rc1, rc2) -> Integer.compare(arr[rc1[0]][rc1[1]], arr[rc2[0]][rc2[1]]));
+      
+      for (int i = 0; i < arr.length; i++) {
+        pq.add(new int[] {i, 0});
+      }
+      
+      List<Integer> ans = new ArrayList<>();
+      
+      while (!pq.isEmpty()) {
+        int[] rc = pq.poll();
+        
+        ans.add(arr[rc[0]][rc[1]]);
+        
+        if (rc[1] < arr[rc[0]].length - 1) {
+          pq.add(new int[] {rc[0], rc[1] + 1});
+        }  
+      }
+      
+      return ans;
+    }
+	
+	
+// Recursive - Merge Sort
+
+	public ListNode mergeKLists(ListNode[] lists) {        
+        return partition(lists, 0, lists.length-1);
+    }
+    
+    public ListNode partition(ListNode[] lists, int start, int end) {
+        if(start == end) return lists[start];
+        
+        if(start < end) {
+            int mid = (start + end) / 2;
+            ListNode l1 = partition(lists, start, mid);
+            ListNode l2 = partition(lists, mid+1, end);
+            return mergeTwoLists(l1, l2);
+        }
+        else
+            return null;
+    }
+	
+	public ListNode mergeTwoLists(ListNode l1, ListNode l2) {
+        if(l1 == null) return l2;
+        if(l2 == null) return l1;
+        
+        if(l1.val < l2.val) {
+            l1.next = mergeTwoLists(l1.next, l2);
+            return l1;
+        }
+        else {
+            l2.next = mergeTwoLists(l1, l2.next);
+            return l2;
+        }            
+    }
+	
+
+// Iterative
+
+	public ListNode mergeTwoLists(ListNode l1, ListNode l2) {
+        if(l1 == null) return l2;
+        if(l2 == null) return l1;
+		
+        ListNode dummy = new ListNode(-1);
+        ListNode res = dummy;
+        while(l1 != null && l2 != null)
+        {
+            if(l1.val<=l2.val)
+            {
+                res.next = l1;
+                l1 = l1.next;
+            }
+            else 
+            {
+                res.next = l2;
+                l2 = l2.next;
+            }
+            res = res.next;
+        }
+        res.next = l1 == null? l2: l1;
+        return dummy.next;        
+    }

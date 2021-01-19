@@ -1,0 +1,49 @@
+Sum of all Submatrices of a Given Matrix
+
+Input :  arr[] = {{1, 1},
+                  {1, 1}};
+Output : 16
+Explanation: 
+Number of sub-matrices with 1 elements = 4
+Number of sub-matrices with 2 elements = 4
+Number of sub-matrices with 3 elements = 0
+Number of sub-matrices with 4 elements = 1
+
+Since all the entries are 1, the sum becomes
+sum = 1 * 4 + 2 * 4 + 3 * 0 + 4 * 1 = 16
+
+Input : arr[] = {{1, 2, 3},
+                 {4, 5, 6},
+                 {7, 8, 9}}
+Output : 500
+
+ 
+	public static int n = 3; 
+
+	public static int matrixSum(int[][] arr) 
+	{ 	
+		int sum = 0; 	
+		
+		for (int i = 0; i < n; i++) 
+		{ 
+			for (int j = 0; j < n; j++) 
+			{ 	
+				// Number of ways to choose top-left elements 
+				
+				int top_left = (i + 1) * (j + 1); 
+	
+				// Number of ways to choose bottom-right elements 
+				
+				int bottom_right = (n - i) * (n - j); 
+				
+				sum += (top_left * bottom_right * arr[i, j]); 
+			} 
+		} 	
+		return sum; 
+	} 
+	
+	
+	
+
+
+

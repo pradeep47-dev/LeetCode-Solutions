@@ -1,0 +1,150 @@
+Graph Valid Tree
+
+Given n nodes labeled from 0 to n-1 and a list of undirected edges (each edge is a pair of nodes), write a function to check whether these edges make up a valid tree.
+
+Example 1:
+
+Input: n = 5, and edges = [[0,1], [0,2], [0,3], [1,4]]
+Output: true
+
+Example 2:
+
+Input: n = 5, and edges = [[0,1], [1,2], [2,3], [1,3], [1,4]]
+Output: false
+
+Note: you can assume that no duplicate edges will appear in edges. Since all edges are undirected, [0,1] is the same as [1,0] and thus will not appear together in edges.
+
+cyclic - Has Cycle - Invalid Tree
+
+	// Main Function
+    public bool CanFinish(int numCourses, int[][] prerequisites) 
+	{
+        Graph graph = new Graph(numCourses); 
+        for(int i=0;i<prerequisites.Length;i++)
+        {
+           graph.addEdge(prerequisites[i][0], prerequisites[i][1]); 
+        }
+        return !graph.isCyclic();       
+    }   
+    
+    public class Graph { 
+      
+		private int V; 
+		private List<Integer>[] adj; 
+	
+		public Graph(int V)  
+		{ 
+			this.V = V; 
+			adj = new ArrayList[V]; 
+			
+			for (int i = 0; i < V; i++) 
+				adj[i] = new ArrayList<Integer>(); 
+		}   
+	
+		public void addEdge(int source, int dest) { 
+			adj[source].add(dest); 
+			adj[dest].add(source); // Undirected graph
+		}	
+		
+		///////////////////////////////// Undirected graph
+		public bool isCyclic()  
+		{ 
+			bool[] visited = new bool[V];        
+			
+			for (int i = 0; i < V; i++) 
+				if (!visited[i]) 
+					if (isCyclicUtil(i, visited, -1)) 
+						return true; 
+	
+			return false; 
+		} 
+		
+		public bool isCyclicUtil(int v, bool[] visited, int parent) 
+		{         
+			visited[v] = true;       
+		
+			foreach (int i in adj[v]) 
+			{ 
+				if (!visited[i]) 
+				{ 
+					if (isCyclicUtil(i, visited, v)) 
+						return true; 
+				} 
+				else if (i != parent) 
+					return true; 
+			}         
+			
+			return false; 
+		} 
+		
+		///////////////////////////// Direct Graph
+		public bool isCyclic()  
+		{ 
+			bool[] visited = new bool[V]; 
+			bool[] recStack = new bool[V]; 
+			
+			for (int i = 0; i < V; i++) 
+				if (isCyclicUtil(i, visited, recStack)) 
+					return true; 
+	
+			return false; 
+		}
+	
+		private bool isCyclicUtil(int i, bool[] visited,bool[] recStack)  
+		{   
+			if (recStack[i]) 
+				return true; 
+	
+			if (visited[i]) 
+				return false; 
+				
+			visited[i] = true;
+			recStack[i] = true; 
+			
+			foreach (int c in adj[i]) 
+				if (isCyclicUtil(c, visited, recStack)) 
+					return true; 
+					
+			recStack[i] = false; 
+	
+			return false; 
+		} 	
+		
+		
+		//// ShortestPath
+		
+		public static int ShortestPath(List<List<int>> adj, int src, int dest)
+		{
+			Queue<int> queue = new Queue<int>();
+			
+			int[] direction = new int[V];
+			int[] distance = new int[V];	
+			bool[] visited = new bool[V]; 
+			
+			visited[src] = true;
+			distance[src] = 0;
+			queue.add(src);
+	
+			while (!queue.isEmpty())
+			{
+				int val = queue.poll();
+			
+				for (int i = 0; i < adj[val].size(); i++)
+				{
+					int index = adj[val][i];
+					if (visited[index] == false)
+					{
+						visited[index] = true;
+						distance[index] = distance[val] + 1;
+						direction[index] = val;
+						queue.add(index);
+	
+						if (index == dest)
+							return distance[dest];
+					}
+				}
+			}
+	
+			return -1; // source is not connected to destination
+		}
+	}

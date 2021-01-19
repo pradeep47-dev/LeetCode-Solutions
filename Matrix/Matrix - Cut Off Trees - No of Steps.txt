@@ -1,0 +1,102 @@
+Cut Off Trees for Golf Event
+
+You are asked to cut off trees in a forest for a golf event. The forest is represented as a non-negative 2D map, in this map:
+
+    0 represents the obstacle can't be reached.
+    1 represents the ground can be walked through.
+    The place with number bigger than 1 represents a tree can be walked through, and this positive number represents the tree's height. 
+
+You are asked to cut off all the trees in this forest in the order of tree's height - always cut off the tree with lowest height first. And after cutting, the original place has the tree will become a grass (value 1).
+
+You will start from the point (0, 0) and you should output the minimum steps you need to walk to cut off all the trees. If you can't cut off all the trees, output -1 in that situation.
+
+You are guaranteed that no two trees have the same height and there is at least one tree needs to be cut off.
+
+Example 1:
+
+Input: 
+[
+ [1,2,3],
+ [0,0,4],
+ [7,6,5]
+]
+Output: 6	
+
+
+// Get all the trees, sort by the ascending tree height
+// using BFS travesal, trverse from 1 tree to another
+// sum all the distances
+
+
+	private static int[] dirs = { 0,1,0,-1,0 };
+	public int m, n;
+	
+    public int CutOffTree(int[][] forest) {
+        
+        int steps = 0;
+		m = forest.length, n = forest[0].length;
+        List<int[]> trees = new ArrayList<>();
+        
+        for(int i=0;i<m;i++)
+        {
+            for(int j=0;j<n;j++)
+            {
+                int val = forest[i][j];
+                
+                if(val > 0)
+                    trees.Add(new int[] { i, j, val});
+            }
+        }
+        
+        Collections.sort(trees, (a,b) => a[2] - b[2]);
+        
+        int sr = 0, sc = 0;
+        for(int i=0;i<trees.size();i++)
+        {            
+            int d = MinimumSteps(forest, sr, sc, trees.get(i)[0], trees.get(i)[1]);
+            
+            if(d<0) return -1;
+            
+            steps += d;
+            sr = trees.get(i)[0];
+            sc = trees.get(i)[1];
+        }
+        return steps;
+    }
+    
+        
+
+    private int MinimumSteps(int[][] forest, int sr, int sc, int tr, int tc)
+    {            
+        if (sr == tr && sc == tc) return 0; 
+        
+        bool[][] visited = new bool[m][n];           
+
+        Queue<int[]> queue = new Queue<int[]>();           
+        queue.add(new int[] { sr, sc });           
+        visited[sr,sc] = true;
+                 
+        for (int step = 0; queue.size() > 0; step++)
+        {
+            int size = queue.size();
+            for (int i = 0; i<size; i++)
+            {
+                int[] Cell = queue.poll();  
+                
+                if (Cell[0] == tr && Cell[1] == tc)                    
+                     return step;                                    
+
+                for (int k=0; k<4; k++)
+                {                       
+                    int nx = Cell[0] + dirs[k];
+                    int ny = Cell[1] + dirs[k+1];
+                    if (nx >= 0 && nx < m && ny >= 0 && ny < n && !visited[nx,ny] && forest[nx][ny] != 0)
+                    {
+                        queue.add(new int[] { nx, ny });
+                        visited[nx,ny] = true;
+                    }
+                }
+            }                
+        }
+        return -1;
+    }

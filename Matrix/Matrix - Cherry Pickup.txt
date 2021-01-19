@@ -1,0 +1,78 @@
+Cherry Pickup
+
+In a N x N grid representing a field of cherries, each cell is one of three possible integers.
+
+    0 means the cell is empty, so you can pass through;
+    1 means the cell contains a cherry, that you can pick up and pass through;
+    -1 means the cell contains a thorn that blocks your way.
+
+Your task is to collect maximum number of cherries possible by following the rules below:
+
+    Starting at the position (0, 0) and reaching (N-1, N-1) by moving right or down through valid path cells (cells with value 0 or 1);
+    After reaching (N-1, N-1), returning to (0, 0) by moving left or up through valid path cells;
+    When passing through a path cell containing a cherry, you pick it up and the cell becomes an empty cell (0);
+    If there is no valid path between (0, 0) and (N-1, N-1), then no cherries can be collected.
+
+
+// Recusrive - DP with memoization
+	
+    public int cherryPickup(int[][] grid) {
+        int len = grid.length;
+        int[][][] dp = new int[len][len][len];
+        return Math.max(0,helper(grid, dp, 0,0,0));
+    }
+	
+    private int helper(int[][] grid, int[][][] dp, int r1, int c1, int c2){
+        int len = grid.length;
+        int r2 = r1 + c1 - c2;
+        if(r1 >= len || r2 >= len || c1 >= len || c2 >= len || grid[r1][c1] == -1 || grid[r2][c2] == -1)
+            return Integer.MIN_VALUE;
+        
+        if(dp[r1][c1][c2] != 0)
+            return dp[r1][c1][c2];			
+        
+        if(r1 == len - 1 && c1 == len - 1)	// reached bottom right corner
+            return grid[r1][c1];
+        
+        int result = (r1 == r2) ? grid[r1][c1] : grid[r1][c1] + grid[r2][c2];
+        // down right
+        int NextState = Math.max(helper(grid, dp, r1 + 1, c1, c2), helper(grid, dp, r1, c1 + 1, c2 + 1));
+        //right down
+        NextState = Math.max(NextState, helper(grid, dp, r1, c1 + 1, c2));
+        
+		if(r1 != r2){
+            NextState = Math.max(NextState,helper(grid, dp, r1 + 1, c1, c2+ 1));
+        }
+        result += NextState;
+        return dp[r1][c1][c2] = result;
+    }
+
+
+// Space O(N*N)
+
+	public int cherryPickup(int[][] grid) {
+        if(grid == null || grid.length == 0) return 0;
+        int N = grid.length, M = (N * 2) -1;
+        int[][] dp = new int[N][N];
+        dp[0][0] = grid[0][0];
+        
+        for(int n=1;n<M;n++) {
+            for(int i=N-1;i>=0;i--) {
+                for(int p=N-1;p>=0;p--) {
+                    int j = n-i, q= n-p;
+                    
+                    if(j<0 || j>= N || q<0 || q>= N || grid[i][j] < 0 || grid[p][q] < 0) {
+                        dp[i][p] = -1;
+                        continue;
+                    }
+                    
+                    if(i>0) dp[i][p] = Math.max( dp[i][p], dp[i-1][p]);
+                    if(p>0) dp[i][p] = Math.max(dp[i][p], dp[i][p-1]);
+                    if(i>0 && p>0) dp[i][p] = Math.max(dp[i][p], dp[i-1][p-1]);
+                    
+                    if(dp[i][p] >= 0) dp[i][p] += grid[i][j] + (i!=p ? grid[p][q] : 0);  
+                }
+            }
+        }
+        return Math.max(dp[N-1][N-1], 0);
+    }

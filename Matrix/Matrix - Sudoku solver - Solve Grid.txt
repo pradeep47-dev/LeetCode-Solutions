@@ -1,0 +1,163 @@
+Valid Sudoku
+
+Determine if a 9 x 9 Sudoku board is valid. Only the filled cells need to be validated according to the following rules:
+
+    Each row must contain the digits 1-9 without repetition.
+    Each column must contain the digits 1-9 without repetition.
+    Each of the nine 3 x 3 sub-boxes of the grid must contain the digits 1-9 without repetition.
+
+    A Sudoku board (partially filled) could be valid but is not necessarily solvable.
+    Only the filled cells need to be validated according to the mentioned rules.
+
+
+Example 1:
+
+Input: board = 
+[["5","3",".",".","7",".",".",".","."]
+,["6",".",".","1","9","5",".",".","."]
+,[".","9","8",".",".",".",".","6","."]
+,["8",".",".",".","6",".",".",".","3"]
+,["4",".",".","8",".","3",".",".","1"]
+,["7",".",".",".","2",".",".",".","6"]
+,[".","6",".",".",".",".","2","8","."]
+,[".",".",".","4","1","9",".",".","5"]
+,[".",".",".",".","8",".",".","7","9"]]
+Output: true
+
+	public boolean isValidSudoku(char[][] board) {
+		int n = board.length;
+		
+		for(int i=0;i<n;i++) {
+			for(int j=0;j<n;j++) {
+				if(board[i][j] != '.') {
+					if(!isSafe(board, i, j, board[i][j], n))
+						return false;
+				}
+			}
+		}
+		return true;
+	}
+	
+	public boolean isSafe(char[][] board, int r, int c, char ch, int n) {
+		for(int i=0;i<n;i++) {
+			if(r != i && board[i][c] == ch)
+				return false;            
+		}
+		
+		for(int j=0;j<n;j++) {
+			if(c != j && board[r][j] == ch)
+				return false;
+		}
+		
+		int sqrt = (int) Math.sqrt(n);
+		int rstart = r - r % sqrt;
+		int cstart = c - c % sqrt;
+		for(int i=rstart; i<rstart+sqrt;i++) {
+			for(int j=cstart;j<cstart+sqrt;j++) {
+				if(i != r && j != c && board[i][j] == ch)
+					return false;
+			}
+		}
+		return true;
+	}
+	
+
+
+Sudoku Solver
+
+
+Write a program to solve a Sudoku puzzle by filling the empty cells.
+
+A sudoku solution must satisfy all of the following rules:
+
+    Each of the digits 1-9 must occur exactly once in each row.
+    Each of the digits 1-9 must occur exactly once in each column.
+    Each of the digits 1-9 must occur exactly once in each of the 9 3x3 sub-boxes of the grid.
+
+The '.' character indicates empty cells.
+
+
+// DFS - Back tracking
+// have visited matrix for row and column and blocks inside
+// place char 1 to 9 and check if it solves (by marking true of char converted to idx), else backtrack
+ 
+	public int sqrt;
+	
+	public void solveSudoku(char[][] board) {  
+		if(board == null || board.length == 0) return;
+		int n = board.length;
+		sqrt = (int) Math.sqrt(n);
+		Output: -> SudokuSolver(board, n);        
+	}
+	
+	public boolean SudokuSolver(char[][] board, int n) {
+		boolean[][] row = new boolean[n][n];
+		boolean[][] col = new boolean[n][n];
+		boolean[][] block = new boolean[n][n];
+		
+		for (int i = 0; i < n; i++) {
+			for (int j = 0; j < n; j++) {
+				if (board[i][j] != '.') {
+					int num = board[i][j] - '1';  
+					int bIdx = i / sqrt * sqrt + j / sqrt;  // blockIdx
+					row[i][num] = col[j][num] = block[bIdx][num] = true;
+				}
+			}
+		}
+		
+		return dfs(0, n, board, row, col, block);
+	}
+	
+	
+	private boolean dfs(int index, int n, char[][] board, boolean[][] row, boolean[][] col, boolean[][] block) {
+		if (index == n * n) return true;      
+		
+		int r = index / n;
+		int c = index % n;
+		int bIdx = r / sqrt * sqrt + c / sqrt;
+		
+		if (board[r][c] != '.') 
+			return dfs(index + 1, n, board, row, col, block);   
+			
+		for (char ch = '1'; ch <= '9'; ch++) {
+			int num = ch - '1';
+			if (row[r][num] || col[c][num] || block[bIdx][num]) continue; 
+			
+			board[r][c] = ch;
+			row[r][num] = true;
+			col[c][num] = true;
+			block[bIdx][num] = true;
+				
+			if (dfs(index + 1, n, board, row, col, block)) return true;
+				
+			board[r][c] = '.';
+			row[r][num] = false;
+			col[c][num] = false;
+			block[bIdx][num] = false;
+		}
+		
+		return false;
+	}
+	
+	
+	public static void print(int[][] board, int N) 
+	{ 	
+		for (int r = 0; r < N; r++) 
+		{ 
+			for (int d = 0; d < N; d++) 
+			{ 
+				System.out.print(board[r][d]); 
+				System.out.print(" "); 
+			} 
+			System.out.print("\n"); 
+			
+			if ((r + 1) % (int) Math.sqrt(N) == 0) 
+			{ 
+				System.out.print(""); 
+			} 
+		} 
+	} 
+
+
+
+

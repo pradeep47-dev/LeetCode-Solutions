@@ -1,0 +1,157 @@
+Add Two Numbers
+
+You are given two non-empty linked lists representing two non-negative integers. The digits are stored in reverse order and each of their nodes contain a single digit. Add the two numbers and return it as a linked list.
+
+You may assume the two numbers do not contain any leading zero, except the number 0 itself.
+
+Example:
+
+Input: (2 -> 4 -> 3) + (5 -> 6 -> 4)
+Output: 7 -> 0 -> 8
+Explanation: 342 + 465 = 807.
+
+
+// Digits are Reversed - Iterative
+
+	Node addTwoLists(Node l1, Node l2) { 
+	
+		if(l1 == null) return l2;
+        if(l2 == null) return l1;
+        
+        int carry = 0; 
+        ListNode dummy = new ListNode(0);
+        ListNode result = dummy;
+       
+        while(l1 != null || l2!= null){
+            
+            int x = l1 == null ? 0 : l1.val;
+            int y = l2 == null ? 0 : l2.val;
+            int sum = carry + x + y;            
+            carry = sum / 10;
+            result.next = new ListNode(sum % 10);            
+            
+            if(l1 != null) l1 = l1.next;
+            if(l2 != null) l2 = l2.next;
+            result = result.next;
+        }
+        
+        if(carry > 0) result.next = new ListNode(carry);
+        
+        return dummy.next;
+	} 
+
+// Recurive
+
+	private ListNode addListsRecursive(ListNode node1, ListNode node2, int carry) {
+		if (node1 == null && node2 == null) {
+			if (carry > 0){
+				return new ListNode(carry);
+			}
+			return null;
+		}	
+		
+		int value1 = (node1 != null) ? node1.value : 0;
+		int value2 = (node2 != null) ? node2.value : 0;	
+			
+		int sum = (value1 + value2 + carry) % 10;
+		carry   = (value1 + value2 + carry) / 10;	
+			
+		ListNode currentHead = new ListNode(sum);	
+		ListNode node1Next = (node1 != null) ? node1.next : null;
+		ListNode node2Next = (node2 != null) ? node2.next : null;
+		
+		currentHead.next = addListsRecursive(node1Next, node2Next, carry);
+		return currentHead;
+	}
+
+
+
+// Digits are Not Reversed - Iterative
+	
+Input: (7 -> 2 -> 4 -> 3) + (5 -> 6 -> 4)
+Output: 7 -> 8 -> 0 -> 7
+
+
+	public ListNode addTwoNumbers(ListNode l1, ListNode l2) {
+        if(l1 == null) return l2;
+        if(l2 == null) return l1;
+        
+        Stack<Integer> s1= new Stack<Integer>();
+        Stack<Integer> s2 = new Stack<Integer>();
+        
+        while(l1 != null) {
+            s1.push(l1.val);
+            l1 = l1.next;
+        }
+        
+        while(l2 != null) {
+            s2.push(l2.val);
+            l2 = l2.next;
+        }
+        
+        int sum =0;
+        ListNode result = new ListNode(0);
+        while(s1.size() > 0 || s2.size() >0) {
+            sum += s1.isEmpty() ? 0 : s1.pop();
+            sum += s2.isEmpty() ? 0 : s2.pop();
+            
+            result.val = sum % 10;
+            ListNode node = new ListNode(sum / 10);
+            node.next = result;
+            result = node;
+            sum = sum / 10;
+        }
+        
+        return result.val > 0 ? result : result.next;
+    }
+	
+
+// recursive solution by counting the difference of length
+
+
+
+	public ListNode addTwoNumbers(ListNode l1, ListNode l2) {
+        int size1 = getLength(l1);
+        int size2 = getLength(l2);
+        ListNode head = new ListNode(1);
+		
+        // Make sure l1.length >= l2.length
+        head.next = size1 < size2 ? helper(l2, l1, size2 - size1) : helper(l1, l2, size1 - size2);
+        
+		// Handle the first digit
+        if (head.next.val > 9) {
+            head.next.val = head.next.val % 10;
+            return head;
+        }
+        return head.next;
+    }
+	
+    // get length of the list
+    public int getLength(ListNode l) {
+        int count = 0;
+        while(l != null) {
+            l = l.next;
+            count++;
+        }
+        return count;
+    }
+	
+    // offset is the difference of length between l1 and l2
+    public ListNode helper(ListNode l1, ListNode l2, int offset) {
+        if (l1 == null) return null;
+        
+		// check whether l1 becomes the same length as l2
+        ListNode result = offset == 0 ? new ListNode(l1.val + l2.val) : new ListNode(l1.val);
+        ListNode post = offset == 0 ? helper(l1.next, l2.next, 0) : helper(l1.next, l2, offset - 1);
+        
+		// handle carry 
+        if (post != null && post.val > 9) {
+            result.val += 1;
+            post.val = post.val % 10;
+        }
+        
+		// combine nodes
+        result.next = post;
+        return result;
+    }
+	

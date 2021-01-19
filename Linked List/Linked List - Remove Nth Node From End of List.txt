@@ -1,0 +1,72 @@
+Remove Nth Node From End of List
+
+Given a linked list, remove the n-th node from the end of list and return its head.
+
+Example:
+
+Given linked list: 1->2->3->4->5, and n = 2.
+
+After removing the second node from the end, the linked list becomes 1->2->3->5.
+
+// Iterative
+
+    public ListNode removeNthFromEnd(ListNode head, int n) {
+        ListNode node = new ListNode(0);
+        node.next = head;
+        ListNode first = node;
+        ListNode second = node;
+        for(int i=0;i<=n;i++) {
+            first = first.next;
+        }
+        
+        while(first != null) {
+            first = first.next;
+            second = second.next;
+        }
+        
+        second.next = second.next.next;
+        return node.next;        
+    }
+
+// Recursive
+
+    public ListNode removeNthFromEnd(ListNode head, int n) {
+        if (head == null) return null;
+        ListNode dummy = new ListNode(0);
+        dummy.next = head;
+        helper(dummy, n);
+        return dummy.next;
+    }
+    
+    private int helper(ListNode head, int n) {
+        if (head == null) return 0;
+        int current = 1 + helper(head.next, n);
+		
+        if (current == n + 1) {
+            head.next = head.next.next;
+        }
+        return current;
+    }
+	
+Remove all elements from a linked list of integers that have value val.
+
+Example:
+
+Input:  1->2->6->3->4->5->6, val = 6
+Output: 1->2->3->4->5
+
+
+
+	public ListNode removeElements(ListNode head, int val) {
+         if(head == null) return head;
+        
+        ListNode node = head;
+        while(node != null) {
+            
+            while(node.next != null && node.next.val == val) {
+                node.next = node.next.next;
+            }
+            node = node.next;
+        }
+        return head.val == val ? head.next : head;
+    }

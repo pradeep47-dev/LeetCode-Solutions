@@ -1,0 +1,42 @@
+Remove Zero Sum Consecutive Nodes from Linked List
+
+Given the head of a linked list, we repeatedly delete consecutive sequences of nodes that sum to 0 until there are no such sequences.
+
+Example 1:
+
+Input: head = [1,2,-3,3,1]
+Output: [3,1]
+Note: The answer [1,2,1] would also be accepted.
+
+Example 2:
+
+Input: head = [1,2,3,-3,4]
+Output: [1,2,4]
+
+
+// Assume the input is an array.
+
+// Iterate for the first time, calculate the prefix sum, and save the it to seen[prefix] HashMap
+
+// Iterate for the second time, calculate the prefix sum, and directly skip to last occurrence of this prefix
+
+	public ListNode removeZeroSumSublists(ListNode head) {
+        ListNode node = new ListNode(0);
+        node.next = head;
+        
+        int prefix = 0;
+        Map<Integer, ListNode> seenMap = new HashMap<>();
+              
+        for(ListNode i=node; i!= null; i = i.next) {
+            prefix += i.val;
+            seenMap.put(prefix, i);
+        }
+        
+        prefix = 0;
+        for(ListNode i=node; i!= null; i = i.next) {
+            prefix += i.val;
+            i.next = seenMap.get(prefix).next;
+        }
+        
+        return node.next;
+    }
