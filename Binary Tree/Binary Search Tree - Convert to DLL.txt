@@ -1,0 +1,107 @@
+Convert a Binary Search Tree to a sorted Circular Doubly-Linked List in place.
+
+You can think of the left and right pointers as synonymous to the predecessor and successor pointers in a 
+doubly-linked list. 
+
+We want to do the transformation in place. After the transformation, the left pointer of the tree node 
+should point to its predecessor, and the right pointer should point to its successor. You should return the pointer to the smallest element of the linked list.
+ 
+Example :
+
+Input: root = [4,2,5,1,3]
+
+Output: [1,2,3,4,5]
+
+
+// Recursive Inorder Traversal - using a dummy node - BST to DLL
+
+	Node prev = null;
+	
+    public Node treeToDoublyList(Node root) {
+        if (root == null) return null;
+        
+	    Node dummy = new Node(0, null, null);
+	    prev = dummy;
+	    InOrder(root);
+	  
+	    prev.right = dummy.right;     //connect head and tail
+	    dummy.right.left = prev;
+	    return dummy.right;
+    }
+    
+    private void InOrder (Node cur) {
+	    if (cur == null) return;
+        
+	    InOrder(cur.left);
+		
+	    prev.right = cur;	//connect head and tail
+	    cur.left = prev;
+	    prev = cur;
+	    InOrder(cur.right);
+    }
+	
+
+// Iterative solution using stack:
+
+    public Node treeToDoublyList(Node root) {
+        if (root == null) {
+            return null;
+        }
+        Node cur = root;
+        Node start = root;
+        while (start.left != null) {
+            start = start.left;
+        }
+        Node prev = null;
+        Stack<Node> stack = new Stack<Node>();
+        while (!stack.isEmpty() || cur != null) {
+            while (cur != null) {
+                stack.push(cur);
+                cur = cur.left;
+            }
+            cur = stack.pop();
+            if (prev != null) {
+                prev.right = cur;
+                cur.left = prev;
+            }
+            prev = cur;
+            cur = cur.right;
+        }
+        start.left = prev;
+        prev.right = start;
+        return start;
+    }
+
+
+// Binary Tree to DoubleLinkedList - Recursive
+
+   public ListNode head; 
+   public static ListNode prev = null; 
+   
+   public void BinaryTree2DoubleLinkedList(TreeNode root) 
+	{ 	
+		if (root == null) 
+		{ 
+			return; 
+		} 
+	
+		BinaryTree2DoubleLinkedList(root.left); 
+	
+		if (prev == null) 
+		{ 
+			head = root; 
+		} 
+		else
+		{ 
+			root.left = prev; 
+			prev.right = root; 
+		} 
+		prev = root; 
+	
+		BinaryTree2DoubleLinkedList(root.right); 
+	} 
+
+   
+   
+   
+    

@@ -1,0 +1,69 @@
+
+Count number of occurrences (or frequency) in a sorted array
+
+Given a sorted array arr[] and a number x, write a function that counts the occurrences of x in arr[]. 
+Expected time complexity is O(Logn)
+
+Examples:
+
+  Input: arr[] = {1, 1, 2, 2, 2, 2, 3,},   x = 2
+  Output: 4 // x (or 2) occurs 4 times in arr[]
+
+  Input: arr[] = {1, 1, 2, 2, 2, 2, 3,},   x = 1
+  Output: 2 
+
+  Input: arr[] = {1, 1, 2, 2, 2, 2, 3,},   x = 4
+  Output: -1 // 4 doesn't occur in arr[] 
+
+
+
+// get the First and Last index of the element using binary search
+// return the difference 
+
+		int[] arr = {1, 2, 2, 3, 3, 3, 3};  
+        int x = 3;  
+        int n = arr.Length; 
+        int c = count(arr, x, n); 
+		
+		static int count(int[] arr, int x, int n)
+        {           
+            int i = first(arr, 0, n - 1, x, n);
+           
+            if (i == -1)
+                return i;
+
+            int j = last(arr, i, n - 1, x, n);
+           
+            return j - i + 1;
+        }
+
+      
+        static int first(int[] arr, int low, int high,int x, int n)
+        {
+            if (low <= high)
+            {               
+                int mid = (low + high) / 2;
+                if ((mid == 0 || x > arr[mid - 1]) && arr[mid] == x)
+                    return mid;
+                else if (arr[mid] < x)
+                    return first(arr, (mid + 1), high, x, n);
+                else
+                    return first(arr, low, (mid - 1), x, n);
+            }
+            return -1;
+        }
+       
+        static int last(int[] arr, int low,int high, int x, int n)
+        {
+            if (low <= high)
+            {               
+                int mid = (low + high) / 2;
+                if ((mid == n - 1 || x < arr[mid + 1]) && arr[mid] == x)
+                    return mid;
+                else if (arr[mid] < x)
+                    return last(arr, (mid + 1), high, x, n);
+                else
+                    return last(arr, low, (mid - 1), x, n);
+            }
+            return -1;
+        }

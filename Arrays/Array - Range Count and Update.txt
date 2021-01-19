@@ -1,0 +1,106 @@
+Queries for count of array elements with values in given range with updates
+
+
+Given an array arr[] of size N and a matrix Q consisting of queries of the following two types:
+
+    1 L R : Print the number of elements lying in the range [L, R].
+    2 i x : Set arr[i] = x
+
+Examples:
+
+    Input: arr[] = {1, 2, 2, 3, 4, 4, 5, 6}, Q = {{1, {3, 5}}, {1, {2, 4}}, {1, {1, 2}}, {2, {1, 7}}, {1, {1, 2}}}
+    Output: 4 5 3 2
+    Explanation:
+    Array elements from the range [3, 5] are {3, 4, 4, 5}
+    Array elements from the range [2, 4] are {2, 2, 3, 4, 4}
+    Array elements from the range [1, 2] are {1, 2, 2}
+    Replacing arr[1] by 7 modifies the array to {1, 7, 2, 3, 4, 4, 5, 6}
+    Elements that lie in range [1, 2] are {1, 2}
+	
+	
+// using Fenwick Tree.
+
+// Construct a Fenwick tree from the given array.
+// Fenwick tree will be represented as an array of size equal to maximum element in the array, 
+// Traverse the array and increase the frequency of every element by calling the update method of Fenwick tree.
+
+// For each query of type (1 L R), call the getSum method of Fenwick tree. getSum(R) – getSum(L – 1)
+
+// For each query of type (2 i x), call the update method of Fenwick tree to increase the frequency of the added element and decrease the count of the element to be replaced.
+
+
+	public class FenwickTree { 	 
+		int[] BIT; 
+		int N; 
+	
+		public FenwickTree(int N) 
+		{ 
+			this.N = N; 
+			BIT = new int[N]; 			 
+		} 	
+		
+		void update(int index, int increment) 
+		{ 
+			while (index < N) { 
+				BIT[index] += increment; 
+					
+				index += (index & -index); 	// Update index to that of parent
+			} 
+		} 
+		
+		int getSum(int index) { 
+			int sum = 0;
+			
+			while (index > 0) { 	
+				sum += BIT[index]; 
+				index -= (index & -index); 
+			} 
+			return sum; 
+		} 
+	}
+	
+	
+	void SolveQuery(int[] arr, int n, int[][] Q) 
+	{ 
+		int N = 100001; 
+	
+		FenwickTree fenTree = new FenwickTree(N); 
+	
+		for (int i = 0; i < n; i++) { 
+			fenTree.update(arr[i], 1); 
+		} 
+	
+		int count = 0; 
+	
+		for (int i = 0; i < Q.length; i++) { 
+			if (Q[i][0] == 1) {
+					 				// get the count of elem in range L and R
+				count = getCount(arr, n, Q[i][1], Q[i][2], fenTree); 
+	
+				System.out.println(count);
+			} 
+			else { 		// set the element
+				setElement(arr, n, Q[i][1], Q[i][2], fenTree); 
+			} 
+		} 
+	} 
+	
+	// Function to set arr[index] = x 
+	void setElement(int[] arr, int n, int index, int x, FenwickTree fenTree) 
+	{ 
+		int removed = arr[index]; 
+		fenTree.update(removed, -1); 
+		arr[index] = x; 
+		fenTree.update(x, 1); 
+	} 
+	
+	// Function to get count of elements that lie in range [l, r] 
+	int getCount(int[] arr, int n, int l, int r, FenwickTree fenTree) 
+	{ 
+		int count = fenTree.getSum(r) - fenTree.getSum(l - 1); 
+		return count; 
+	} 
+	
+
+Time Complexity: O(n*log(N) + Q*log(N))
+Auxiliary Space: O(max m), where max m is the maximum element present in the array.

@@ -1,0 +1,71 @@
+Clone Binary Tree
+
+class CloneTree {
+
+    public NodeWithRandom clone(NodeWithRandom root) {
+
+        if (root == null)
+            return null;
+
+        NodeWithRandom cloneRoot = cloneLeftRight(root);
+        cloneRandom(root, cloneRoot);
+        restoreTree(root, cloneRoot);
+
+        return cloneRoot;
+    }
+
+   
+    private NodeWithRandom cloneLeftRight(NodeWithRandom root) {
+
+        if (root == null)
+            return null;
+
+        NodeWithRandom clone = new NodeWithRandom(root.value);
+      
+        NodeWithRandom left = root.left;
+        
+        root.left = clone;
+        clone.left = left;
+        
+        if (left != null)
+            left.left = cloneLeftRight(left);
+        
+        clone.right = cloneLeftRight(root.right);
+       
+        return clone;
+    }
+   
+    private void cloneRandom(NodeWithRandom root, NodeWithRandom cloneRoot) {
+
+        if (root == null)
+            return;
+
+        if (root.random != null)
+            cloneRoot.random = root.random.left;
+        else
+            cloneRoot.random = null;
+       
+        if (root.left != null && cloneRoot.left != null)
+            cloneRandom(root.left.left, cloneRoot.left.left);
+       
+        cloneRandom(root.right, cloneRoot.right);
+    }
+   
+    private void restoreTree(NodeWithRandom root, NodeWithRandom cloneRoot) {
+
+        if (root == null)
+            return;
+        
+        if (cloneRoot.left != null) {
+            NodeWithRandom clonesLeft = cloneRoot.left.left;
+            root.left = cloneRoot.left;
+            cloneRoot.left = clonesLeft;
+
+        } else
+            root.left = null; 
+        
+        restoreTree(root.left, cloneRoot.left);
+      
+        restoreTree(root.right, cloneRoot.right);
+    }
+}

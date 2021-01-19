@@ -1,0 +1,47 @@
+
+Given arrays containing numbers, find the difference of closest greatest of each number from left and right
+
+3 2 1 7 5
+0 3 2 0 7 => from left (here for number 1 since 2 and 3 are both greater, we pick the closest viz. 2)
+7 7 7 0 0 => from right
+7 4 5 0 7 => difference
+
+
+// Stack to get the left array and right array of greater element
+// then get the difference of right and left array
+
+	private static int[] getDiffGreaterClosest(int[] nums)
+    {
+        int n = nums.Length;
+        if (nums == null || n == 0) return new int[0];
+	
+        int[] left = new int[n];
+        int[] right = new int[n];
+        int[] result = new int[n];
+	
+        Stack<int> stack = new Stack<int>();
+        for (int i = 0; i < n; ++i)
+        {
+            while (stack.size()>0 && nums[stack.Peek()] < nums[i])
+            {
+                left[stack.Pop()] = nums[i];
+            }
+            stack.Push(i);
+        }
+		
+        stack.Clear();
+        for (int i = n - 1; i >= 0; --i)
+        {
+            while (stack.Count > 0 && nums[stack.Peek()] < nums[i])
+            {
+                right[stack.Pop()] = nums[i];
+            }
+            stack.Push(i);
+        }
+	
+        for (int i = 0; i < n; ++i)
+        {
+            result[i] = Math.Abs(left[i] - right[i]);
+        }
+        return result;
+    }

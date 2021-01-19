@@ -1,0 +1,141 @@
+Closest Binary Search Tree Value 
+
+Given a non-empty binary search tree and a target value, find k values in the BST that are closest to the target.
+
+Example:
+
+Input: root = [4,2,5,1,3], target = 3.714286, and k = 2
+
+    4
+   / \
+  2   5
+ / \
+1   3
+
+Output: [4,3]
+
+
+// Return one value
+	
+	public int closestValue(TreeNode root, double target) {
+        int result = root.val;
+        while(root != null) {
+            if(Math.abs(target - root.val) < Math.abs(target - result))
+                result = root.val;
+            
+            root = root.val > target ? root.left : root.right;
+        }
+        return result;
+    }
+	
+	
+// Return K values - InOrder Traversal
+
+    public List<Integer> ClosestKValues(TreeNode root, double target, int k) {
+        List<Integer> res = new ArrayList<>();
+        collect(root, target, k, res);
+        return res;
+    }
+    
+    public void collect(TreeNode root, double target, int k, List<Integer> res)
+    {
+        if (root == null) return;
+        collect(root.left, target, k, res);
+
+        if (res.size() == k)
+        {                
+            if (Math.abs(target - root.val) < Math.abs(target - res.get(0)))
+                res.remove(0);
+            else 
+				return;
+        }
+        res.add(root.val);
+        collect(root.right, target, k, res);
+    }
+
+
+
+/// Balanced Tree
+
+// Build two stack for Predecessor - values before target and successor values after target
+// compare abs diff and get the node values
+
+	public List<int> closestKValues(TreeNode root, double target, int k)
+    {
+        List<int> result = new List<int>();
+        Stack<TreeNode> pred = new Stack<TreeNode>();
+        Stack<TreeNode> suc = new Stack<TreeNode>();
+        buildStack(root, target, true, pred);
+        buildStack(root, target, false, suc);
+		
+        if (pred.size() > 0 && suc.size() > 0 && pred.peek().val == suc.peek().val)
+        {
+            getNext(pred, true);
+        }
+        while (k-- > 0)
+        {
+            if (pred.size() <= 0)
+            {
+                result.Add(getNext(suc, false));
+            }
+            else if (suc.size() <= 0)
+            {
+                result.Add(getNext(pred, true));
+            }
+            else
+            {
+                double predDiff = Math.Abs((double)pred.peek().val - target);
+                double sucDiff = Math.Abs((double)suc.peek().val - target);
+                if (predDiff < sucDiff)
+                {
+                    result.Add(getNext(pred, true));
+                }
+                else
+                {
+                    result.Add(getNext(suc, false));
+                }
+            }
+        }
+        return result;
+    }
+
+    private void buildStack(TreeNode root, double target, bool isPred, Stack<TreeNode> stack)
+    {
+        while (root != null)
+        {
+            if (root.val == target)
+            {
+                stack.Push(root);
+                return;
+            }
+            else if (root.val < target)
+            {
+                if (isPred)
+                {
+                    stack.Push(root);
+                }
+                root = root.right;
+            }
+            else
+            {
+                if (!isPred)
+                {
+                    stack.Push(root);
+                }
+                root = root.left;
+            }
+        }
+    }
+	
+    private int getNext(Stack<TreeNode> stack, bool isPred)
+    {
+        TreeNode cur = stack.Pop();
+        int result = cur.val;
+        cur = isPred ? cur.left : cur.right;
+        while (cur != null)
+        {
+            stack.Push(cur);
+            cur = isPred ? cur.right : cur.left;
+        }
+        return result;
+    }

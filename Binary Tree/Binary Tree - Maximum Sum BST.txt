@@ -1,0 +1,57 @@
+Maximum Sum BST in Binary Tree
+
+Given a binary tree root, the task is to return the maximum sum of all keys of any sub-tree which is also a Binary Search 
+Tree (BST).
+
+Example 1:
+
+Input: root = [1,4,3,2,4,2,5,null,null,null,null,null,null,4,6]
+Output: 20
+Explanation: Maximum sum in a valid Binary search tree is obtained in root node with key equal to 3.
+
+Example 2:
+
+Input: root = [4,3,null,1,2]
+Output: 2
+Explanation: Maximum sum in a valid Binary search tree is obtained in a single root node with key equal to 2.
+
+
+																				// Similar to Validate Binary Search Tree
+																				
+																				// DFS - PreOrder
+																				
+																				int max = 0;
+																				public int maxSumBST(TreeNode root) {       
+																					if (root == null) return 0;        
+																					dfs_PreOrder(root);
+																					return max;	
+																				}
+																				
+																				private int[] dfs_PreOrder(TreeNode root) {
+																					int[] ans = new int[] {root.val, root.val, root.val};									
+																					// Sum, left tree val, right tree val 
+																					
+																					boolean isBST = true;
+																					
+																					if (root.left != null) {
+																						int[] left = dfs_PreOrder(root.left);
+																						if (left == null || root.val <= left[2]) {
+																							isBST = false;
+																						} else {
+																							ans[0] += left[0];
+																							ans[1] = left[1];
+																						}
+																					}
+																					if (root.right != null) {
+																						int[] right = dfs_PreOrder(root.right);
+																						if (right == null || root.val >= right[1]) {
+																							isBST = false;
+																						} else {
+																							ans[0] += right[0];
+																							ans[2] = right[2];
+																						}
+																					}
+																					if (isBST == false) return null;
+																					max = Math.max(max, ans[0]);
+																					return ans;
+																				}

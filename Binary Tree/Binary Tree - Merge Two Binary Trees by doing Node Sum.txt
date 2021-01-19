@@ -1,0 +1,104 @@
+Merge Two Binary Trees by doing Node Sum 
+
+given two binary trees. We need to merge them into a new binary tree. The merge rule is that if two nodes overlap, then sum node values up as the new value of the merged node. Otherwise, the non-null node will be used as the node of new tree.
+
+Example:
+
+Input: 
+     Tree 1            Tree 2                  
+       2                 3                             
+      / \               / \                            
+     1   4             6   1                        
+    /                   \   \                      
+   5                     2   7                  
+
+Output: Merged tree:
+         5
+        / \
+       7   5
+      / \   \ 
+     5   2   7
+
+
+
+// Recursive Algorithm:
+
+    Traverse the tree in Preorder fashion
+    Check if both the tree nodes are NULL
+        If not, then update the value
+    Recur for left subtrees
+    Recur for right subtrees
+    Return root of updated Tree
+
+
+	public Node MergeTrees(Node t1, Node t2) 
+    { 
+        if (t1 == null) return t2; 
+        if (t2 == null) return t1; 
+		
+        t1.data += t2.data; 
+        t1.left = MergeTrees(t1.left, t2.left); 
+        t1.right = MergeTrees(t1.right, t2.right); 
+        return t1; 
+    } 
+	
+	
+// Iterative Algorithm:
+
+    Create a stack
+    Push the root nodes of both the trees onto the stack.
+    While the stack is not empty, perform following steps :
+        Pop a node pair from the top of the stack
+        For every node pair removed, add the values corresponding to the two nodes and update the value of the corresponding node in the first tree
+        If the left child of the first tree exists, push the left child(pair) of both the trees onto the stack.
+        If the left child of the first tree doesn’t exist, append the left child of the second tree to the current node of the first tree
+        Do same for right child pair as well.
+        If both the current nodes are NULL, continue with popping the next nodes from the stack.
+    Return root of updated Tree
+
+
+	
+	public class StackNode 
+	{ 
+		Node l, r; 
+	}
+
+	public Node MergeTrees(Node t1, Node t2) 
+    { 
+        if (t1 == null) return t2; 
+        if (t2 == null) return t1; 
+		
+		Stack<StackNode> s = new Stack<>(); 
+		StackNode temp = new StackNode(); 
+		temp.l = t1; 
+		temp.r = t2; 
+		s.push(temp); 
+		StackNode n = new StackNode(); 
+		while (! s.empty()) 
+		{ 
+			n = s.top(); 
+			s.pop(); 
+			if (n.l == NULL|| n.r == NULL) 
+				continue; 
+			n.l.data += n.r.data; 
+			if (n.l.left == NULL) 
+				n.l.left = n.r.left; 
+			else
+			{ 
+				StackNode t = new StackNode();  
+				t.l = n.l.left; 
+				t.r = n.r.left; 
+				s.push(t); 
+			} 
+			if (n.l.right == NULL) 
+				n.l.right = n.r.right; 
+			else
+			{ 
+				StackNode t = new StackNode(); 
+				t.l = n.l.right; 
+				t.r = n.r.right; 
+				s.push(t); 
+			} 
+		} 
+		return t1; 
+	} 

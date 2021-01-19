@@ -1,0 +1,58 @@
+Optimal Utilization
+
+Given 2 lists a and b. Each element is a pair of integers where the first integer represents the unique id and the second integer represents a value. Your task is to find an element from a and an element form b such that the sum of their values is less or equal to target and as close to target as possible. Return a list of ids of selected elements. If no pair is possible, return an empty list.
+
+Example 1:
+
+Input:
+a = [[1, 2], [2, 4], [3, 6]]
+b = [[1, 2]]
+target = 7
+
+Output: [[2, 1]]
+
+Explanation:
+There are only three combinations [1, 1], [2, 1], and [3, 1], which have a total sum of 4, 6 and 8, respectively.
+Since 6 is the largest sum that does not exceed 7, [2, 1] is the optimal pair.
+
+
+// Sort both arrays
+// using a pointer for each other
+// search from left of first array and last of second array
+
+
+	public int[][] GetPairsWithSumEqualToOrLessThanTarget(int[][] a, int[][] b, int target) {
+                
+        Arrays.sort(a, (x, y) => x[1] - y[1]);
+        Arrays.sort(b, (x, y) => x[1] - y[1]);
+		
+        int i = 0, j = b.length - 1;           
+        int maxSum = Integer.MIN_VALUE; 
+		List<int[]> result = new ArrayList();
+		 
+        while(i < a.length && j >= 0)
+        {
+            int currentSum = a[i][1] + b[j][1];
+            if(currentSum > target)
+            {
+                j--;
+            }
+            else
+            {
+                if(currentSum > maxSum)
+                {
+                    maxSum = currentSum;
+                    result.clear();
+                }
+                               
+                int index = j;
+                while(index >= 0 && b[index][1] == b[j][1])
+                {
+                    result.add(new int[] { a[i][0], b[index][0] });
+                    index--;
+                }
+                i++;
+            }
+        }
+        return result.toArray(new int[result.size()][]);
+    }

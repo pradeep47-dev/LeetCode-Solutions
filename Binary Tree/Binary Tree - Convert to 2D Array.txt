@@ -1,0 +1,53 @@
+
+Print a binary tree in an m*n 2D string array following these rules:
+
+Example 1:
+
+Input:
+     1
+    /
+   2
+Output:
+[["", "1", ""],
+ ["2", "", ""]]
+
+
+// Get Height of tree
+// calulculate the column of tree - Width
+// preOrder traversal - insert val to result
+
+
+	public List<List<String>> printTree(TreeNode root) {
+        List<List<String>> result = new ArrayList<>();
+        
+        int height = GetHeight(root);
+        int columns = (int) (Math.pow(2, height) - 1);
+        
+        List<String> row = new ArrayList<String>(Collections.nCopies(columns, ""));
+        
+        for(int i=0;i<height;i++)
+        {
+            result.add(new ArrayList<>(row));
+        }
+        
+        AddTreeNodes(root, result, 0 ,0, columns -1);
+        return result;
+    }
+    
+    public void AddTreeNodes(TreeNode root, List<List<String>> result, int index, int left, int right)
+    {
+       if(root == null) return;
+        
+        int mid = (left + right) / 2;
+        result.get(index).set(mid, String.valueOf(root.val));
+        AddTreeNodes(root.left, result, index + 1 , left, mid);
+        AddTreeNodes(root.right, result, index + 1 , mid + 1, right);
+    }
+    
+    public int GetHeight(TreeNode root)
+    {
+        if(root == null) return 0;
+        return 1 + Math.max(GetHeight(root.left), GetHeight(root.right));
+    }
+
+

@@ -1,0 +1,85 @@
+Rank of an element in a stream
+
+	public static void main(String[] args)  
+	{ 
+		int a[] = {5, 1, 14, 4, 15, 9, 7, 20, 11};  
+		int key = 20;  
+		int n = a.length;  
+		int count = 0;  
+		for(int i = 0; i < n; i++)  
+		{  
+			if(a[i] <= key)  
+			{  
+				count += 1;  
+			}  
+		}  
+		System.out.println("Rank of " + key +  " in stream is: " + (count - 1)); 
+	} 
+
+
+// Binary search tree 
+
+	public static void main(String[] args)  
+	{  
+		int arr[] = { 5, 1, 4, 4, 5, 9, 7, 13, 3 };  
+		int n = arr.length;  
+		int x = 4;  
+	
+		Node root = null;  
+		for (int i = 0; i < n; i++)  
+			root = insert(root, arr[i]);  
+	
+		System.out.println("Rank of " + x + " in stream is : "+ getRank(root, x)); 
+	}  
+	
+	static class Node {  
+		int data;  
+		Node left = null, right = null;  
+		int leftSize = 0;  
+		
+		public Node(int data)  
+		{  
+			this.data = data;  
+		}  
+	}
+	
+	// Inserting a new Node.  
+	static Node insert(Node root, int data)  
+	{  
+		if (root == null)  
+			return Node(data);  
+	
+		// Updating size of left subtree.  
+		if (data <= root.data) {  
+			root.left = insert(root.left, data);  
+			root.leftSize++;  
+		}  
+		else
+			root.right = insert(root.right, data);  
+	
+		return root;  
+	}  
+		
+	static int getRank(Node root, int x)  
+	{      
+		if (root.data == x)  
+			return root.leftSize;    
+	
+		if (x < root.data) {  
+			if (root.left == null)  
+				return -1;  
+			else
+				return getRank(root.left, x);  
+		}    
+		
+		else {  
+			if (root.right == null)  
+				return -1;  
+			else {  
+				int rightSize = getRank(root.right, x);  
+				return root.leftSize + 1 + rightSize;  
+			}  
+		}  
+	}  
+  
+

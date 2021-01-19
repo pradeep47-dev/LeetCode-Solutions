@@ -1,0 +1,58 @@
+Find distance between two nodes of a Binary Tree
+
+Distance between two nodes is the minimum number of edges to be traversed to reach one node from other.
+
+The distance between two nodes can be obtained in terms of lowest common ancestor. Following is the formula.
+
+Dist(n1, n2) = Dist(root, n1) + Dist(root, n2) - 2 * Dist(root, lca) 
+'n1' and 'n2' are the two given keys
+'root' is root of given Binary Tree.
+'lca' is lowest common ancestor of n1 and n2
+Dist(n1, n2) is the distance between n1 and n2.
+
+
+// find Lowest Common Ancestor node
+// Sum both distance from LCA node
+	
+	public static int findDistance(Node root, int a, int b) 
+    { 
+        Node lca = LCA(root, a, b); 
+  
+        int d1 = findLevel(lca, a, 0); 
+        int d2 = findLevel(lca, b, 0); 
+  
+        return d1 + d2; 
+    } 
+	
+	public static Node LCA(Node root, int n1, int n2)  
+    { 
+        if (root == null) 
+            return root; 
+        if (root.value == n1 || root.value == n2) 
+            return root; 
+  
+        Node left = LCA(root.left, n1, n2); 
+        Node right = LCA(root.right, n1, n2); 
+  
+        if (left != null && right != null) 
+            return root; 
+        if (left != null) 
+            return LCA(root.left, n1, n2); 
+        else
+            return LCA(root.right, n1, n2); 
+    } 
+  
+    
+    public static int findLevel(Node root, int value, int level) 
+    { 
+        if (root == null) 
+            return -1; 
+        if (root.value == value) 
+            return level; 
+        int left = findLevel(root.left, value, level + 1); 
+        if (left == -1) 
+            return findLevel(root.right, value, level + 1); 
+        return left; 
+    } 
+  
+    

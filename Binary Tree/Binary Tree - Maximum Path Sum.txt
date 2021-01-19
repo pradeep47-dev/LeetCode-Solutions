@@ -1,0 +1,87 @@
+Binary Tree Maximum Path Sum
+
+Given a non-empty binary tree, find the maximum path sum.
+
+For this problem, a path is defined as any sequence of nodes from some starting node to any node in the tree along the parent-child connections. The path must contain at least one node and does not need to go through the root.
+
+Example 1:
+
+Input: [1,2,3]
+
+       1
+      / \
+     2   3
+
+Output: 6
+
+Example 2:
+
+Input: [-10,9,20,null,null,15,7]
+
+   -10
+   / \
+  9  20
+    /  \
+   15   7
+
+Output: 42
+
+// DFS - Recursive
+
+public class Solution {
+    public int Maxval = int.MinValue;
+    
+    public int MaxPathSum(TreeNode root) {        
+        if(root ==null) return 0;
+        Postorder(root);
+        return Maxval;
+    }
+    
+    public int Postorder(TreeNode root) {
+        
+        if(root == null) return 0;
+        
+        int leftMax = Math.Max(0, Postorder(root.left));
+        int rightMax = Math.Max(0, Postorder(root.right));
+        
+        int Val = root.val + leftMax + rightMax;
+        
+        Maxval = Math.Max(Maxval, Val);
+        
+        return root.val + Math.Max(leftMax,rightMax);
+    }
+}
+
+
+// BFS - Iterative
+
+
+	public int maxPathSum(TreeNode root) {
+        HashMap<TreeNode, Integer> map = new HashMap<>();
+        map.put(null, 0);
+        
+        Deque<TreeNode> stack = new ArrayDeque<TreeNode>();        
+        stack.push(root);
+        
+        int max = Integer.MIN_VALUE;
+        
+        while (!stack.isEmpty()) {
+            TreeNode node = stack.pop();
+            
+            if (!map.containsKey(node)) {
+                map.put(node, node.val);
+                stack.push(node);
+                if (node.left != null) stack.push(node.left);
+                if (node.right != null) stack.push(node.right);
+                continue;
+            }
+            
+            int left = Math.max(map.get(node.left), 0);
+            int right = Math.max(map.get(node.right), 0);
+                        
+            max = Math.max(max, node.val + left + right);
+            map.put(node, node.val + Math.max(left, right));
+        }
+        
+        return max;
+    }

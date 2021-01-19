@@ -1,0 +1,91 @@
+Intersection of Two Arrays
+
+Given two arrays, write a function to compute their intersection.
+
+Example 1:
+
+Input: nums1 = [1,2,2,1], nums2 = [2,2]
+Output: [2]
+
+Example 2:
+
+Input: nums1 = [4,9,5], nums2 = [9,4,9,8,4]
+Output: [9,4]
+
+	public int[] intersection(int[] nums1, int[] nums2) {       
+        HashSet<Integer> hash1 = new HashSet<>();
+        HashSet<Integer> hash2 = new HashSet<>();
+        
+        for(int num : nums1)
+            hash1.add(num);
+              
+        for(int num : nums2)
+            if(hash1.contains(num))
+                hash2.add(num);
+        
+        int[] arr = new int[hash2.size()];
+        int i = 0;
+        for(int num : hash2)
+            arr[i++] = num;
+        return arr;        
+    } 
+	
+
+
+Intersection of Two Arrays II
+
+Given two arrays, write a function to compute their intersection.
+
+Example 1:
+
+Input: nums1 = [1,2,2,1], nums2 = [2,2]
+Output: [2,2]
+
+Example 2:
+
+Input: nums1 = [4,9,5], nums2 = [9,4,9,8,4]
+Output: [4,9]
+
+Note:
+
+    Each element in the result should appear as many times as it shows in both arrays.
+    The result can be in any order.
+
+Follow up:
+
+    What if the given array is already sorted? How would you optimize your algorithm?
+    What if nums1's size is small compared to nums2's size? Which algorithm is better?
+    What if elements of nums2 are stored on disk, and the memory is limited such that you cannot load all elements into the memory at once?
+
+
+// HashMap to save the count of the elements in array 1
+// loop through array 2 to know the common elements
+
+	public int[] intersect(int[] nums1, int[] nums2) {
+        int m = nums1.length;
+        int n = nums2.length;
+        
+        if(m > n) return intersects(nums1, nums2);
+        else return intersects(nums2, nums1);
+    }
+    
+    public int[] intersects(int[] nums1, int[] nums2) {
+        HashMap<Integer, Integer> hash = new HashMap<Integer, Integer>();
+        for(int num : nums1) {
+            hash.put(num, hash.getOrDefault(num,0)+1);
+        }
+                    
+        List<Integer> list = new ArrayList<>();
+        for(int num : nums2)
+            if(hash.containsKey(num) && hash.get(num) > 0) {
+                list.add(num);
+                hash.put(num, hash.get(num) - 1);
+            }
+                
+        
+        int[] arr = new int[list.size()];
+        for(int i=0;i<list.size();i++)
+            arr[i] = list.get(i);
+        
+        return arr;
+    }

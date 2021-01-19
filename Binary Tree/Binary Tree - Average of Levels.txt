@@ -1,0 +1,75 @@
+Average of Levels in Binary Tree
+
+Given a non-empty binary tree, return the average value of the nodes on each level in the form of an array.
+
+Example 1:
+
+Input:
+    3
+   / \
+  9  20
+    /  \
+   15   7
+Output: [3, 14.5, 11]
+Explanation:
+The average value of nodes on level 0 is 3,  on level 1 is 14.5, and on level 2 is 11. Hence return [3, 14.5, 11].
+
+
+														// Iterative - Level Order Traversal
+														
+															public List<double> AverageOfLevels(TreeNode root) {
+																
+																List<Double> result = new ArrayList<Double>();        
+																Queue<TreeNode> que = new LinkedList<TreeNode>();
+																que.add(root);
+																double sum = 0;
+																
+																while(!que.isEmpty())
+																{   
+																	int size = que.size();		
+																	sum = 0;
+																	
+																	for(int i = size; i>0; i--)
+																	{
+																		TreeNode temp = que.poll();
+																		
+																		sum += temp.val;
+																		
+																		if(temp.left!= null)
+																			que.add(temp.left);
+																		if(temp.right!= null)
+																			que.add(temp.right);
+																	}
+																	result.add(sum / ((double)size));
+																}
+																
+																return result;
+															}   
+															
+														
+														// PreorderDFS - Recursion
+														
+															public List<double> AverageOfLevels(TreeNode root) {
+																Map<Integer, List<double>> Map = new HashMap<>();
+																PreorderDFS(root, Map, 0);
+																
+																List<double> result = new ArrayList<double>();    
+																
+																for(int key : Map.keySet())
+																{
+																	result.add(Map.get(key).average());
+																}
+																return result;
+															}
+															
+															public void PreorderDFS(TreeNode root, HashMap<Integer, List<double>> Map, int lvl)
+															{
+																if(root == null) return;
+																
+																Map.putIfAbsent(lvl, new ArrayList<>());         
+																Map.get(lvl).add(root.val);
+																
+																PreorderDFS(root.left, Map, lvl +1);
+																PreorderDFS(root.right, Map, lvl +1);
+																return;
+															}

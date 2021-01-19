@@ -1,0 +1,62 @@
+Shortest Distance to Target Color
+
+You are given an array colors, in which there are three colors: 1, 2 and 3.
+
+You are also given some queries. Each query consists of two integers i and c, 
+return the shortest distance between the given index i and the target color c. If there is no solution return -1.
+ 
+
+Example 1:
+
+Input: colors = [1,1,2,1,3,2,2,3,3], queries = [[1,3],[2,2],[6,1]]
+Output: [3,0,3]
+Explanation: 
+The nearest 3 from index 1 is at index 4 (3 steps away).
+The nearest 2 from index 2 is at index 2 itself (0 steps away).
+The nearest 1 from index 6 is at index 3 (3 steps away).
+
+
+// Search from both direction in Color array for each query
+
+    public List<Integer> ShortestDistanceColor(int[] colors, int[][] queries) {        
+        if (colors == null || colors.length == 0) {
+            return new ArrayList<>();
+        }
+		int n = colors.length;
+		
+        Map<Integer, Map<Integer, Integer>> map = new HashMap<>();
+        List<Integer> result = new ArrayList<>();
+		
+        for (int[] q : queries) {
+            int index = q[0];
+            int value = q[1];
+            
+            if (map.containsKey(index) && map.get(index).containsKey(value)) {
+                result.add(map.get(index).get(value));
+                continue;
+            }
+            int i = index;
+            int j = index;
+            int size = result.size();
+            while (i >= 0 || j < n) {	
+                if (i >= 0 && colors[i] == value) {
+                    result.add(index - i);
+                    break;
+                }
+                if (j < n && colors[j] == value) {
+                    result.add(j - index);
+                    break;
+                }
+                i--;
+                j++;
+            }
+            if (size == result.size()) {
+                result.add(-1);
+            }
+            
+            map.putIfAbsent(index, new HashMap<>());            
+            map.get(index).put(value, result.get(result.size() - 1));
+        }
+		
+        return result;       
+    }

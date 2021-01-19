@@ -1,0 +1,67 @@
+Split Array into Fibonacci Sequence
+
+Given a string S of digits, such as S = "123456579", we can split it into a Fibonacci-like sequence [123, 456, 579].
+
+Formally, a Fibonacci-like sequence is a list F of non-negative integers such that:
+
+    F.length >= 3
+    F[i] + F[i+1] = F[i+2] for all 0 <= i < F.length - 2.
+
+Return any Fibonacci-like sequence split from S, or return [] if it cannot be done.
+
+Example 1:
+
+Input: "123456579"
+Output: [123,456,579]
+
+Example 2:
+
+Input: "11235813"
+Output: [1,1,2,3,5,8,13]
+
+Example 3:
+
+Input: "112358130"
+Output: []
+Explanation: The task is impossible.
+
+Example 4:
+
+Input: "0123"
+Output: []
+Explanation: Leading zeroes are not allowed, so "01", "2", "3" is not valid.
+
+/// DFS with Backtracking
+
+	public List<Integer> splitIntoFibonacci(String S) {
+        List<Integer> result = new ArrayList<>();
+        dfs(S, result, 0);
+        return result;
+    }
+    
+    public boolean dfs(String S, List<Integer> result, int idx) {
+        if(idx == S.length() && result.size() >= 3)
+            return true;
+        
+        for(int i=idx;i<S.length();i++) {
+            if(S.charAt(idx) == '0' && i > idx)
+                break;
+            
+            long num = Long.parseLong(S.substring(idx, i+1));
+            if(num > Integer.MAX_VALUE)
+                break;
+            
+            int size = result.size();
+            if(size >= 2 && num > result.get(size-1) + result.get(size-2))
+                break;
+            
+            if(size <= 1 || num == result.get(size-1) + result.get(size-2)) {
+                result.add((int)num);
+                if(dfs(S, result, i+1))
+                    return true;
+                
+                result.remove(result.size()-1);
+            }
+        }
+        return false;
+    }

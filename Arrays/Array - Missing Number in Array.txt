@@ -1,0 +1,172 @@
+//////  First Missing Positive
+
+Given an unsorted integer array, find the smallest missing positive integer.
+
+Example 2:
+
+Input: [3,4,-1,1]
+Output: 2
+
+Example 3:
+
+Input: [7,8,9,11,12]
+Output: 1
+
+// In-place swap, higher elements to end
+
+	public int firstMissingPositive(int[] nums) {
+		int n = nums.length;
+		for(int i=0;i<n;i++) {
+			if(nums[i] > 0 && nums[i] <= n && nums[i] != nums[nums[i] - 1]) {
+				swap(nums, i, nums[i] - 1);
+				i--;
+			}
+		}
+		
+		for(int i=0;i<n;i++) {
+			if(nums[i] != i+1)
+				return i+1;
+		}
+		return n+1;
+	}
+	
+	public void swap(int[] A, int i, int j) {
+		int temp = A[i];
+		A[i] = A[j];
+		A[j] = temp;
+	}
+
+
+/*************/    Kth Missing Element in Sorted Array
+
+Given a sorted array A of unique numbers, find the K-th missing number starting from the leftmost number of the array.
+
+Example 1:
+
+Input: A = [4,7,9,10], K = 1
+Output: 5
+Explanation: 
+The first missing number is 5.
+
+Example 3:
+
+Input: A = [1,2,4], K = 3
+Output: 6
+Explanation: 
+The missing numbers are [3,5,6,7,...], hence the third missing number is 6.
+
+// Binary Search
+
+	public int MissingElement(int[] nums, int k) {
+		
+		int start = 0, end = nums.length;        
+		
+		while(start < end) 
+		{                     
+			int mid = start + (end - start) / 2 ;
+			int count = nums[mid] - mid - k;
+			
+			if(count < nums[0]){
+				start = mid + 1;                     
+			} 
+			else {
+			end = mid; 
+			}
+		}
+		return nums[0] + start + k - 1;
+	}  
+	
+
+/////// Missing Number
+
+Given an array containing n distinct numbers taken from 0, 1, 2, ..., n, find the one that is missing from the array.
+
+Example:
+
+Input: [9,6,4,2,3,5,7,0,1]
+Output: 8
+
+	public int MissingNumber(int[] nums) {
+		int n = nums.Length;
+		int sum = (n * (n + 1)) / 2;
+		
+		for(int i=0;i<n;i++)
+		{
+			sum -= nums[i];            
+		}
+		return sum;
+	}
+	
+
+///  Find the Missing Number in a sorted array --- Divide and conquer
+
+Example:
+
+Input: [0,1,2,4,5]
+Output: 3
+
+	static int search(int[] arr) 
+	{ 
+		int a = 0, b = arr.Length - 1; 
+		int mid = 0; 
+		while (a < b) 
+		{ 
+			mid = (a + b) / 2; 
+			if ((arr[a] - a) != (arr[mid] - mid)) 
+				b = mid; 
+			else if ((arr[b] - b) != (arr[mid] - mid)) 
+				a = mid; 
+		} 
+		return (arr[mid] + 1); 
+	}	
+
+
+Find All Numbers Missing in an Array (duplicates)
+
+Given an array of integers where 1 ≤ a[i] ≤ n (n = size of array), some elements appear twice and others appear once.
+
+Find all the elements of [1, n] inclusive that do not appear in this array.
+
+Could you do it without extra space and in O(n) runtime? You may assume the returned list does not count as extra space.
+
+Example:
+
+Input:
+[4,3,2,7,8,2,3,1]
+
+Output:
+[5,6]
+
+
+	public List<Integer> FindDisappearedNumbers(int[] nums) {
+		
+		List<Integer> result = new ArrayList<Integer>();
+		int n = nums.length;
+		
+		for(int i=0;i<n;i++)
+		{
+			int val = Math.Abs(nums[i]) - 1;
+			
+			if(nums[val] > 0)
+			{
+				nums[val] = -nums[val]; 
+				// Make the index of number negative in array
+			}
+		}
+		
+		for(int i=0;i<n;i++)
+		{
+			if(nums[i] > 0)
+			{
+				result.add(i+1);  
+				// if that index is left out add the index
+			}
+		}
+		return result;
+	}
+	
+
+
+ 
+	
+	

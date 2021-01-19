@@ -1,0 +1,136 @@
+Convert BST to Greater Tree
+
+Given a Binary Search Tree (BST), convert it to a Greater Tree such that every key of the original BST is changed to the original key plus sum of all keys greater than the original key in BST.
+
+Example:
+
+Input: The root of a Binary Search Tree like this:
+              5
+            /   \
+           2     13
+
+Output: The root of a Greater Tree like this:
+             18
+            /   \
+          20     13
+
+
+
+// Recursive 
+
+	private int sum = 0;
+    
+    public TreeNode convertBST(TreeNode root) {
+        if (root != null) {
+            convertBST(root.right);
+            sum += root.val;
+            root.val = sum;
+            convertBST(root.left);
+        }
+        return root;
+    }
+	
+
+// O(1) space solution - Reverse Morris In-order Traversal
+
+    public TreeNode ConvertBST(TreeNode root) {
+        if(root == null) return root;
+        TreeNode node = root;
+        int sum = 0;
+        while(node != null)
+        {		
+            // If there is no right subtree, then we can visit this node and continue traversing left.
+            
+            if(node.right == null)
+            {
+                node.val += sum;
+                sum = node.val;
+                node = node.left;
+            }
+            else
+            {			  
+             // If there is a right subtree, then there is at least one node that has a greater value than the current one.
+                 
+                TreeNode curr = node.right;	
+                while(curr.left !=null && curr.left != node)
+                    curr = curr.left;
+                
+				// If the left subtree is null, then we have never been here before.
+                if(curr.left == null)
+                {
+                    curr.left = node;
+                    node = node.right;
+                }
+                else
+                {
+				// If there is a left subtree, it is a link that we created on a
+                    previous pass, so we should unlink it and visit this node.
+                 
+                    curr.left = null;
+                    node.val += sum;
+                    sum = node.val;
+                    node = node.left;
+                }
+            }
+        }
+        return root;
+    }
+	
+	
+	
+Largest Common Number in 2 BSTs
+
+Write code that given the root of two BSTs of integers, finds the greatest common integer in them.
+
+Given:
+
+  5
+ /  \ 
+3   7
+
+  9
+ / \
+5   12
+  \
+   7
+
+Returns:
+7
+
+
+ * Traverse both BSTs in descending order. 
+ * Move ahead in the bst with greater value.
+ * Return when the values in both the BSTs is same.
+
+
+	void pushNodeAndRightSubtreeToStack(stack<TreeNode> nodeStack, TreeNode root) {
+        while(root != NULL ) {
+            nodeStack.push(root);
+            root = root.right;
+        }
+    }
+
+    int findLargestNumber(TreeNode root1, TreeNode root2) {
+        stack<TreeNode> nodeStack1, nodeStack2;
+        pushNodeAndRightSubtreeToStack(nodeStack1, root1);
+        pushNodeAndRightSubtreeToStack(nodeStack2, root2);
+
+        while( !nodeStack1.empty() && !nodeStack2.empty() ) {
+            TreeNode node1 = nodeStack1.top(), node2 = nodeStack2.top();
+
+            if(node1.val == node2.val) {
+                return node1->val;
+            }
+            if(node1.val < node2.val) {
+                nodeStack2.pop();
+                pushNodeAndRightSubtreeToStack(nodeStack2, node2.left);
+            } else {
+                nodeStack1.pop();
+                pushNodeAndRightSubtreeToStack(nodeStack1, node1.left);
+            }
+        } 
+
+        return -1;
+    }
+
+

@@ -1,0 +1,56 @@
+Remove Duplicates from Sorted Array
+
+Given a sorted array nums, remove the duplicates in-place such that each element appears only once and returns the new length.
+
+Do not allocate extra space for another array, you must do this by modifying the input array in-place with O(1) extra memory.
+
+Example 1:
+
+Given nums = [1,1,2],
+
+Your function should return length = 2, with the first two elements of nums being 1 and 2 respectively.
+
+
+
+											public int removeDuplicates(int[] nums) {
+												if(nums.length == 0) return 0;
+												int c = 0;
+												
+												for(int i=0;i<nums.length;i++) {
+													if(nums[i] != nums[c]){
+														c++;
+														nums[c] = nums[i];
+													}
+												}
+												
+												return c+1;
+											}
+	
+	
+
+Remove Duplicates from Sorted Array II - Two Duplicates
+
+Given a sorted array nums, remove the duplicates in-place such that duplicates appeared at most twice and return the new length.
+
+Do not allocate extra space for another array, you must do this by modifying the input array in-place with O(1) extra memory.
+
+Example 1:
+
+Given nums = [1,1,1,2,2,3],
+
+Your function should return length = 5, with the first five elements of nums being 1, 1, 2, 2 and 3 respectively.
+
+
+
+									public int removeDuplicates(int[] nums) {
+										if(nums.length == 0) return 0;
+										
+										int i = 0;
+										
+										for(int n : nums) {
+											if(i < 2 || n > nums[i-2]) {              
+											nums[i++] = n; 
+											}                
+										}
+										return i;
+									}

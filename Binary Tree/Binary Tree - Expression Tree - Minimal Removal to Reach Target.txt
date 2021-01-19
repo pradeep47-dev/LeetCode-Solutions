@@ -1,0 +1,55 @@
+Minimal Removal to Reach Target for Expression Tree
+
+Given an (valid) expression tree (which is a binary tree that each node will either have 2 or 0 children. 
+All leaf nodes will contain an integer number and all other nodes will contain "+" or "-"), 
+you are asked to remove as minimal number of leaf nodes as possible so that 
+
+1). the resulting tree is still a valid expression tree; 
+2). the expression tree is evaluted to the given target value. If this is not possible, return -1.
+
+Example:
+
+Input:        -
+            /    \
+          +       -
+        /  \     / \
+	  5     -   3   -1
+	       /  \
+		  3    2
+target = 3
+Output: 1
+Explanation: The given tree is evaluated as 5 + (3 - 2) - (3 - (-1)) = 2. If we remove the leaf node of 3, the tree becomes:
+              -
+            /    \
+          +       -
+        /  \     / \
+	  5     2   3   -1
+which is now evaluated as 5 + 2 - (3 - (-1)) = 3
+
+
+
+	const int INF = (int) 1e9, minVal = -100, maxVal = 100;
+
+	Map<TreeNode, Map<Integer, Integer>> dp = new HashMap<>();
+
+	public int minVal(TreeNode root, int target){
+		if(root == null) return -1;
+		
+		if(root.left != null && root.right != null){
+			if(Integer.parseInt(root.val) == target) return 0;
+			else if(target == 0) return 1;
+			else return INF;
+		}
+		
+		if(dp.containsKey(root) && dp.containsKey(target)) 
+			return dp.get(root).get(target);
+			
+		dp.putIfAbsent(root, new HashMap<>());
+		dp.get(root).put(target, INF);
+		
+		int op = (root.val == "+") ? 1 : -1;
+		for(int i = minVal;i <= maxVal;i++){
+			dp.get(root).put(target, Math.min(dp.get(root).get(target), minVal(root.left, i) + minVal(root.right, op * (target - i)));
+		}
+		return dp.get(root).get(target);
+	}

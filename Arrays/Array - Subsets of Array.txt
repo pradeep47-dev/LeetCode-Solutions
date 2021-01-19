@@ -1,0 +1,120 @@
+
+/// Anagrams
+
+output: "xyz"
+
+xzy
+yzx
+xyz
+zyx
+yxz
+zxy
+
+List<String> anagrams (String input)
+{
+	char[] inp = input.toCharArray();
+	List<String> result = new ArrayList();
+   	backtrack(inp,result,inp.Length,"");
+   	return result;
+} 
+
+void backtrack(char[] input, List<String> result, int n, String str) {
+	if(str.length() == n){ 
+		result.add(new String(str));
+	}
+	else{
+		for(int i =0; i<n; i++){
+			if(str.contains(""+input[i])){
+				continue;
+			}
+			String newStr = str + input[i];
+			backtrack(input,result,n,newStr);
+		}
+	}
+}
+
+
+/// Subarray For String
+
+Output: "xyz"
+
+x
+y
+z
+xy
+yz
+xz
+xyz
+		public static Set<String> SubsetsString(char[] nums)
+        {           
+            Set<String> set = new HashSet<String>();
+			Subsequences("xyz", set, "", 0);
+            return result;
+        }
+
+       public static void Subsequences(String str, Set<String> result, String subresult, int index)
+        {
+            result.add(subresult);
+            for (int i = index; i < str.length(); i++)
+            {
+                subresult += str.charAt(i);
+                Subsequences(str, result, subresult, i + 1);
+                subresult = subresult.subString(0, subresult.length() - 1);
+            }
+        }
+		
+/// Subset Backtracking
+
+Output: { 1,2,3 }
+
+1
+2
+3
+12
+123
+13
+23
+
+      public static List<List<Integer>> Subsetss(int[] nums)
+      {            
+            List<List<Integer>> result = new ArrayList<>();
+			DFS(result, new ArrayList<>(), new int[] { 1,2,3}, 0);
+            return result;
+      }
+
+      public static void DFS(List<List<Integer>> result, List<Integer> subset, int[] arr, int index)
+      {
+            result.add(new ArrayList<Integer>(subset));
+            for (int i = index; i < arr.length; i++)
+            {
+                subset.add(arr[i]);
+                DFS(result, subset, arr, i +1 );
+                subset.remove(subset.size() - 1);
+            }
+      }
+
+
+/// Subset No Duplicates
+
+	public IList<IList<int>> SubsetsWithDup(int[] nums) {
+        
+        Array.Sort(nums);
+        List<List<Integer>> result = new ArrayList<>();  
+        DFS(result, new List<int>(), nums, 0);
+        return result;
+    }
+    
+    public void DFS(IList<IList<int>> result, IList<int> subset, int[] arr, int index)
+    {
+        result.add(new ArrayList<Integer>(subset));
+        for(int i = index; i<arr.Length;i++)
+        {
+            if(i>index && arr[i] == arr[i-1]) continue;
+            subset.add(arr[i]);
+            DFS(result, subset, arr, i +1 );
+            subset.remove(subset.size() - 1);
+        }
+    }
+	
+
+  

@@ -1,0 +1,79 @@
+Count Complete Tree Nodes
+
+Given a complete binary tree, count the number of nodes.
+
+complete binary tree, every level, except possibly the last, is completely filled, and all nodes in the 
+last level are as far left as possible. It can have between 1 and 2h nodes inclusive at the last level h.
+
+Example:
+
+Input: 
+    1
+   / \
+  2   3
+ / \  /
+4  5 6
+
+Output: 6
+
+
+// Return no of nodes
+
+// Get height and total nodes if bottom level is complete
+// get missed bottom level nodes
+// total - missed;
+
+	public int countNodes(TreeNode root) {
+        int h = getHeight(root);
+		int total = (int)Math.pow(2, h)-1; // total nodes if bottom level is complete
+			
+		int[] miss = new int[1]; // missed bottom level nodes
+		helper(root, 0, h, miss);
+	
+		return total - miss[0];
+    }
+    
+//true continue, false stop
+
+	private boolean helper(TreeNode node, int level, int height, int[] miss){
+		if(node != null){
+			level++;
+		}else{
+			return true;
+		}
+	
+		if(level >= height){
+			return false;
+		}
+	
+		if(level == height-1) { // bottom level of the tree
+			if(node.right == null){
+				miss[0]++;
+			}
+			if(node.left == null){
+				miss[0]++;
+			}
+	
+			if(node.left != null){
+				return false;
+			}
+		}
+	
+		boolean r = helper(node.right, level, height, miss);
+		if(r){
+			boolean l = helper(node.left, level, height, miss);
+			return l;
+		}
+	
+		return true;
+	}
+	
+	private int getHeight(TreeNode root){
+		TreeNode p = root;
+		int h = 0;
+		while(p!=null){
+			h++;
+			p = p.left;
+		}
+		return h;
+	}

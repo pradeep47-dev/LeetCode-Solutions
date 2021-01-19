@@ -1,0 +1,92 @@
+Distance Between Nodes in BST
+
+Given a list of unique integers nums, construct a BST from it (you need to insert nodes one-by-one with the given order to get the BST) and find the distance between two nodes node1 and node2. Distance is the number of edges between two nodes. If any of the given nodes does not appear in the BST, return -1.
+
+Example 1:
+
+Input: nums = [2, 1, 3], node1 = 1, node2 = 3
+Output: 2
+Explanation:
+     2
+   /   \
+  1     3
+
+
+// Shortest Distance - Method 1
+// Lowest Common Ancestor node
+// Sum both distance from LCA node
+
+	public int bstDistance(TreeNode root, int node1, int node2) {
+		if (root == null) 
+				return -1;
+		TreeNode lca = lca(root, node1, node2);			
+		return getDistance(lca, node1) + getDistance(lca, node2);
+	}
+
+	private int getDistance(TreeNode src, int dest) {
+		if (src.val == dest) 
+				return 0;
+		TreeNode node = src.left;
+		if (src.val < dest) {
+			node = src.right;
+		}
+		return 1 + getDistance(node, dest);
+	}
+
+	private TreeNode lca(TreeNode root, int node1, int node2) {
+		while (true) {
+			if (root.val > node1 && root.val > node2) 
+				root = root.left;
+			else if (root.val < node1 && root.val < node2) 
+				root = root.right;
+			else 
+				return root;			
+		}
+	}
+
+
+// Method 2 - Recusrion
+
+		public int FindDistanceofNodes(Node root, int a, int b)
+        {            
+            if (a > b)            
+                return distanceBetween2(root, b, a);           
+			else
+			    return distanceBetween2(root, a, b);            
+        }
+
+		
+        static int distanceBetween2(Node root, int a, int b)
+        {
+            if (root == null)
+                return 0;
+
+            if (root.key > a && root.key > b)	 	// Both keys lie in left  
+                return distanceBetween2(root.left, a, b);
+
+            if (root.key < a && root.key < b)		// Both keys lie in right  
+                return distanceBetween2(root.right, a, b);
+
+            if (root.key >= a && root.key <= b)		// root is LCA of two nodes)  
+                return distanceFromRoot(root, a) + distanceFromRoot(root, b);
+
+            return 0;
+        }
+		
+		
+		static int distanceFromRoot(Node root, int x)
+        {
+            if (root.key == x)
+                return 0;
+            else if (root.key > x)
+                return 1 + distanceFromRoot(root.left, x);
+            else
+                return 1 + distanceFromRoot(root.right, x);
+        }
+		
+		
+	
+
+
+
+       

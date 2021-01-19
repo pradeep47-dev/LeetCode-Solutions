@@ -1,0 +1,83 @@
+Global and Local Inversions
+
+We have some permutation A of [0, 1, ..., N - 1], where N is the length of A.
+
+The number of (global) inversions is the number of i < j with 0 <= i < j < N and A[i] > A[j].
+
+The number of local inversions is the number of i with 0 <= i < N and A[i] > A[i+1].
+
+Return true if and only if the number of global inversions is equal to the number of local inversions.
+
+Example 1:
+
+Input: A = [1,0,2]
+Output: true
+Explanation: There is 1 global inversion, and 1 local inversion.
+
+	public bool IsIdealPermutation(int[] A) {
+       
+        for(int i=0;i<A.Length;i++)
+        {
+            if(Math.Abs(A[i] - i) > 1)
+                return false;
+        }
+        
+        return true;
+    }
+	
+
+// Count the Inversions -- Use the Merge sort
+
+We can determine "out of order" an array A by counting the number of inversions it has. 
+Two elements A[i] and A[j] form an inversion if A[i] > A[j] but i < j. 
+a smaller element appears after a larger element.
+
+
+		public int count_Inversion = 0; 
+		
+		public static int[] mergeSort(int[] list, int lowIndex, int highIndex)
+        {
+            if (lowIndex == highIndex)
+                return new int[] { list[lowIndex] };
+            else
+            {
+                int midIndex = (lowIndex + highIndex) / 2;
+                int[] left = mergeSort(list, lowIndex, midIndex);
+                int[] right = mergeSort(list, midIndex + 1, highIndex);
+                return merge(left, right);
+            }
+        }
+
+		private static int[] merge(int[] left, int[] right)
+        {
+            int[] result = new int[left.Length + right.Length];
+
+            int i, j, k;
+            i = j = k = 0;
+
+            while (i < left.Length && j < right.Length)
+            {
+                if (left[i] < right[j])
+                {
+                    result[k++] = left[i++];
+                }
+                else
+                {
+                    result[k++] = right[j++];
+					
+					count_Inversion += left.Length - i;
+                }
+            }
+
+            while (i < left.Length)
+            {
+                result[k++] = left[i++];
+            }
+
+            while (j < right.Length)
+            {
+                result[k++] = right[j++];
+            }
+
+            return result;
+        }

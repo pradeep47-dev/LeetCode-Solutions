@@ -1,0 +1,164 @@
+Given a multiset of integers
+
+return whether it can be partitioned into two subsets whose sums are the same.
+
+Input =  {15, 5, 20, 10, 35, 15, 10}, it would return true
+
+Ouput: Split - Sum upto 55
+
+{15, 5, 10, 15, 10} and {20, 35}
+
+
+// Can partition to two subsets with equal sum
+
+	public bool CanPartition(int[] nums) {        
+        int n = nums.Length;
+        if(n==0) return false;
+		
+        int sum =0;
+        foreach(int num in nums)
+            sum += num;
+        
+        if(sum % 2 != 0) return false;
+        
+        sum = sum / 2;
+        
+        bool[] visited = new bool[sum+1];
+        visited[0] = true;
+        
+        for(int num : nums)
+        {
+            for(int i=sum;i>=num;i--)
+            {                
+              visited[i] = visited[i] || visited[i-num];               
+            }             
+        }
+        return visited[sum];
+    }
+	
+// 3 Parts with equal sum
+
+	public boolean canThreePartsEqualSum(int[] A) {
+        int n = A.length;	
+		int total = 0;
+        
+		for(int a : A)
+			total += a;
+		
+        if(total % 3 != 0) return false;
+        
+        int sum = 0, result = 0;
+        for(int i=0;i<n;i++) {
+            sum += A[i];
+            if(sum == total / 3) {
+                if (++result == 3) {
+                    return true;
+                }
+                sum = 0;
+            }
+        }
+        return false;
+    }
+	
+	
+/// Partition to K Equal Sum Subsets -> K number of subsets
+
+Example 1:
+
+Input: nums = [4, 3, 2, 3, 5, 2, 1], k = 4
+Output: True
+Explanation: It's possible to divide it into 4 subsets (5), (1, 4), (2,3), (2,3) with equal sums.
+
+
+// DFS - Backtacking
+
+	public bool CanPartitionKSubsets(int[] nums, int k) {        
+        int n = nums.Length;
+        int sum =0, max =0;
+        foreach(int num in nums)
+        {
+            sum+=num;
+            max = Math.max(max, num);
+        }
+        
+        if(sum % k != 0 || max > sum/k) return false;
+        return CanPartitionKSubsets(nums, k, 0, sum / k, new boolean[n], 0);
+    }
+    
+    public bool CanPartitionKSubsets(int[] nums, int k, int currSum,int target, boolean[] visited, int index)
+    {
+        if(k==0) return true;
+        else if(currSum > target) return false;
+        else if(currSum  == target) return CanPartitionKSubsets(nums, k-1, 0, target, visited, 0);
+        
+        for(int i=index;i<nums.Length;i++)
+        {
+            if(!visited[i])
+            {
+                visited[i] = true;
+                if(CanPartitionKSubsets(nums, k, currSum + nums[i], target, visited, i+1)) return true;
+                visited[i] = false;
+            }
+        }
+        return false;
+    }
+
+
+// Partition to 3 consecutive subsets
+
+Given a list of strictly positive integers, partition the list into 3 contiguous partitions which each sum up to the same value. If not possible, return null.
+
+For example, given the following list:
+
+[3, 5, 8, 0, 8]
+Return the following 3 partitions:
+
+[[3, 5],
+ [8, 0],
+ [8]]
+Which each add up to 8.
+
+
+	public List<List<Integer>> findSplit(int[] arr, int n) { 
+        int Sum = 0; 
+        for (i = 0; i < n; i++)  
+            Sum += arr[i];       
+       
+        if(Sum % 3 != 0) 
+            return null; 
+        
+		int i = 0, ind1 = -1, ind2 = -1; 
+        int preSum = 0;   
+		
+        int S1 = Sum / 3; 
+        int S2 = 2 * S1; 
+      
+		List<List<Integer>> result = new ArrayList<>();
+		List<Integer> subset = new ArrayList<>();
+		
+        for (i = 0; i < n; i++) 
+        { 
+            preSum += arr[i]; 
+            subset.add(arr[i]);
+       
+            if (preSum == S1 && ind1 == -1) {
+				ind1 = i;
+				result.add(new ArrayList<>(subset));
+				subset = new ArrayList<>();
+			}
+            else if(preSum == S2 && ind1 != -1) { 
+				ind2 = i;
+                result.add(new ArrayList<>(subset));
+				subset = new ArrayList<>();
+            } 
+        }       
+       
+        if (ind1 != -1 && ind2 != -1) 
+        { 
+            result.add(new ArrayList<>(subset));
+            return result; 
+        }       
+        
+        return null; 
+    } 
+

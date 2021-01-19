@@ -1,0 +1,88 @@
+Alien Dictionary
+
+There is a new alien language which uses the latin alphabet. However, the order among letters are unknown to you. 
+You receive a list of non-empty words from the dictionary, where words are sorted lexicographically by the rules of this new language. 
+Derive the order of letters in this language.
+
+Example 1:
+
+Input:
+[
+  "wrt",
+  "wrf",
+  "er",
+  "ett",
+  "rftt"
+]
+
+Output: "wertf"
+
+
+//Topology sort + BFS  
+    
+    public string AlienOrder(string[] words) {
+        if(words == null || words.length == 0) return "";
+        int n = words.length;  
+		
+        Map<Character, Set<Character>> graph = new HashMap<Character, Set<Character>>();
+        Set<Character> charSet = new Set<Character>();        
+        
+         for(int i = 0; i < n; i++) {
+             for(char c : words[i].toCharArray()){
+                 charSet.add(c);
+             }
+         }
+        
+		int[] degrees = new int[26];        
+		 
+        for(int i = 0; i < n-1; i++) {
+            string a = words[i], b = words[i+1];
+            int len = Math.min(a.length, b.length);
+            
+            for(int j = 0; j < len; j++){
+                if(a[j] != b[j]) {
+                    
+                    graph.putIfAbsent(a[j], new HashSet<char>());                                      
+                   
+                    if(!graph.get(a[j]).contains(b[j])) {
+                        graph.get(a[j]).add(b[j]);
+                        degrees[b[j] - 'a']++;
+                    }
+
+                    break;
+                }
+            }
+        }
+        
+		// if degree is zero, they are first char in the alien dictionary
+        
+        Queue<Character> queue = new LinkedList<>();
+        for(int i = 0; i < degrees.Length; i++) {
+            if(degrees[i] == 0 && charSet.contains((char)('a' + i))) {               
+                queue.add((char)('a' + i));
+            }
+        }
+        
+        StringBuilder sb = new StringBuilder();
+        while(!queue.isEmpty()){            
+            for(int i = queue.size(); i >= 0; i--) {
+                char c = queue.poll();                
+                sb.append(c);
+                degrees[c-'a'] = -1; //mark it as processed, so that it won't add again.
+                
+                if(graph.containsKey(c)) {
+                    for(char ch : graph.get(c)) {
+                        degrees[ch-'a']--;
+                        if(degrees[ch-'a'] == 0) {
+                            queue.add(ch);
+                        }
+                    }
+                 }
+            }
+        }
+        
+        if(sb.length == charSet.size()) return sb.toString();
+        
+        return ""; //Invalid, cycle
+    }
+

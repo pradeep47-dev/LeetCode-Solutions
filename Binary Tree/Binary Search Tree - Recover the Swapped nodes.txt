@@ -1,0 +1,90 @@
+Recover Binary Search Tree
+
+Two elements of a binary search tree (BST) are swapped by mistake.
+
+Recover the tree without changing its structure.
+
+Example 1:
+
+Input: [1,3,null,null,2]
+
+   1
+  /
+ 3
+  \
+   2
+
+Output: [3,1,null,null,2]
+
+   3
+  /
+ 1
+  \
+   2
+
+Example 2:
+
+Input: [3,1,4,null,null,2]
+
+  3
+ / \
+1   4
+   /
+  2
+
+Output: [2,1,4,null,null,3]
+
+  2
+ / \
+1   4
+   /
+  3
+
+
+ * use of leaf nodes' right/left pointer to achieve O(1) space Traversal on a Binary Tree.
+ * standard Inorder Morris Traversal,  
+
+    if(pre!=null && pre.val > root.val){
+    	if(first==null){first = pre;second = root;}
+    	else{second = root;}
+	}
+	pre = root;
+
+ * each time, the pre node and root are in order as System.out.println(root.val); outputs them in order.
+ * to specify the first wrong node and second wrong node.
+
+	When they are not consecutive, the first time we meet pre.val > root.val ensure us the first node is the pre node, 
+	since root should be traversal ahead of pre, pre should be at least at small as root. 
+	The second time we meet pre.val > root.val ensure us the second node is the root node, 
+	since we are now looking for a node to replace with out first node, which is found before.
+
+	When they are consecutive, which means the case pre.val > cur.val will appear only once. 
+	We need to take case this case without destroy the previous analysis. 
+	So the first node will still be pre, and the second will be just set to root. 
+	Once we meet this case again, the first node will not be affected.
+
+
+* updated version on Morris Traversal.
+
+	TreeNode firstStartPoint = null, lastEndPoint = null;
+    TreeNode previousNode = null;
+	
+    public void recoverTree(TreeNode root) {
+        inOrder(root);
+        int x = firstStartPoint.val;
+        firstStartPoint.val = lastEndPoint.val;
+        lastEndPoint.val = x;
+    }
+    
+	public void inOrder(TreeNode root){
+        if(root == null) return;
+        inOrder(root.left);
+        if(previousNode != null && previousNode.val > root.val){
+            if(firstStartPoint == null){
+                firstStartPoint = previousNode;
+            }
+            lastEndPoint = root;
+        }
+        previousNode = root;
+        inOrder(root.right);
+    }

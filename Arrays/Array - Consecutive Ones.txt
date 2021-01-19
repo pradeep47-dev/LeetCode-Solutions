@@ -1,0 +1,90 @@
+Max Consecutive Ones
+
+Given a binary array, find the maximum number of consecutive 1s in this array.
+
+Example 1:
+
+Input: [1,1,0,1,1,1]
+Output: 3
+Explanation: The first two digits or the last three digits are consecutive 1s.
+    The maximum number of consecutive 1s is 3.
+
+
+									public int findMaxConsecutiveOnes(int[] nums) {
+										int n = nums.length;
+										int max = 0, count = 0;
+										
+										for(int end=0;end<n;end++) {
+											if(nums[end] == 1)
+												count++;
+											else
+												count = 0;
+											
+											if(max < count) max = count;
+										}
+										return max;
+									}
+	
+	
+Max Consecutive Ones - Flip 0 once
+
+Given a binary array, find the maximum number of consecutive 1s in this array if you can flip at most one 0.
+
+Example 1:
+
+Input: [1,0,1,1,0]
+Output: 4
+Explanation: Flip the first zero will get the the maximum number of consecutive 1s.
+    After flipping, the maximum number of consecutive 1s is 4.
+
+
+								// Two pointers - start and end 
+								
+									public int findMaxConsecutiveOnes(int[] nums) {
+										int max = 0, q = -1;
+										for (int i = 0, j = 0; j < nums.length; j++) {
+											if (nums[j] == 0) {
+												i = q + 1;
+												q = j;
+											}
+											max = Math.max(max, j - i + 1);
+										}                                                               
+										return max;             
+									}
+	
+	
+	
+Max Consecutive Ones - Flip 0 K times
+
+Given an array A of 0s and 1s, we may change up to K values from 0 to 1.
+
+Return the length of the longest (contiguous) subarray that contains only 1s. 
+
+Example 1:
+
+Input: A = [1,1,1,0,0,0,1,1,1,1,0], K = 2
+Output: 6
+Explanation: 
+[1,1,1,0,0,1,1,1,1,1,1]
+Bolded numbers were flipped from 0 to 1.  The longest subarray is underlined.
+
+
+									// Slding Window
+									
+										public int longestOnes(int[] A, int K) {
+											int n = A.length;
+											int start = 0, max = 0, count = 0;
+											
+											for(int end=0;end<n;end++) {
+												if(A[end] == 0)
+													count++;
+												
+												while(count > K) {
+													if(A[start] == 0)
+														count--;
+													start++;
+												}
+												if(max < end-start +1) max = end-start+1;
+											}
+											return max;
+										}

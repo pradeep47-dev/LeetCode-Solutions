@@ -1,0 +1,175 @@
+Range Update and Range Queries
+
+Given an array arr[0..n-1]. The following operations need to be performed.
+
+    update(l, r, val) : Add ‘val’ to all the elements in the array from [l, r].
+    getRangeSum(l, r) : Find sum of all elements in array from [l, r].
+
+Initially all the elements in the array are 0. Queries can be in any order, i.e., there can be many updates before range sum.
+
+Example:
+
+Input : n = 5   // {0, 0, 0, 0, 0}
+Queries: update : l = 0, r = 4, val = 2
+         update : l = 3, r = 4, val = 3 
+         getRangeSum : l = 2, r = 4
+
+Output: Sum of elements of range [2, 4] is 12
+
+Explanation : Array after first update becomes
+              {2, 2, 2, 2, 2}
+              Array after second update becomes
+              {2, 2, 2, 5, 5}
+	
+	
+// Binary Indexed Tree - FenWick Tree - Update value of an index
+	
+	public class FenwickTree { 	 
+		int[] arr;
+		int[] BIT;
+		int n;
+	
+		public FenwickTree(int[] arr) {
+			this.arr = arr;
+	
+			n = arr.length;
+			BIT = new int[n + 1];
+			for (int i = 0; i < n; i++)
+				init(i, arr[i]);
+		}
+	
+		public void init(int i, int val) {
+			i++;
+			while (i <= n) {
+				BIT[i] += val;
+				i += (i & -i);
+			}
+		}		
+	
+		void update(int i, int val) {
+			int diff = val - arr[i];
+			arr[i] = val;
+			init(i, diff);
+		}
+		
+		public int rangeSum(int i, int j) {
+			return getSum(j) - getSum(i - 1);
+		}
+		
+		public int getSum(int i) {
+			int sum = 0;
+			i++;
+			while (i > 0) {
+				sum += BIT[i];
+				i -= (i & -i);
+			}
+			return sum;
+		}
+	}
+	
+	
+// Update value of the Range l -> r
+
+	public static void main(String[] args) { 
+		int n = 5; 	
+		
+		int[] BITTree1 = new int[n + 1]; // get element at any index in the array 
+		int[] BITTree2 = new int[n + 1]; // maintains the extra term which needs to be subtracted  
+		
+		int l = 0 , r = 4 , val = 5; 
+		updateRange(BITTree1, BITTree2, n, val, l, r);
+	
+		// Find sum of all the elements from [1,4] 
+		rangeSum(1, 4, BITTree1, BITTree2);
+	} 	
+	
+	public void updateRange(int BITTree1[], int BITTree2[], int n, int val, int l, int r) { 
+		
+		updateBIT(BITTree1, n, l, val); 
+		updateBIT(BITTree1, n, r + 1, -val); 
+	
+		
+		updateBIT(BITTree2, n, l, val * (l - 1)); 
+		updateBIT(BITTree2, n, r + 1, -val * r); 
+	} 
+	
+	
+	public void updateBIT(int BITree[], int n, int index, int val) {		
+		index = index + 1; 
+		
+		while (index <= n) 
+		{ 			
+			BITree[index] += val; 	
+			
+			index += index & (-index); 
+		} 
+	} 
+	
+	// Find sum from [0,r] then subtract sum from [0,l-1] 
+	
+	public int rangeSum(int l, int r, int BITTree1[], int BITTree2[]) { 		
+		return sum(r, BITTree1, BITTree2) - sum(l - 1, BITTree1, BITTree2); 
+	} 
+	
+	// Returns the sum of array from [0, x] 
+	
+	public int sum(int x, int BITTree1[], int BITTree2[]) { 
+		return (getSum(BITTree1, x) * x) - getSum(BITTree2, x); 
+	} 
+	
+	public int getSum(int BITree[], int index) 	{ 
+		int sum = 0; 	
+		
+		index = index + 1; 	
+		
+		while (index > 0) 
+		{ 			
+			sum += BITree[index]; 
+			index -= index & (-index); 
+		} 
+		return sum; 
+	} 
+	
+	
+	
+	/**
+	 * Binary Indexed Trees (BIT or Fenwick tree):
+	 * 
+	 * Example: given an array a[0]...a[7], we use a array BIT[9] to
+	 * represent a tree, where index [2] is the parent of [1] and [3], [6]
+	 * is the parent of [5] and [7], [4] is the parent of [2] and [6], and
+	 * [8] is the parent of [4]. I.e.,
+	 * 
+	 * BIT[] as a binary tree:
+	 *            ______________*
+	 *            ______*
+	 *            __*     __*
+	 *            *   *   *   *
+	 * indices: 0 1 2 3 4 5 6 7 8
+	 * 
+	 * BIT[i] = ([i] is a left child) ? the partial sum from its left most
+	 * descendant to itself : the partial sum from its parent (exclusive) to
+	 * itself. (check the range of "__").
+	 * 
+	 * Eg. BIT[1]=a[0], BIT[2]=a[1]+BIT[1]=a[1]+a[0], BIT[3]=a[2],
+	 * BIT[4]=a[3]+BIT[3]+BIT[2]=a[3]+a[2]+a[1]+a[0],
+	 * BIT[6]=a[5]+BIT[5]=a[5]+a[4],
+	 * BIT[8]=a[7]+BIT[7]+BIT[6]+BIT[4]=a[7]+a[6]+...+a[0], ...
+	 * 
+	 * Thus, to update a[1]=BIT[2], we shall update BIT[2], BIT[4], BIT[8],
+	 * i.e., for current [i], the next update [j] is j=i+(i&-i) //double the
+	 * last 1-bit from [i].
+	 * 
+	 * Similarly, to get the partial sum up to a[6]=BIT[7], we shall get the
+	 * sum of BIT[7], BIT[6], BIT[4], i.e., for current [i], the next
+	 * summand [j] is j=i-(i&-i) // delete the last 1-bit from [i].
+	 * 
+	 * To obtain the original value of a[7] (corresponding to index [8] of
+	 * BIT), we have to subtract BIT[7], BIT[6], BIT[4] from BIT[8], i.e.,
+	 * starting from [idx-1], for current [i], the next subtrahend [j] is
+	 * j=i-(i&-i), up to j==idx-(idx&-idx) exclusive. (However, a quicker
+	 * way but using extra space is to store the original array.)
+	 */
+	
+	
+  

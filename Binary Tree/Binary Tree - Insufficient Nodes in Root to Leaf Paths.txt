@@ -1,0 +1,77 @@
+Insufficient Nodes in Root to Leaf Paths
+
+Given the root of a binary tree, consider all root to leaf paths
+
+A node is insufficient if every such root to leaf path intersecting this node has sum strictly less than limit.
+
+Delete all insufficient nodes simultaneously, and return the root of the resulting binary tree.
+ 
+
+Example 1:
+
+
+Input: root = [1,2,3,4,-99,-99,7,8,9,-99,-99,12,13,-99,14], limit = 1
+
+Output: [1,2,3,4,null,null,7,8,9,null,14]
+
+
+// Pre Order traversal - Recusrion
+
+    Instead of running sum and checking that against limit, we can instead reduce limit at each stage of the iteration.
+       
+  1)  In the recursion, we have the base case that the current node is a leaf node.
+        If leaf node val < limit, that node is insufficient and we return None, otherwise return the node.
+   2) If the node isn't a leaf node, then we set the left and right values to the recursive value.
+		to propagate deletions upwards from any leaf nodes that were removed.
+   3) finally we check after recursing on the children of the current node, 
+		has it become a leaf node?' (due to deletions being propagated upwards).
+        If so, then we also remove this node as it's also insufficient.
+
+
+
+// Recusive - preOrder
+
+	public TreeNode sufficientSubset(TreeNode root, int limit) {
+        
+        if(root == null) return root;
+        
+        if(root.left ==null && root.right == null)
+            return root.val < limit ? null : root;
+        
+        root.left = sufficientSubset(root.left, limit - root.val);
+        root.right = sufficientSubset(root.right, limit - root.val);        
+        return root.left == root.right ? null : root;
+    }
+	
+
+// DFS - running sum and checking that against limit
+
+	public TreeNode sufficientSubset(TreeNode root, int limit) {        
+        return dfs(root, 0, limit);        
+    }
+    
+    public TreeNode dfs(TreeNode node, int sum, int limit) {
+        if (node == null) return null;
+        
+        if (node.left == null && node.right == null) {
+            if (sum + node.val < limit) {
+                return null;
+            }
+            return node;
+        } else {
+            TreeNode left = node.left;
+            TreeNode right = node.right;
+            
+            node.left = dfs(node.left, sum + node.val, limit);
+            node.right = dfs(node.right, sum + node.val, limit); 
+            
+            Boolean isLeftGone = left == null ? true : left != node.left;
+            Boolean isRightGone = right == null ? true : right != node.right;
+            
+            if (isLeftGone && isRightGone) {
+                return null;
+            }
+        }
+        
+        return node;
+    }

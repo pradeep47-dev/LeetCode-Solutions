@@ -1,0 +1,39 @@
+Number of Nice Subarrays
+
+Given an array of integers nums and an integer k. A subarray is called nice if there are k odd numbers on it.
+
+Return the number of nice sub-arrays.
+
+Example 1:
+
+Input: nums = [1,1,2,1,1], k = 3
+Output: 2
+Explanation: The only sub-arrays with 3 odd numbers are [1,1,2,1] and [1,2,1,1].
+
+
+// Sliding Window algorithm
+// get the odd number count of each window (subarrays)
+// increment the count if it reaches K
+
+	public int numberOfSubarrays(int[] nums, int k) {
+        int n = nums.length;
+        int start = 0, ans = 0, count = 0;
+        
+        for (int end=0; end<n; end++) {
+		
+            if(nums[end] % 2 != 0) {
+                k--;
+                count = 0;
+            }
+            
+            while(k == 0) {
+                if(nums[start] % 2 != 0)
+                    k++;
+                start++;
+                count++;
+            }
+            
+            ans += count;
+        }
+        return ans;
+    }

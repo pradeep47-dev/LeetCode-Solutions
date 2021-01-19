@@ -1,0 +1,81 @@
+Difference between sums of odd level and even level nodes of a Binary Tree
+
+Given a a Binary Tree, find the difference between the sum of nodes at odd level and the sum of nodes at even level. Consider root as level 1, left and right children of root as level 2 and so on.
+
+sum of nodes at odd level is (5 + 1 + 4 + 8) which is 18. 
+sum of nodes at even level is (2 + 6 + 3 + 7 + 9) which is 27. 
+
+The output for following tree should be 18 – 27 which is -9.
+
+
+// Level Order Traversal - Iterative using Stack
+
+	public int evenOddLevelDifference(Node root)
+    {
+        if (root == null)
+            return 0;
+        
+        Queue<Node> q = new Queue<Node>();
+        q.add(root);
+
+        int level = 0;
+        int evenSum = 0, oddSum = 0;
+        
+        while (q.size() != 0)
+        {
+            int size = q.size();
+            level++;
+          
+            while (size > 0)
+            {
+                Node temp = q.poll();
+               
+                if (level % 2 == 0)
+                    evenSum += temp.value;
+                else
+                    oddSum += temp.value;
+               
+                if (temp.left != null)
+                    q.add(temp.left);
+                
+                if (temp.right != null)
+                    q.add(temp.right);
+                size--;
+            }
+        }
+        return (oddSum - evenSum);
+    }
+		
+		
+		
+// Level Order traversal of tree and return the elements
+		
+	public List<List<Integer>> LevelOrder(TreeNode root) {
+        
+        List<List<Integer>> result = new ArrayList<>();
+        if(root == null) return result;
+        
+        Queue<TreeNode>  q = new Queue<TreeNode>();
+        q.add(root);        
+        
+        while(q.size()>0)
+        {
+            int size = q.size();           
+            List<int> temp = new List<int>();
+            while(size > 0)
+            {
+                TreeNode node = q.poll();
+                temp.Add(node.val);
+                
+                if (node.left != null)
+                    q.add(node.left);
+                    
+                if (node.right != null)
+                    q.add(node.right);
+                size--;                
+            }
+            if(temp.size()>0)
+                result.add(temp);
+        }
+        return result;
+    }

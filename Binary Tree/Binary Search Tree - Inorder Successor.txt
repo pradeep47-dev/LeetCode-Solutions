@@ -1,0 +1,102 @@
+Inorder Successor in BST
+
+Given a binary search tree and a node in it, find the in-order successor of that node in the BST.
+
+
+// Recusrion
+
+	TreeNode succ;
+    
+	 public TreeNode inorderSuccessor(TreeNode root, TreeNode p) {   
+        inorderSuccessorHelper(root, p);
+        return succ;
+    }
+	
+    private void inorderSuccessorHelper (TreeNode root, TreeNode p) {
+        if (root == null || p == null) return;
+        
+        if (root.val > p.val) {
+            succ = root;
+            inorderSuccessorHelper(root.left, p);
+        }
+        else
+            inorderSuccessorHelper(root.right, p);
+    }
+        
+   
+// Iterative
+	
+	public TreeNode inorderSuccessor(TreeNode root, TreeNode p) { 
+		if (root == null || p == null) {
+			return null;
+		}
+	
+		if (p.right != null) {			
+			TreeNode node = p.right;
+			while (node.left != null) {
+				node = node.left;
+			}
+	
+			return node;
+		}
+	
+		// Case 2: p.right == null
+		TreeNode succ = null;
+		TreeNode q = root;
+	
+		while (q != null) {
+			if (q.val > p.val) {
+				succ = q;
+				q = q.left;
+			} else if (q.val < p.val) {
+				q = q.right;
+			} else {
+				break;
+			}
+		}
+	
+		return succ;
+    }
+
+   
+	
+// in-order traversal of the BST. 
+// When we found the target node, we look for the smallest number greater than the node.
+
+	public TreeNode inorderSuccessor(TreeNode root, TreeNode p) {
+        if (root == null || p == null) {
+            return null;
+        }
+
+        if (p == root) {
+            return p.right;
+        }
+
+        Stack<TreeNode> stack = new Stack<>();
+        TreeNode q = root;
+
+        while (!stack.isEmpty() || q != null) {
+            if (q != null) {
+                stack.push(q);
+                q = q.left;
+            } else {
+                TreeNode curr = stack.pop();
+                q = curr.right;
+
+                if (curr == p) {
+                    if (curr.right != null) {
+                        TreeNode m = curr.right;
+                        while (m.left != null) {
+                            m = m.left;
+                        }
+                        return m;
+
+                    } else if (!stack.isEmpty()){
+                        return stack.pop();
+                    }
+                }
+            }
+        }
+
+        return null;
+    }

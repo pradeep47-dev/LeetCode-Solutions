@@ -1,0 +1,124 @@
+Evaluate arithmetic expression tree
+
+Suppose an arithmetic expression is given as a binary tree. Each leaf is an integer and each internal node is one of '+', '−', '∗', or '/'.
+
+Given the root to such a tree, write a function to evaluate it.
+
+For example, given the following tree:
+
+    *
+   / \
+  +    +
+ / \  / \
+3  2  4  5
+You should return 45, as it is (3 + 2) * (4 + 5).
+
+	
+	public static void Main(String []args)  
+    { 
+        ExpressionTree et = new ExpressionTree(); 
+        String postfix = "*++3245"; 
+        char[] charArray = postfix.ToCharArray(); 
+		
+        Node root = et.constructTree(charArray); 
+        
+		int value = et.Evaluatetree(root);
+		
+        et.Printinorder(root); 
+    } 
+
+public class ExpressionTree  
+{  
+	Node constructTree(char[] postfix) 
+    { 
+        Stack st = new Stack(); 
+        Node node, node1, node2;   
+       
+        for (int i = postfix.Length - 1; i >= 0; i++) 
+        { 
+            if (!isOperator(postfix[i]))  
+            { 
+                node = new Node(postfix[i]); 
+                st.Push(node); 
+            }  
+            else // operator 
+            { 
+                node = new Node(postfix[i]);   
+               
+                node1 = (Node)st.Pop();     
+                node2 = (Node)st.Pop();  
+            
+                node.right = node1; 
+                node.left = node2;  
+                
+                st.Push(node); 
+            } 
+        } 
+		
+        node = (Node)st.Pop();
+        return node; 
+    } 
+	
+	public void Printinorder(Node t)  
+    { 
+        if (t != null)  
+        { 
+            inorder(t.left); 
+            Console.Write(t.value + " "); 
+            inorder(t.right); 
+        } 
+    }
+	    
+	public int evaluateNode(Node root) 
+    {
+        int result, left, right;
+        Node temp;
+        
+        if (root==null)
+            result = 0;
+        else
+        {
+            temp = root;
+            
+            if (isOperator(temp.value)
+            {
+                left = evaluateNode(root.left);
+                right = evaluateNode(root.right);
+                result = computeTerm(temp.value, left, right);
+            }
+            else
+                result = temp.value;
+        }
+        
+        return result;
+    }
+	
+	private static int computeTerm(char operator, int left, int right)
+    {
+        int result=0;
+        
+        if (operator == '+')
+            result = left + right;        
+        else if (operator == '-')
+            result = left - right;
+        else if (operator == '*')
+            result = left * right;
+        else if (operator == '/')
+            result = left / right;
+		else 
+            result = Math.Pow(left,right);
+
+        return result;
+    }
+	
+	private boolean isOperator(char c) 
+    { 
+        if (c == '+' || c == '-' || c == '*' || c == '/' || c == '^') 
+        { 
+            return true; 
+        } 
+        return false; 
+    } 	
+}
+
+   
